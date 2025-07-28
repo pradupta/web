@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScoutDupta | Pramuka Pradupta</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Ubuntu&family=Poppins&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            crimson: '#DC143C',
+            scout: {
+              brown: '#8B4513',
+              green: '#228B22'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      scroll-behavior: smooth; 
+    }
+    h2 { 
+      font-family: 'Ubuntu', sans-serif; 
+      font-size: 1.8rem; 
+      color: #333;
+    }
+    .logo-text { 
+      font-family: 'Pacifico', cursive; 
+      font-size: 1.8rem; 
+    }
+    .sticky-nav { 
+      position: sticky; 
+      top: 0; 
+      z-index: 50; 
+      background-color: #111; 
+    }
+    .fade-in { 
+      opacity: 0; 
+      transform: translateY(20px); 
+      transition: all 0.6s ease-out; 
+    }
+    .fade-in.visible { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+    .social-icon:hover { 
+      transform: scale(1.1); 
+    }
+    .hero-overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+    .program-card {
+      transition: all 0.3s ease;
+    }
+    .program-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .timeline-item {
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      width: 2px;
+      background-color: #DC143C;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -1px;
+    }
+    .timeline-content {
+      position: relative;
+      width: 45%;
+    }
+    .timeline-content::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #DC143C;
+      border-radius: 50%;
+      top: 15px;
+    }
+    .left {
+      left: 0;
+    }
+    .right {
+      left: 55%;
+    }
+    .left::after {
+      right: -10px;
+    }
+    .right::after {
+      left: -10px;
+    }
+    @media (max-width: 768px) {
+      .timeline-item::before {
+        left: 20px;
+      }
+      .timeline-content {
+        width: calc(100% - 50px);
+        left: 50px !important;
+      }
+      .timeline-content::after {
+        left: -30px !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white text-black">
+
+  <!-- Navbar -->
+  <nav class="sticky-nav text-white px-4 py-3 flex flex-col md:flex-row justify-between items-center shadow-md">
+    <div class="logo-text text-crimson mb-2 md:mb-0">ScoutDupta</div>
+    <ul class="flex flex-wrap justify-center gap-4 text-sm md:text-base">
+      <li><a href="#beranda" class="hover:text-crimson transition-colors">Beranda</a></li>
+      <li><a href="#about" class="hover:text-crimson transition-colors">About</a></li>
+      <li><a href="#berita" class="hover:text-crimson transition-colors">Berita</a></li>
+      <li><a href="#program" class="hover:text-crimson transition-colors">Program</a></li>
+      <li><a href="#galeri" class="hover:text-crimson transition-colors">Galeri</a></li>
+      <li><a href="#kontak" class="hover:text-crimson transition-colors">Kontak</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section id="beranda" class="relative h-screen flex flex-col items-center justify-center bg-cover bg-center text-center text-white" style="background-image: url('bannernew.webp')">
+    <div class="absolute inset-0 hero-overlay"></div>
+    <div class="z-10 px-4">
+      <h1 class="text-4xl md:text-6xl font-bold drop-shadow-lg">Selamat Datang di</h1>
+      <p class="text-3xl md:text-5xl font-bold mt-2 drop-shadow-lg text-crimson">PRADUPTA</p>
+      <p class="text-xl mt-4 max-w-2xl mx-auto">Ambalan Pramuka yang menjunjung tinggi nilai kedisiplinan, kepemimpinan, dan kerja sama</p>
+      <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="#about" class="bg-white text-black px-6 py-3 rounded-full hover:bg-crimson hover:text-white transition-colors font-semibold">Tentang Kami</a>
+        <a href="#program" class="bg-crimson text-white px-6 py-3 rounded-full hover:bg-white hover:text-crimson transition-colors font-semibold">Program Kerja</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-center mb-12 fade-in">Tentang Kami</h2>
+      <div class="flex flex-col md:flex-row items-center gap-8">
+        <div class="md:w-1/3 flex flex-col items-center">
+          <div class="relative">
+            <div class="absolute inset-0 bg-crimson rounded-full blur-md opacity-20 transform scale-110"></div>
+            <img src="pradupta.jpg" />
+          </div>
+          <h3 class="text-xl font-bold mt-4">Pradupta</h3>
+          <p class="text-gray-600 text-center">Est. 1990</p>
+          <div class="flex justify-center gap-6 mt-4 text-xl text-gray-700">
+            <a href="#" class="social-icon transition-transform hover:text-crimson" title="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="social-icon transition-transform hover:text-crimson" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="social-icon transition-transform hover:text-crimson" title="TikTok"><i class="fab fa-tiktok"></i></a>
+          </div>
+        </div>
+        <div class="md:w-2/3 mt-6 md:mt-0">
+          <h3 class="text-2xl font-bold mb-4 text-crimson">Arti Makna Logo</h3>
+          <p class="mb-4 fade-in">Pradupta adalah Ambalan Pramuka yang menjunjung tinggi nilai kedisiplinan, kepemimpinan, dan kerja sama. Visi kami adalah menciptakan generasi muda yang tangguh, bertanggung jawab, dan peduli terhadap lingkungan sekitar.</p>
+          <p class="mb-6 fade-in">Logo kami melambangkan semangat kepanduan yang selalu siap menghadapi tantangan, dengan warna-warna yang memiliki makna mendalam: coklat melambangkan ketangguhan, hijau melambangkan kesuburan dan harapan, serta merah melambangkan keberanian.</p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+            <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <div class="text-3xl text-scout-brown mb-2"><i class="fas fa-campground"></i></div>
+              <h4 class="font-bold">Visi</h4>
+              <p class="text-sm text-gray-600">Menciptakan generasi muda yang tangguh dan bertanggung jawab</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <div class="text-3xl text-scout-green mb-2"><i class="fas fa-hands-helping"></i></div>
+              <h4 class="font-bold">Misi</h4>
+              <p class="text-sm text-gray-600">Mengembangkan karakter dan keterampilan melalui kegiatan kepramukaan</p>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <div class="text-3xl text-crimson mb-2"><i class="fas fa-heart"></i></div>
+              <h4 class="font-bold">Nilai</h4>
+              <p class="text-sm text-gray-600">Kedisiplinan, kepemimpinan, dan kerja sama</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Berita -->
+  <section id="berita" class="py-16 bg-gray-100 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-center mb-10 fade-in">Berita Dupta</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+          <img src="soon.jpg" class="w-full h-48 object-cover" alt="Berita 1">
+          <div class="p-4">
+            <span class="text-xs text-gray-500">12 Juni 2023</span>
+            <h3 class="font-bold text-lg mt-1">Perkemahan Tahunan 2023</h3>
+            <p class="text-gray-600 text-sm mt-2">Kegiatan perkemahan tahunan Pradupta yang diselenggarakan di Gunung Gede Pangrango berlangsung dengan sukses.</p>
+            <a href="http://2dc9a78d-0af8-47d8-93a1-5e9fbdac8ef4-00-5q3py84l6sq0.sisko.replit.dev/" class="inline-block mt-3 text-crimson hover:underline text-sm">Baca selengkapnya</a>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+          <img src="soon.jpg" class="w-full h-48 object-cover" alt="Berita 2">
+          <div class="p-4">
+            <span class="text-xs text-gray-500">5 Mei 2023</span>
+            <h3 class="font-bold text-lg mt-1">Bakti Sosial di Desa Sukamaju</h3>
+            <p class="text-gray-600 text-sm mt-2">Anggota Pradupta melakukan kegiatan bakti sosial dengan membersihkan lingkungan dan memberikan bantuan kepada warga.</p>
+            <a href="http://2dc9a78d-0af8-47d8-93a1-5e9fbdac8ef4-00-5q3py84l6sq0.sisko.replit.dev/" class="inline-block mt-3 text-crimson hover:underline text-sm">Baca selengkapnya</a>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+          <img src="soon.jpg" class="w-full h-48 object-cover" alt="Berita 3">
+          <div class="p-4">
+            <span class="text-xs text-gray-500">20 April 2023</span>
+            <h3 class="font-bold text-lg mt-1">Juara Lomba Pionering Tingkat Provinsi</h3>
+            <p class="text-gray-600 text-sm mt-2">Tim Pradupta berhasil meraih juara 1 dalam lomba pionering yang diselenggarakan di tingkat provinsi.</p>
+            <a href="http://2dc9a78d-0af8-47d8-93a1-5e9fbdac8ef4-00-5q3py84l6sq0.sisko.replit.dev/" class="inline-block mt-3 text-crimson hover:underline text-sm">Baca selengkapnya</a>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-8">
+        <a href="#" class="inline-block bg-crimson text-white px-6 py-2 rounded-full hover:bg-red-700 transition-colors">Lihat Semua Berita</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Program Kerja -->
+  <section id="program" class="py-16 bg-white px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-center mb-10 fade-in">Program Kerja</h2>
+      
+      <div class="timeline">
+        <div class="timeline-item py-8">
+          <div class="timeline-content left bg-white p-4 rounded-lg shadow-md">
+            <h3 class="font-bold text-lg text-crimson">Rapat Kerja</h3>
+            <span class="text-sm text-gray-500">Januari 2023</span>
+            <p class="mt-2">Perencanaan program kerja tahunan dan pembagian tugas untuk seluruh anggota Pradupta.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item py-8">
+          <div class="timeline-content right bg-white p-4 rounded-lg shadow-md">
+            <h3 class="font-bold text-lg text-crimson">Bukber</h3>
+            <span class="text-sm text-gray-500">April 2023</span>
+            <p class="mt-2">Buka puasa bersama seluruh anggota Pradupta dan alumni untuk mempererat silaturahmi.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item py-8">
+          <div class="timeline-content left bg-white p-4 rounded-lg shadow-md">
+            <h3 class="font-bold text-lg text-crimson">Halal Bihalal</h3>
+            <span class="text-sm text-gray-500">Mei 2023</span>
+            <p class="mt-2">Kegiatan silaturahmi dan saling memaafkan setelah Idul Fitri bersama seluruh anggota.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item py-8">
+          <div class="timeline-content right bg-white p-4 rounded-lg shadow-md">
+            <h3 class="font-bold text-lg text-crimson">Hari Laut</h3>
+            <span class="text-sm text-gray-500">Juni 2023</span>
+            <p class="mt-2">Kegiatan bersih pantai dan edukasi tentang pentingnya menjaga ekosistem laut.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="program-card bg-gray-50 p-4 rounded-lg text-center">
+          <div class="w-16 h-16 bg-crimson/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="fas fa-hiking text-2xl text-crimson"></i>
+          </div>
+          <h4 class="font-bold">Perkemahan</h4>
+          <p class="text-sm text-gray-600 mt-2">Kegiatan outdoor untuk melatih kemandirian dan survival</p>
+        </div>
+        <div class="program-card bg-gray-50 p-4 rounded-lg text-center">
+          <div class="w-16 h-16 bg-crimson/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="fas fa-hands-helping text-2xl text-crimson"></i>
+          </div>
+          <h4 class="font-bold">Bakti Sosial</h4>
+          <p class="text-sm text-gray-600 mt-2">Kegiatan sosial untuk membantu masyarakat sekitar</p>
+        </div>
+        <div class="program-card bg-gray-50 p-4 rounded-lg text-center">
+          <div class="w-16 h-16 bg-crimson/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="fas fa-trophy text-2xl text-crimson"></i>
+          </div>
+          <h4 class="font-bold">Lomba</h4>
+          <p class="text-sm text-gray-600 mt-2">Partisipasi dalam berbagai lomba kepramukaan</p>
+        </div>
+        <div class="program-card bg-gray-50 p-4 rounded-lg text-center">
+          <div class="w-16 h-16 bg-crimson/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="fas fa-book text-2xl text-crimson"></i>
+          </div>
+          <h4 class="font-bold">Pelatihan</h4>
+          <p class="text-sm text-gray-600 mt-2">Pengembangan keterampilan dan pengetahuan kepramukaan</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Galeri -->
+  <section id="galeri" class="py-16 bg-gray-100 px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-center mb-10 fade-in">Galeri Kegiatan</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div class="overflow-hidden rounded-lg">
+          <img src="harilaut.jpg" alt="Hari Laut" class="w-full h-40 object-cover hover:scale-110 transition-transform duration-300" />
+        </div>
+        <div class="overflow-hidden rounded-lg">
+          <img src="pta.jpg" alt="PTA" class="w-full h-40 object-cover hover:scale-110 transition-transform duration-300" />
+        </div>
+        <div class="overflow-hidden rounded-lg">
+          <img src="raker.jpg" alt="Rapat Kerja" class="w-full h-40 object-cover hover:scale-110 transition-transform duration-300" />
+        </div>
+        <div class="overflow-hidden rounded-lg">
+          <img src="sirling.jpg" alt="Silaturahmi Keliling" class="w-full h-40 object-cover hover:scale-110 transition-transform duration-300" />
+        </div>
+        <div class="overflow-hidden rounded-lg">
+          <img src="bukber.jpg" alt="BUKBER" class="w-full h-40 object-cover hover:scale-110 transition-transform duration-300" />
+        </div>
+        <div class="overflow-hidden rounded-lg">
+          <img src="soon.jpg" alt="Galeri 6" class="w-full h-40 object-cover hover:scale-110 transition-transform duration-300" />
+        </div>
+        <div class="overflow-hidden rounded-lg">
+          <img src="soon.jpg" alt="Galeri 7" class="w-full h-40 object-cover hover:scale-110 transition-transform duration-300" />
+        </div>
+        <div class="overflow-hidden rounded-lg">
+          <img src="soon.jpg" alt="Galeri 8" class="w-full h-40 object-cover hover:scale-110 transition-transform duration-300" />
+        </div>
+      </div>
+      <div class="text-center mt-8">
+        <a href="#" class="inline-block bg-crimson text-white px-6 py-2 rounded-full hover:bg-red-700 transition-colors">Lihat Semua Foto</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Kontak -->
+  <section id="kontak" class="py-16 bg-white px-4">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-center mb-10 fade-in">Hubungi Kami</h2>
+      <div class="flex flex-col md:flex-row gap-8">
+        <div class="md:w-1/2">
+          <h3 class="text-xl font-bold mb-4">Informasi Kontak</h3>
+          <div class="flex items-start mb-4">
+            <div class="text-crimson mr-3 mt-1"><i class="fas fa-map-marker-alt"></i></div>
+            <div>
+              <h4 class="font-semibold">Alamat</h4>
+              <p class="text-gray-600">Jl. Pramuka No. 123, Kecamatan Sukajadi, Kota Bandung</p>
+            </div>
+          </div>
+          <div class="flex items-start mb-4">
+            <div class="text-crimson mr-3 mt-1"><i class="fas fa-phone"></i></div>
+            <div>
+              <h4 class="font-semibold">Telepon</h4>
+              <p class="text-gray-600">+62 812-3456-7890</p>
+            </div>
+          </div>
+          <div class="flex items-start mb-4">
+            <div class="text-crimson mr-3 mt-1"><i class="fas fa-envelope"></i></div>
+            <div>
+              <h4 class="font-semibold">Email</h4>
+              <p class="text-gray-600">info@pradupta.org</p>
+            </div>
+          </div>
+          <div class="mt-6">
+            <h4 class="font-semibold mb-2">Ikuti Kami</h4>
+            <div class="flex gap-4 text-xl">
+              <a href="#" class="text-gray-600 hover:text-crimson transition-colors"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="text-gray-600 hover:text-crimson transition-colors"><i class="fab fa-facebook"></i></a>
+              <a href="#" class="text-gray-600 hover:text-crimson transition-colors"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="text-gray-600 hover:text-crimson transition-colors"><i class="fab fa-youtube"></i></a>
+              <a href="#" class="text-gray-600 hover:text-crimson transition-colors"><i class="fab fa-tiktok"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="md:w-1/2">
+          <h3 class="text-xl font-bold mb-4">Kirim Pesan</h3>
+          <form class="space-y-4">
+            <div>
+              <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+              <input type="text" id="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-crimson focus:border-transparent" placeholder="Nama lengkap">
+            </div>
+            <div>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-crimson focus:border-transparent" placeholder="email@example.com">
+            </div>
+            <div>
+              <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subjek</label>
+              <input type="text" id="subject" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-crimson focus:border-transparent" placeholder="Subjek pesan">
+            </div>
+            <div>
+              <label for="message" class="block text-sm font-medium text-gray-700 mb-1">Pesan</label>
+              <textarea id="message" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-crimson focus:border-transparent" placeholder="Tulis pesan Anda di sini..."></textarea>
+            </div>
+            <div>
+              <button type="submit" class="w-full bg-crimson text-white py-2 px-4 rounded-md hover:bg-red-700 transition-colors">Kirim Pesan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-8 px-4">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col md:flex-row justify-between">
+        <div class="mb-6 md:mb-0">
+          <div class="logo-text text-crimson mb-2">ScoutDupta</div>
+          <p class="text-gray-400 text-sm max-w-xs">Ambalan Pramuka yang menjunjung tinggi nilai kedisiplinan, kepemimpinan, dan kerja sama.</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+          <div>
+            <h4 class="font-bold mb-3">Tautan</h4>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li><a href="#beranda" class="hover:text-crimson transition-colors">Beranda</a></li>
+              <li><a href="#about" class="hover:text-crimson transition-colors">About</a></li>
+              <li><a href="#berita" class="hover:text-crimson transition-colors">Berita</a></li>
+              <li><a href="#program" class="hover:text-crimson transition-colors">Program</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold mb-3">Program</h4>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li><a href="#" class="hover:text-crimson transition-colors">Perkemahan</a></li>
+              <li><a href="#" class="hover:text-crimson transition-colors">Bakti Sosial</a></li>
+              <li><a href="#" class="hover:text-crimson transition-colors">Lomba</a></li>
+              <li><a href="#" class="hover:text-crimson transition-colors">Pelatihan</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold mb-3">Kontak</h4>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li><a href="#" class="hover:text-crimson transition-colors">info@pradupta.org</a></li>
+              <li><a href="#" class="hover:text-crimson transition-colors">+62 812-3456-7890</a></li>
+              <li><a href="#" class="hover:text-crimson transition-colors">Bandung, Indonesia</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-sm text-gray-500">&copy; 2023 ScoutDupta. All rights reserved.</p>
+        <div class="flex gap-4 mt-4 md:mt-0">
+          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+  <script>
+    // Fade-in animation
+    document.addEventListener('DOMContentLoaded', function() {
+      const fadeElements = document.querySelectorAll('.fade-in');
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1 });
+      
+      fadeElements.forEach(element => {
+        observer.observe(element);
+      });
+      
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          const targetId = this.getAttribute('href');
+          const targetElement = document.querySelector(targetId);
+          
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+      
+      // Initialize Owl Carousel
+      $('.owl-carousel').owlCarousel({
+        loop: true,
+        margin: 10,
+        nav: true,
+        responsive: {
+          0: { items: 1 },
+          600: { items: 2 },
+          1000: { items: 3 }
+        }
+      });
+      
+      // Mobile menu toggle
+      const mobileMenuButton = document.querySelector('.mobile-menu-button');
+      const mobileMenu = document.querySelector('.mobile-menu');
+      
+      if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', () => {
+          mobileMenu.classList.toggle('hidden');
+        });
+      }
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9664b6ce13f640e4',t:'MTc1MzcwOTI0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
