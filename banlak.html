@@ -1,0 +1,500 @@
+               <!DOCTYPE html>
+               <html lang="id">
+               <head>
+                 <meta charset="UTF-8" />
+                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                 <title>Perkemahan Tahunan 2023 | ScoutDupta</title>
+                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+                 <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Ubuntu&family=Poppins&display=swap" rel="stylesheet">
+                 <script src="https://cdn.tailwindcss.com"></script>
+                 <script>
+                   tailwind.config = {
+                     theme: {
+                       extend: {
+                         colors: {
+                           crimson: '#DC143C',
+                           scout: {
+                             brown: '#8B4513',
+                             green: '#228B22'
+                           }
+                         }
+                       }
+                     }
+                   }
+                 </script>
+                 <style>
+                   body { 
+                     font-family: 'Poppins', sans-serif; 
+                     scroll-behavior: smooth; 
+                   }
+                   h2 { 
+                     font-family: 'Ubuntu', sans-serif; 
+                     font-size: 1.8rem; 
+                     color: #333;
+                   }
+                   .logo-text { 
+                     font-family: 'Pacifico', cursive; 
+                     font-size: 1.8rem; 
+                   }
+                   .sticky-nav { 
+                     position: sticky; 
+                     top: 0; 
+                     z-index: 50; 
+                     background-color: #111; 
+                   }
+                   .fade-in { 
+                     opacity: 0; 
+                     transform: translateY(20px); 
+                     transition: all 0.6s ease-out; 
+                   }
+                   .fade-in.visible { 
+                     opacity: 1; 
+                     transform: translateY(0); 
+                   }
+                   .social-icon:hover { 
+                     transform: scale(1.1); 
+                   }
+                   .article-content p {
+                     margin-bottom: 1.25rem;
+                     line-height: 1.8;
+                   }
+                   .article-content h3 {
+                     font-weight: 700;
+                     font-size: 1.25rem;
+                     margin-top: 2rem;
+                     margin-bottom: 1rem;
+                     color: #333;
+                   }
+                   .article-content ul {
+                     list-style-type: disc;
+                     margin-left: 1.5rem;
+                     margin-bottom: 1.25rem;
+                   }
+                   .article-content ul li {
+                     margin-bottom: 0.5rem;
+                   }
+                   .article-content img {
+                     border-radius: 0.5rem;
+                     margin: 1.5rem 0;
+                   }
+                   .article-content blockquote {
+                     border-left: 4px solid #DC143C;
+                     padding-left: 1rem;
+                     font-style: italic;
+                     color: #555;
+                     margin: 1.5rem 0;
+                   }
+                 </style>
+               </head>
+               <body class="bg-gray-50 text-black">
+
+                 <!-- Navbar -->
+                 <nav class="sticky-nav text-white px-4 py-3 flex flex-col md:flex-row justify-between items-center shadow-md">
+                   <div class="logo-text text-crimson mb-2 md:mb-0">ScoutDupta</div>
+                   <ul class="flex flex-wrap justify-center gap-4 text-sm md:text-base">
+                     <li><a href="index.html#beranda" class="hover:text-crimson transition-colors">Beranda</a></li>
+                     <li><a href="index.html#about" class="hover:text-crimson transition-colors">About</a></li>
+                     <li><a href="index.html#berita" class="hover:text-crimson transition-colors">Berita</a></li>
+                     <li><a href="index.html#program" class="hover:text-crimson transition-colors">Program</a></li>
+                     <li><a href="index.html#galeri" class="hover:text-crimson transition-colors">Galeri</a></li>
+                     <li><a href="index.html#kontak" class="hover:text-crimson transition-colors">Kontak</a></li>
+                   </ul>
+                 </nav>
+
+                 <!-- Breadcrumb -->
+                 <div class="bg-gray-100 py-3 px-4">
+                   <div class="max-w-4xl mx-auto">
+                     <div class="flex items-center text-sm text-gray-600">
+                       <a href="index.html" class="hover:text-crimson">Beranda</a>
+                       <span class="mx-2"><i class="fas fa-chevron-right text-xs"></i></span>
+                       <a href="index.html#berita" class="hover:text-crimson">Berita</a>
+                       <span class="mx-2"><i class="fas fa-chevron-right text-xs"></i></span>
+                       <span class="text-gray-800">Perkemahan Tahunan 2023</span>
+                     </div>
+                   </div>
+                 </div>
+
+                 <!-- Article Header -->
+                 <header class="relative">
+                   <div class="w-full h-64 md:h-96 overflow-hidden">
+                     <img src="https://source.unsplash.com/random/1200x600/?scout,camping" alt="Perkemahan Tahunan 2023" class="w-full h-full object-cover">
+                     <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                   </div>
+                   <div class="absolute bottom-0 left-0 right-0 p-4 md:p-8">
+                     <div class="max-w-4xl mx-auto">
+                       <span class="inline-block bg-crimson text-white text-xs px-3 py-1 rounded-full mb-2">Kegiatan</span>
+                       <h1 class="text-2xl md:text-4xl font-bold text-white mb-2">Perkemahan Tahunan 2023</h1>
+                       <div class="flex items-center text-white/80 text-sm">
+                         <span><i class="far fa-calendar-alt mr-1"></i> 12 Juni 2023</span>
+                         <span class="mx-3">|</span>
+                         <span><i class="far fa-user mr-1"></i> Admin Pradupta</span>
+                       </div>
+                     </div>
+                   </div>
+                 </header>
+
+                 <!-- Article Content -->
+                 <main class="py-8 px-4">
+                   <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-sm p-6 md:p-8">
+                     <div class="article-content">
+                       <p class="font-medium text-lg text-gray-800 mb-6">
+                         Kegiatan perkemahan tahunan Pradupta yang diselenggarakan di Gunung Gede Pangrango berlangsung dengan sukses. Acara yang berlangsung selama tiga hari ini diikuti oleh seluruh anggota Pradupta dan beberapa alumni.
+                       </p>
+
+                       <img src="https://source.unsplash.com/random/900x500/?scout,camping,mountain" alt="Suasana Perkemahan" class="w-full">
+                       <p class="text-sm text-gray-500 text-center -mt-4 mb-6">Suasana perkemahan di kaki Gunung Gede Pangrango</p>
+
+                       <p>
+                         Perkemahan tahunan merupakan agenda rutin yang selalu ditunggu-tunggu oleh seluruh anggota Pradupta. Tahun ini, kegiatan tersebut dilaksanakan pada tanggal 9-11 Juni 2023 di kawasan Gunung Gede Pangrango. Kegiatan ini bertujuan untuk melatih kemandirian, kerja sama tim, dan keterampilan bertahan hidup di alam terbuka.
+                       </p>
+
+                       <h3>Rangkaian Kegiatan</h3>
+                       <p>
+                         Selama tiga hari, peserta mengikuti berbagai kegiatan yang telah dipersiapkan oleh panitia. Berikut adalah rangkaian kegiatan yang dilaksanakan:
+                       </p>
+                       <ul>
+                         <li>Mendirikan tenda dan membangun bivak</li>
+                         <li>Memasak dengan peralatan terbatas</li>
+                         <li>Navigasi menggunakan peta dan kompas</li>
+                         <li>Pertolongan pertama pada kecelakaan (P3K)</li>
+                         <li>Teknik survival di alam terbuka</li>
+                         <li>Malam api unggun dan pentas seni</li>
+                       </ul>
+
+                       <div class="grid grid-cols-2 gap-4 my-6">
+                         <img src="https://source.unsplash.com/random/600x400/?scout,tent" alt="Mendirikan Tenda" class="rounded-lg">
+                         <img src="https://source.unsplash.com/random/600x400/?campfire" alt="Api Unggun" class="rounded-lg">
+                       </div>
+
+                       <h3>Pembelajaran dan Pengalaman</h3>
+                       <p>
+                         Kegiatan perkemahan ini memberikan banyak pembelajaran berharga bagi seluruh peserta. Mereka tidak hanya belajar tentang teknik bertahan hidup di alam terbuka, tetapi juga nilai-nilai penting seperti kerja sama, kepemimpinan, dan tanggung jawab.
+                       </p>
+
+                       <blockquote>
+                         "Perkemahan ini mengajarkan kami untuk lebih menghargai alam dan pentingnya kerja sama dalam tim. Kami juga belajar untuk mandiri dan bertanggung jawab atas diri sendiri dan lingkungan sekitar." - Andi, Ketua Pradupta
+                       </blockquote>
+
+                       <p>
+                         Selain itu, peserta juga berkesempatan untuk lebih mengenal satu sama lain dan mempererat tali persaudaraan. Momen-momen kebersamaan seperti makan bersama, api unggun, dan pentas seni menjadi kenangan yang tak terlupakan bagi seluruh peserta.
+                       </p>
+
+                       <h3>Kontribusi untuk Lingkungan</h3>
+                       <p>
+                         Sebagai bentuk kepedulian terhadap lingkungan, peserta perkemahan juga melakukan kegiatan bersih-bersih area perkemahan sebelum kembali pulang. Mereka mengumpulkan sampah dan memastikan tidak ada jejak yang ditinggalkan di lokasi perkemahan.
+                       </p>
+
+                       <img src="https://source.unsplash.com/random/900x500/?scout,group" alt="Foto Bersama" class="w-full">
+                       <p class="text-sm text-gray-500 text-center -mt-4 mb-6">Foto bersama seluruh peserta perkemahan</p>
+
+                       <h3>Rencana ke Depan</h3>
+                       <p>
+                         Melihat antusiasme dan manfaat yang didapatkan dari kegiatan ini, Pradupta berencana untuk mengadakan perkemahan serupa di tahun-tahun mendatang dengan lokasi dan tema yang berbeda. Hal ini diharapkan dapat memberikan pengalaman dan pembelajaran yang lebih beragam bagi seluruh anggota.
+                       </p>
+
+                       <p>
+                         Terima kasih kepada seluruh pihak yang telah mendukung terlaksananya kegiatan perkemahan tahunan 2023. Sampai jumpa di kegiatan Pradupta selanjutnya!
+                       </p>
+
+                       <div class="border-t border-gray-200 mt-8 pt-6">
+                         <h4 class="font-bold mb-3">Bagikan:</h4>
+                         <div class="flex gap-3">
+                           <a href="#" class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-700 transition-colors">
+                             <i class="fab fa-facebook-f"></i>
+                           </a>
+                           <a href="#" class="bg-sky-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-sky-600 transition-colors">
+                             <i class="fab fa-twitter"></i>
+                           </a>
+                           <a href="#" class="bg-green-600 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-green-700 transition-colors">
+                             <i class="fab fa-whatsapp"></i>
+                           </a>
+                           <a href="#" class="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
+                             <i class="fab fa-telegram"></i>
+                           </a>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                 </main>
+
+                 <!-- Related Articles -->
+                 <section class="py-8 px-4 bg-gray-100">
+                   <div class="max-w-4xl mx-auto">
+                     <h2 class="text-2xl font-bold mb-6">Berita Terkait</h2>
+                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                       <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                         <img src="https://source.unsplash.com/random/600x400/?scout,community" class="w-full h-48 object-cover" alt="Berita 1">
+                         <div class="p-4">
+                           <span class="text-xs text-gray-500">5 Mei 2023</span>
+                           <h3 class="font-bold text-lg mt-1">Bakti Sosial di Desa Sukamaju</h3>
+                           <p class="text-gray-600 text-sm mt-2">Anggota Pradupta melakukan kegiatan bakti sosial dengan membersihkan lingkungan dan memberikan bantuan kepada warga.</p>
+                           <a href="#" class="inline-block mt-3 text-crimson hover:underline text-sm">Baca selengkapnya</a>
+                         </div>
+                       </div>
+                       <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                         <img src="https://source.unsplash.com/random/600x400/?scout,achievement" class="w-full h-48 object-cover" alt="Berita 2">
+                         <div class="p-4">
+                           <span class="text-xs text-gray-500">20 April 2023</span>
+                           <h3 class="font-bold text-lg mt-1">Juara Lomba Pionering Tingkat Provinsi</h3>
+                           <p class="text-gray-600 text-sm mt-2">Tim Pradupta berhasil meraih juara 1 dalam lomba pionering yang diselenggarakan di tingkat provinsi.</p>
+                           <a href="#" class="inline-block mt-3 text-crimson hover:underline text-sm">Baca selengkapnya</a>
+                         </div>
+                       </div>
+                       <div class="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+                         <img src="https://source.unsplash.com/random/600x400/?scout,training" class="w-full h-48 object-cover" alt="Berita 3">
+                         <div class="p-4">
+                           <span class="text-xs text-gray-500">15 Maret 2023</span>
+                           <h3 class="font-bold text-lg mt-1">Pelatihan Kepemimpinan Anggota Baru</h3>
+                           <p class="text-gray-600 text-sm mt-2">Pradupta mengadakan pelatihan kepemimpinan untuk anggota baru guna mempersiapkan generasi penerus yang tangguh.</p>
+                           <a href="#" class="inline-block mt-3 text-crimson hover:underline text-sm">Baca selengkapnya</a>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                 </section>
+
+                 <!-- Comments Section -->
+                 <section class="py-8 px-4">
+                   <div class="max-w-4xl mx-auto">
+                     <h2 class="text-2xl font-bold mb-6">Komentar (3)</h2>
+
+                     <!-- Comment Form -->
+                     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                       <h3 class="font-bold mb-4">Tinggalkan Komentar</h3>
+                       <form>
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                           <div>
+                             <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nama</label>
+                             <input type="text" id="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-crimson focus:border-transparent" placeholder="Nama lengkap">
+                           </div>
+                           <div>
+                             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                             <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-crimson focus:border-transparent" placeholder="email@example.com">
+                           </div>
+                         </div>
+                         <div class="mb-4">
+                           <label for="comment" class="block text-sm font-medium text-gray-700 mb-1">Komentar</label>
+                           <textarea id="comment" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-crimson focus:border-transparent" placeholder="Tulis komentar Anda di sini..."></textarea>
+                         </div>
+                         <button type="submit" class="bg-crimson text-white py-2 px-4 rounded-md hover:bg-red-700 transition-colors">Kirim Komentar</button>
+                       </form>
+                     </div>
+
+                     <!-- Comments List -->
+                     <div class="space-y-6">
+                       <!-- Comment 1 -->
+                       <div class="bg-white rounded-lg shadow-sm p-6">
+                         <div class="flex items-start">
+                           <div class="flex-shrink-0 mr-4">
+                             <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
+                               <i class="fas fa-user"></i>
+                             </div>
+                           </div>
+                           <div class="flex-grow">
+                             <div class="flex items-center justify-between mb-2">
+                               <h4 class="font-bold">Budi Santoso</h4>
+                               <span class="text-xs text-gray-500">14 Juni 2023, 09:45</span>
+                             </div>
+                             <p class="text-gray-700">Kegiatan yang sangat bermanfaat! Saya harap bisa ikut di perkemahan tahun depan. Apakah alumni diperbolehkan untuk ikut serta?</p>
+                             <div class="mt-3 flex items-center gap-4">
+                               <button class="text-sm text-gray-500 hover:text-crimson flex items-center gap-1">
+                                 <i class="far fa-thumbs-up"></i> <span>12</span>
+                               </button>
+                               <button class="text-sm text-gray-500 hover:text-crimson flex items-center gap-1">
+                                 <i class="far fa-comment"></i> <span>Balas</span>
+                               </button>
+                             </div>
+                           </div>
+                         </div>
+                       </div>
+
+                       <!-- Comment 2 -->
+                       <div class="bg-white rounded-lg shadow-sm p-6">
+                         <div class="flex items-start">
+                           <div class="flex-shrink-0 mr-4">
+                             <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
+                               <i class="fas fa-user"></i>
+                             </div>
+                           </div>
+                           <div class="flex-grow">
+                             <div class="flex items-center justify-between mb-2">
+                               <h4 class="font-bold">Siti Rahma</h4>
+                               <span class="text-xs text-gray-500">13 Juni 2023, 15:20</span>
+                             </div>
+                             <p class="text-gray-700">Foto-fotonya bagus sekali! Lokasi perkemahannya juga indah. Semoga tahun depan bisa diadakan lagi dengan kegiatan yang lebih seru.</p>
+                             <div class="mt-3 flex items-center gap-4">
+                               <button class="text-sm text-gray-500 hover:text-crimson flex items-center gap-1">
+                                 <i class="far fa-thumbs-up"></i> <span>8</span>
+                               </button>
+                               <button class="text-sm text-gray-500 hover:text-crimson flex items-center gap-1">
+                                 <i class="far fa-comment"></i> <span>Balas</span>
+                               </button>
+                             </div>
+                           </div>
+                         </div>
+                       </div>
+
+                       <!-- Comment 3 with Reply -->
+                       <div class="bg-white rounded-lg shadow-sm p-6">
+                         <div class="flex items-start">
+                           <div class="flex-shrink-0 mr-4">
+                             <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
+                               <i class="fas fa-user"></i>
+                             </div>
+                           </div>
+                           <div class="flex-grow">
+                             <div class="flex items-center justify-between mb-2">
+                               <h4 class="font-bold">Deni Kurniawan</h4>
+                               <span class="text-xs text-gray-500">12 Juni 2023, 20:15</span>
+                             </div>
+                             <p class="text-gray-700">Saya sangat terkesan dengan kegiatan ini. Bagaimana cara untuk bergabung dengan Pradupta? Apakah ada persyaratan khusus?</p>
+                             <div class="mt-3 flex items-center gap-4">
+                               <button class="text-sm text-gray-500 hover:text-crimson flex items-center gap-1">
+                                 <i class="far fa-thumbs-up"></i> <span>15</span>
+                               </button>
+                               <button class="text-sm text-gray-500 hover:text-crimson flex items-center gap-1">
+                                 <i class="far fa-comment"></i> <span>Balas</span>
+                               </button>
+                             </div>
+
+                             <!-- Reply -->
+                             <div class="mt-4 ml-8 p-4 bg-gray-50 rounded-lg">
+                               <div class="flex items-start">
+                                 <div class="flex-shrink-0 mr-3">
+                                   <div class="w-10 h-10 rounded-full bg-crimson/10 flex items-center justify-center text-crimson">
+                                     <i class="fas fa-user"></i>
+                                   </div>
+                                 </div>
+                                 <div>
+                                   <div class="flex items-center justify-between mb-1">
+                                     <h5 class="font-bold text-sm">Admin Pradupta</h5>
+                                     <span class="text-xs text-gray-500">13 Juni 2023, 08:30</span>
+                                   </div>
+                                   <p class="text-gray-700 text-sm">Halo Deni, terima kasih atas ketertarikannya! Untuk bergabung dengan Pradupta, Anda bisa menghubungi kami melalui kontak yang tersedia di website atau datang langsung ke sekretariat kami. Persyaratan utamanya adalah memiliki semangat kepramukaan dan berkomitmen untuk aktif dalam kegiatan.</p>
+                                 </div>
+                               </div>
+                             </div>
+                           </div>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                 </section>
+
+                 <!-- Footer -->
+                 <footer class="bg-gray-900 text-white py-8 px-4">
+                   <div class="max-w-6xl mx-auto">
+                     <div class="flex flex-col md:flex-row justify-between">
+                       <div class="mb-6 md:mb-0">
+                         <div class="logo-text text-crimson mb-2">ScoutDupta</div>
+                         <p class="text-gray-400 text-sm max-w-xs">Ambalan Pramuka yang menjunjung tinggi nilai kedisiplinan, kepemimpinan, dan kerja sama.</p>
+                       </div>
+                       <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                         <div>
+                           <h4 class="font-bold mb-3">Tautan</h4>
+                           <ul class="space-y-2 text-sm text-gray-400">
+                             <li><a href="index.html#beranda" class="hover:text-crimson transition-colors">Beranda</a></li>
+                             <li><a href="index.html#about" class="hover:text-crimson transition-colors">About</a></li>
+                             <li><a href="index.html#berita" class="hover:text-crimson transition-colors">Berita</a></li>
+                             <li><a href="index.html#program" class="hover:text-crimson transition-colors">Program</a></li>
+                           </ul>
+                         </div>
+                         <div>
+                           <h4 class="font-bold mb-3">Program</h4>
+                           <ul class="space-y-2 text-sm text-gray-400">
+                             <li><a href="#" class="hover:text-crimson transition-colors">Perkemahan</a></li>
+                             <li><a href="#" class="hover:text-crimson transition-colors">Bakti Sosial</a></li>
+                             <li><a href="#" class="hover:text-crimson transition-colors">Lomba</a></li>
+                             <li><a href="#" class="hover:text-crimson transition-colors">Pelatihan</a></li>
+                           </ul>
+                         </div>
+                         <div>
+                           <h4 class="font-bold mb-3">Kontak</h4>
+                           <ul class="space-y-2 text-sm text-gray-400">
+                             <li><a href="#" class="hover:text-crimson transition-colors">info@pradupta.org</a></li>
+                             <li><a href="#" class="hover:text-crimson transition-colors">+62 812-3456-7890</a></li>
+                             <li><a href="#" class="hover:text-crimson transition-colors">Bandung, Indonesia</a></li>
+                           </ul>
+                         </div>
+                       </div>
+                     </div>
+                     <div class="border-t border-gray-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
+                       <p class="text-sm text-gray-500">&copy; 2023 ScoutDupta. All rights reserved.</p>
+                       <div class="flex gap-4 mt-4 md:mt-0">
+                         <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-instagram"></i></a>
+                         <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-facebook"></i></a>
+                         <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-twitter"></i></a>
+                         <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-youtube"></i></a>
+                       </div>
+                     </div>
+                   </div>
+                 </footer>
+
+                 <!-- Back to Top Button -->
+                 <button id="backToTop" class="fixed bottom-6 right-6 bg-crimson text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300">
+                   <i class="fas fa-arrow-up"></i>
+                 </button>
+
+                 <!-- Scripts -->
+                 <script>
+                   // Fade-in animation
+                   document.addEventListener('DOMContentLoaded', function() {
+                     const fadeElements = document.querySelectorAll('.fade-in');
+
+                     const observer = new IntersectionObserver((entries) => {
+                       entries.forEach(entry => {
+                         if (entry.isIntersecting) {
+                           entry.target.classList.add('visible');
+                         }
+                       });
+                     }, { threshold: 0.1 });
+
+                     fadeElements.forEach(element => {
+                       observer.observe(element);
+                     });
+
+                     // Back to top button
+                     const backToTopButton = document.getElementById('backToTop');
+
+                     window.addEventListener('scroll', () => {
+                       if (window.pageYOffset > 300) {
+                         backToTopButton.classList.remove('opacity-0', 'invisible');
+                         backToTopButton.classList.add('opacity-100', 'visible');
+                       } else {
+                         backToTopButton.classList.add('opacity-0', 'invisible');
+                         backToTopButton.classList.remove('opacity-100', 'visible');
+                       }
+                     });
+
+                     backToTopButton.addEventListener('click', () => {
+                       window.scrollTo({
+                         top: 0,
+                         behavior: 'smooth'
+                       });
+                     });
+
+                     // Like button functionality
+                     const likeButtons = document.querySelectorAll('.far.fa-thumbs-up');
+
+                     likeButtons.forEach(button => {
+                       button.addEventListener('click', function() {
+                         const countElement = this.nextElementSibling;
+                         let count = parseInt(countElement.textContent);
+
+                         if (this.classList.contains('fas')) {
+                           // Unlike
+                           this.classList.remove('fas');
+                           this.classList.add('far');
+                           countElement.textContent = count - 1;
+                         } else {
+                           // Like
+                           this.classList.remove('far');
+                           this.classList.add('fas');
+                           countElement.textContent = count + 1;
+                         }
+                       });
+                     });
+                   });
+                 </script>
+               <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9664d616e6ac7a7a',t:'MTc1MzcxMDUyOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+               </html>
