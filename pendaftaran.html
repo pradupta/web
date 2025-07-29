@@ -851,5 +851,921 @@
       updateProgress(1);
     });
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'966bf820c0c29ba3',t:'MTc1Mzc4NTMyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'966bf820c0c29ba3',t:'MTc1Mzc4NTMyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+<script>
+  fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vSs0ZwZojSyelB9PPD5LuKp7N1yBZjilNmrjTiCbBJ2JLfB24M5MKryX1JiprQDGMbI8dMAyxWcApyc/pub?output=tsv")
+    .then(res => res.text())
+    .then(text => {
+      const rows = text.trim().split('\n').map(row => row.split('\t'));
+      let html = '<div class="overflow-auto"><table class="table-auto w-full border-collapse border border-gray-300">';
+      html += '<thead><tr class="bg-gray-100">';
+      rows[0].forEach(col => html += `<th class="border px-4 py-2 text-left">${col}</th>`);
+      html += '</tr></thead><tbody>';
+      rows.slice(1).forEach(row => {
+        html += '<tr>';
+        row.forEach(cell => html += `<td class="border px-4 py-2">${cell}</td>`);
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+      document.getElementById('data-output').innerHTML = html;
+    });
+</script>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Formulir Pendaftaran Anggota Pramuka | ScoutDupta</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Ubuntu&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            crimson: '#DC143C',
+            scout: {
+              brown: '#8B4513',
+              green: '#228B22'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { 
+      font-family: 'Poppins', sans-serif; 
+      scroll-behavior: smooth; 
+    }
+    h2 { 
+      font-family: 'Ubuntu', sans-serif; 
+      font-size: 1.8rem; 
+      color: #333;
+    }
+    .logo-text { 
+      font-family: 'Pacifico', cursive; 
+      font-size: 1.8rem; 
+    }
+    .sticky-nav { 
+      position: sticky; 
+      top: 0; 
+      z-index: 50; 
+      background-color: #111; 
+    }
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: #DC143C;
+      box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.2);
+    }
+    .form-label {
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #4B5563;
+    }
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #D1D5DB;
+      border-radius: 0.375rem;
+      transition: all 0.2s;
+    }
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: #9CA3AF;
+    }
+    .form-error {
+      color: #DC143C;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+    .file-input-wrapper input[type=file] {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      cursor: pointer;
+    }
+    .file-preview {
+      width: 150px;
+      height: 200px;
+      border: 2px dashed #D1D5DB;
+      border-radius: 0.375rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .file-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+    }
+    .file-preview-text {
+      text-align: center;
+      color: #9CA3AF;
+      padding: 1rem;
+    }
+    .progress-bar {
+      height: 4px;
+      background-color: #E5E7EB;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background-color: #DC143C;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-black">
+
+  <!-- Navbar -->
+  <nav class="sticky-nav text-white px-4 py-3 flex flex-col md:flex-row justify-between items-center shadow-md">
+    <div class="logo-text text-crimson mb-2 md:mb-0">ScoutDupta</div>
+    <ul class="flex flex-wrap justify-center gap-4 text-sm md:text-base">
+      <li><a href="index.html#beranda" class="hover:text-crimson transition-colors">Beranda</a></li>
+      <li><a href="index.html#about" class="hover:text-crimson transition-colors">About</a></li>
+      <li><a href="index.html#berita" class="hover:text-crimson transition-colors">Berita</a></li>
+      <li><a href="index.html#program" class="hover:text-crimson transition-colors">Program</a></li>
+      <li><a href="index.html#galeri" class="hover:text-crimson transition-colors">Galeri</a></li>
+      <li><a href="index.html#kontak" class="hover:text-crimson transition-colors">Kontak</a></li>
+    </ul>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="bg-gray-100 py-3 px-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="flex items-center text-sm text-gray-600">
+        <a href="index.html" class="hover:text-crimson">Beranda</a>
+        <span class="mx-2"><i class="fas fa-chevron-right text-xs"></i></span>
+        <span class="text-gray-800">Formulir Pendaftaran</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <header class="bg-white py-8 px-4 border-b">
+    <div class="max-w-4xl mx-auto">
+      <h1 class="text-3xl font-bold mb-2">Formulir Pendaftaran Anggota Pramuka</h1>
+      <p class="text-gray-600">Isi formulir berikut untuk mendaftar sebagai anggota Pramuka ScoutDupta</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="py-8 px-4">
+    <div class="max-w-4xl mx-auto">
+      <!-- Form Container -->
+      <div class="bg-white rounded-lg shadow-sm p-6 md:p-8">
+        <!-- Form Header -->
+        <div class="mb-8 pb-6 border-b border-gray-200">
+          <div class="flex items-center">
+            <div class="w-10 h-10 bg-crimson rounded-full flex items-center justify-center text-white mr-4">
+              <i class="fas fa-user-plus"></i>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold">Data Pendaftaran</h2>
+               <div id="data-output">
+              <p class="text-gray-600 text-sm">Mohon isi data dengan lengkap dan benar</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Registration Form -->
+        <form id="registrationForm" class="space-y-6">
+          <!-- Form Progress -->
+          <div class="mb-8 hidden" id="formProgress">
+            <div class="flex justify-between mb-2">
+              <span class="text-sm font-medium text-gray-700" id="progressText">0% selesai</span>
+              <span class="text-sm font-medium text-gray-700" id="progressStep">Bagian 1 dari 3</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-bar-fill" style="width: 0%"></div>
+            </div>
+          </div>
+          
+          <!-- Form Section 1: Personal Information -->
+          <div id="section1" class="space-y-6">
+            <h3 class="text-lg font-semibold text-gray-800">Informasi Pribadi</h3>
+            
+            <!-- Nama Panggilan -->
+            <div>
+              <label for="namaPanggilan" class="form-label">Nama Panggilan <span class="text-crimson">*</span></label>
+              <input type="text" id="namaPanggilan" name="Nama Panggilan" class="form-input" placeholder="Masukkan nama panggilan" required>
+              <div class="form-error hidden" id="namaPanggilanError">Nama panggilan harus diisi</div>
+            </div>
+            
+            <!-- Nama Lengkap -->
+            <div>
+              <label for="namaLengkap" class="form-label">Nama Lengkap <span class="text-crimson">*</span></label>
+              <input type="text" id="namaLengkap" name="Nama Lengkap" class="form-input" placeholder="Masukkan nama lengkap" required>
+              <div class="form-error hidden" id="namaLengkapError">Nama lengkap harus diisi</div>
+            </div>
+            
+            <!-- Jenis Kelamin -->
+            <div>
+              <label class="form-label">Jenis Kelamin <span class="text-crimson">*</span></label>
+              <div class="flex gap-4 mt-2">
+                <label class="inline-flex items-center">
+                  <input type="radio" name="Jenis Kelamin" value="Laki-laki" class="w-4 h-4 text-crimson" required>
+                  <span class="ml-2">Laki-laki</span>
+                </label>
+                <label class="inline-flex items-center">
+                  <input type="radio" name="Jenis Kelamin" value="Perempuan" class="w-4 h-4 text-crimson" required>
+                  <span class="ml-2">Perempuan</span>
+                </label>
+              </div>
+              <div class="form-error hidden" id="jenisKelaminError">Jenis kelamin harus dipilih</div>
+            </div>
+            
+            <!-- Agama -->
+            <div>
+              <label for="agama" class="form-label">Agama <span class="text-crimson">*</span></label>
+              <select id="agama" name="Agama" class="form-select" required>
+                <option value="" disabled selected>Pilih agama</option>
+                <option value="Islam">Islam</option>
+                <option value="Kristen">Kristen</option>
+                <option value="Katolik">Katolik</option>
+                <option value="Hindu">Hindu</option>
+                <option value="Buddha">Buddha</option>
+                <option value="Konghucu">Konghucu</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+              <div class="form-error hidden" id="agamaError">Agama harus dipilih</div>
+            </div>
+            
+            <!-- Tempat, Tanggal Lahir -->
+            <div>
+              <label for="ttl" class="form-label">Tempat, Tanggal Lahir <span class="text-crimson">*</span></label>
+              <div class="flex flex-col sm:flex-row gap-4">
+                <input type="text" id="tempatLahir" name="Tempat Lahir" class="form-input" placeholder="Tempat lahir" required>
+                <input type="date" id="tanggalLahir" name="Tanggal Lahir" class="form-input" required>
+              </div>
+              <div class="form-error hidden" id="ttlError">Tempat dan tanggal lahir harus diisi</div>
+            </div>
+            
+            <!-- Kelas/Ruangan -->
+            <div>
+              <label for="kelas" class="form-label">Kelas/Ruangan <span class="text-crimson">*</span></label>
+              <input type="text" id="kelas" name="Kelasl/Ruangan" class="form-input" placeholder="Contoh: X IPA 1" required>
+              <div class="form-error hidden" id="kelasError">Kelas/Ruangan harus diisi</div>
+            </div>
+            
+            <div class="pt-4">
+              <button type="button" id="nextToSection2" class="w-full sm:w-auto px-6 py-3 bg-crimson text-white rounded-md hover:bg-red-700 transition-colors font-medium">
+                Lanjutkan <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Form Section 2: Contact Information -->
+          <div id="section2" class="space-y-6 hidden">
+            <h3 class="text-lg font-semibold text-gray-800">Informasi Kontak</h3>
+            
+            <!-- Email -->
+            <div>
+              <label for="email" class="form-label">Email <span class="text-crimson">*</span></label>
+              <input type="email" id="email" name="Email" class="form-input" placeholder="Contoh: nama@email.com" required>
+              <div class="form-error hidden" id="emailError">Email harus diisi dengan format yang benar</div>
+            </div>
+            
+            <!-- No. Telepon/WA -->
+            <div>
+              <label for="telepon" class="form-label">No. Telepon/WA <span class="text-crimson">*</span></label>
+              <input type="tel" id="telepon" name="No. Telepon/WA" class="form-input" placeholder="Contoh: 08123456789" required>
+              <div class="form-error hidden" id="teleponError">Nomor telepon harus diisi dengan format yang benar</div>
+            </div>
+            
+            <!-- Pas Foto -->
+            <div>
+              <label class="form-label">Pas Foto <span class="text-crimson">*</span></label>
+              <div class="flex flex-col sm:flex-row items-start gap-4">
+                <div class="file-preview" id="fotoPreview">
+                  <div class="file-preview-text">
+                    <i class="fas fa-image text-2xl mb-2"></i>
+                    <p>Belum ada foto</p>
+                    <p class="text-xs">Ukuran maks. 2MB</p>
+                  </div>
+                </div>
+                <div class="mt-4 sm:mt-0">
+                  <div class="file-input-wrapper">
+                    <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
+                      <i class="fas fa-upload mr-2"></i> Pilih Foto
+                    </button>
+                    <input type="file" id="pasFoto" name="Pas foto" accept="image/*" required>
+                  </div>
+                  <p class="text-sm text-gray-500 mt-2">Format: JPG, PNG, atau JPEG</p>
+                  <div class="form-error hidden" id="fotoError">Pas foto harus diunggah</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="pt-4 flex justify-between">
+              <button type="button" id="backToSection1" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali
+              </button>
+              <button type="button" id="nextToSection3" class="px-6 py-3 bg-crimson text-white rounded-md hover:bg-red-700 transition-colors font-medium">
+                Lanjutkan <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Form Section 3: Additional Information -->
+          <div id="section3" class="space-y-6 hidden">
+            <h3 class="text-lg font-semibold text-gray-800">Informasi Tambahan</h3>
+            
+            <!-- Hobi -->
+            <div>
+              <label for="hobi" class="form-label">Hobi <span class="text-crimson">*</span></label>
+              <input type="text" id="hobi" name="Hobi" class="form-input" placeholder="Masukkan hobi Anda" required>
+              <div class="form-error hidden" id="hobiError">Hobi harus diisi</div>
+            </div>
+            
+            <!-- Cita-cita -->
+            <div>
+              <label for="cita" class="form-label">Cita-cita <span class="text-crimson">*</span></label>
+              <input type="text" id="cita" name="Cita-cita" class="form-input" placeholder="Masukkan cita-cita Anda" required>
+              <div class="form-error hidden" id="citaError">Cita-cita harus diisi</div>
+            </div>
+            
+            <!-- Motto Hidup -->
+            <div>
+              <label for="motto" class="form-label">Motto Hidup <span class="text-crimson">*</span></label>
+              <textarea id="motto" name="Motto hidup" class="form-textarea" rows="2" placeholder="Masukkan motto hidup Anda" required></textarea>
+              <div class="form-error hidden" id="mottoError">Motto hidup harus diisi</div>
+            </div>
+            
+            <!-- Alasan Masuk Pramuka -->
+            <div>
+              <label for="alasan" class="form-label">Alasan Masuk Pramuka <span class="text-crimson">*</span></label>
+              <textarea id="alasan" name="Alasan Masuk Pramuka" class="form-textarea" rows="3" placeholder="Ceritakan alasan Anda ingin bergabung dengan Pramuka" required></textarea>
+              <div class="form-error hidden" id="alasanError">Alasan masuk Pramuka harus diisi</div>
+            </div>
+            
+            <div class="pt-4 flex justify-between">
+              <button type="button" id="backToSection2" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali
+              </button>
+              <button type="submit" id="submitForm" class="px-6 py-3 bg-crimson text-white rounded-md hover:bg-red-700 transition-colors font-medium">
+                <i class="fas fa-paper-plane mr-2"></i> Kirim Pendaftaran
+              </button>
+            </div>
+          </div>
+        </form>
+        
+        <!-- Success Message (Hidden by default) -->
+        <div id="successMessage" class="hidden text-center py-8">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-check text-green-500 text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-2">Pendaftaran Berhasil!</h3>
+          <p class="text-gray-600 mb-6">Terima kasih telah mendaftar sebagai anggota Pramuka ScoutDupta. Kami akan menghubungi Anda segera.</p>
+          <a href="index.html" class="inline-block px-6 py-3 bg-crimson text-white rounded-md hover:bg-red-700 transition-colors font-medium">
+            <i class="fas fa-home mr-2"></i> Kembali ke Beranda
+          </a>
+        </div>
+        
+        <!-- Error Message (Hidden by default) -->
+        <div id="errorMessage" class="hidden text-center py-8">
+          <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-2">Pendaftaran Gagal</h3>
+          <p class="text-gray-600 mb-6">Terjadi kesalahan saat mengirim data pendaftaran. Silakan coba lagi nanti.</p>
+          <button id="retryButton" class="inline-block px-6 py-3 bg-crimson text-white rounded-md hover:bg-red-700 transition-colors font-medium">
+            <i class="fas fa-redo mr-2"></i> Coba Lagi
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-crimson mx-auto mb-4"></div>
+      <h3 class="text-xl font-bold mb-2">Mengirim Data...</h3>
+      <p class="text-gray-600">Mohon tunggu sebentar, data pendaftaran Anda sedang dikirim.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-8 px-4 mt-12">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex flex-col md:flex-row justify-between">
+        <div class="mb-6 md:mb-0">
+          <div class="logo-text text-crimson mb-2">ScoutDupta</div>
+          <p class="text-gray-400 text-sm max-w-xs">Ambalan Pramuka yang menjunjung tinggi nilai kedisiplinan, kepemimpinan, dan kerja sama.</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+          <div>
+            <h4 class="font-bold mb-3">Tautan</h4>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li><a href="index.html#beranda" class="hover:text-crimson transition-colors">Beranda</a></li>
+              <li><a href="index.html#about" class="hover:text-crimson transition-colors">About</a></li>
+              <li><a href="index.html#berita" class="hover:text-crimson transition-colors">Berita</a></li>
+              <li><a href="index.html#program" class="hover:text-crimson transition-colors">Program</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold mb-3">Program</h4>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li><a href="#" class="hover:text-crimson transition-colors">Perkemahan</a></li>
+              <li><a href="#" class="hover:text-crimson transition-colors">Bakti Sosial</a></li>
+              <li><a href="#" class="hover:text-crimson transition-colors">Lomba</a></li>
+              <li><a href="#" class="hover:text-crimson transition-colors">Pelatihan</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold mb-3">Kontak</h4>
+            <ul class="space-y-2 text-sm text-gray-400">
+              <li><a href="#" class="hover:text-crimson transition-colors">info@pradupta.org</a></li>
+              <li><a href="#" class="hover:text-crimson transition-colors">+62 812-3456-7890</a></li>
+              <li><a href="#" class="hover:text-crimson transition-colors">Bandung, Indonesia</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-sm text-gray-500">&copy; 2023 ScoutDupta. All rights reserved.</p>
+        <div class="flex gap-4 mt-4 md:mt-0">
+          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Form sections
+      const section1 = document.getElementById('section1');
+      const section2 = document.getElementById('section2');
+      const section3 = document.getElementById('section3');
+      
+      // Navigation buttons
+      const nextToSection2 = document.getElementById('nextToSection2');
+      const backToSection1 = document.getElementById('backToSection1');
+      const nextToSection3 = document.getElementById('nextToSection3');
+      const backToSection2 = document.getElementById('backToSection2');
+      const submitForm = document.getElementById('submitForm');
+      const retryButton = document.getElementById('retryButton');
+      
+      // Messages
+      const successMessage = document.getElementById('successMessage');
+      const errorMessage = document.getElementById('errorMessage');
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      
+      // Progress bar
+      const formProgress = document.getElementById('formProgress');
+      const progressBar = document.querySelector('.progress-bar-fill');
+      const progressText = document.getElementById('progressText');
+      const progressStep = document.getElementById('progressStep');
+      
+      // Form and fields
+      const registrationForm = document.getElementById('registrationForm');
+      const pasFoto = document.getElementById('pasFoto');
+      const fotoPreview = document.getElementById('fotoPreview');
+      const tempatLahir = document.getElementById('tempatLahir');
+      const tanggalLahir = document.getElementById('tanggalLahir');
+      
+      // Show progress bar
+      formProgress.classList.remove('hidden');
+      
+      // Update progress
+      function updateProgress(step) {
+        let percentage = 0;
+        let stepText = '';
+        
+        switch(step) {
+          case 1:
+            percentage = 0;
+            stepText = 'Bagian 1 dari 3';
+            break;
+          case 2:
+            percentage = 33;
+            stepText = 'Bagian 2 dari 3';
+            break;
+          case 3:
+            percentage = 66;
+            stepText = 'Bagian 3 dari 3';
+            break;
+          case 4: // Completed
+            percentage = 100;
+            stepText = 'Selesai';
+            break;
+        }
+        
+        progressBar.style.width = `${percentage}%`;
+        progressText.textContent = `${percentage}% selesai`;
+        progressStep.textContent = stepText;
+      }
+      
+      // Validate section 1
+      function validateSection1() {
+        let isValid = true;
+        
+        // Validate Nama Panggilan
+        const namaPanggilan = document.getElementById('namaPanggilan');
+        const namaPanggilanError = document.getElementById('namaPanggilanError');
+        if (!namaPanggilan.value.trim()) {
+          namaPanggilanError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          namaPanggilanError.classList.add('hidden');
+        }
+        
+        // Validate Nama Lengkap
+        const namaLengkap = document.getElementById('namaLengkap');
+        const namaLengkapError = document.getElementById('namaLengkapError');
+        if (!namaLengkap.value.trim()) {
+          namaLengkapError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          namaLengkapError.classList.add('hidden');
+        }
+        
+        // Validate Jenis Kelamin
+        const jenisKelamin = document.querySelector('input[name="Jenis Kelamin"]:checked');
+        const jenisKelaminError = document.getElementById('jenisKelaminError');
+        if (!jenisKelamin) {
+          jenisKelaminError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          jenisKelaminError.classList.add('hidden');
+        }
+        
+        // Validate Agama
+        const agama = document.getElementById('agama');
+        const agamaError = document.getElementById('agamaError');
+        if (!agama.value) {
+          agamaError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          agamaError.classList.add('hidden');
+        }
+        
+        // Validate TTL
+        const ttlError = document.getElementById('ttlError');
+        if (!tempatLahir.value.trim() || !tanggalLahir.value) {
+          ttlError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          ttlError.classList.add('hidden');
+        }
+        
+        // Validate Kelas
+        const kelas = document.getElementById('kelas');
+        const kelasError = document.getElementById('kelasError');
+        if (!kelas.value.trim()) {
+          kelasError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          kelasError.classList.add('hidden');
+        }
+        
+        return isValid;
+      }
+      
+      // Validate section 2
+      function validateSection2() {
+        let isValid = true;
+        
+        // Validate Email
+        const email = document.getElementById('email');
+        const emailError = document.getElementById('emailError');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email.value.trim() || !emailRegex.test(email.value)) {
+          emailError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          emailError.classList.add('hidden');
+        }
+        
+        // Validate Telepon
+        const telepon = document.getElementById('telepon');
+        const teleponError = document.getElementById('teleponError');
+        const teleponRegex = /^[0-9]{10,15}$/;
+        if (!telepon.value.trim() || !teleponRegex.test(telepon.value.replace(/\D/g, ''))) {
+          teleponError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          teleponError.classList.add('hidden');
+        }
+        
+        // Validate Pas Foto
+        const fotoError = document.getElementById('fotoError');
+        if (!pasFoto.files || !pasFoto.files[0]) {
+          fotoError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          fotoError.classList.add('hidden');
+        }
+        
+        return isValid;
+      }
+      
+      // Validate section 3
+      function validateSection3() {
+        let isValid = true;
+        
+        // Validate Hobi
+        const hobi = document.getElementById('hobi');
+        const hobiError = document.getElementById('hobiError');
+        if (!hobi.value.trim()) {
+          hobiError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          hobiError.classList.add('hidden');
+        }
+        
+        // Validate Cita-cita
+        const cita = document.getElementById('cita');
+        const citaError = document.getElementById('citaError');
+        if (!cita.value.trim()) {
+          citaError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          citaError.classList.add('hidden');
+        }
+        
+        // Validate Motto
+        const motto = document.getElementById('motto');
+        const mottoError = document.getElementById('mottoError');
+        if (!motto.value.trim()) {
+          mottoError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          mottoError.classList.add('hidden');
+        }
+        
+        // Validate Alasan
+        const alasan = document.getElementById('alasan');
+        const alasanError = document.getElementById('alasanError');
+        if (!alasan.value.trim()) {
+          alasanError.classList.remove('hidden');
+          isValid = false;
+        } else {
+          alasanError.classList.add('hidden');
+        }
+        
+        return isValid;
+      }
+      
+      // Navigation: Section 1 to Section 2
+      nextToSection2.addEventListener('click', function() {
+        if (validateSection1()) {
+          section1.classList.add('hidden');
+          section2.classList.remove('hidden');
+          updateProgress(2);
+          window.scrollTo(0, 0);
+        }
+      });
+      
+      // Navigation: Section 2 to Section 1
+      backToSection1.addEventListener('click', function() {
+        section2.classList.add('hidden');
+        section1.classList.remove('hidden');
+        updateProgress(1);
+        window.scrollTo(0, 0);
+      });
+      
+      // Navigation: Section 2 to Section 3
+      nextToSection3.addEventListener('click', function() {
+        if (validateSection2()) {
+          section2.classList.add('hidden');
+          section3.classList.remove('hidden');
+          updateProgress(3);
+          window.scrollTo(0, 0);
+        }
+      });
+      
+      // Navigation: Section 3 to Section 2
+      backToSection2.addEventListener('click', function() {
+        section3.classList.add('hidden');
+        section2.classList.remove('hidden');
+        updateProgress(2);
+        window.scrollTo(0, 0);
+      });
+      
+      // Handle image preview
+      pasFoto.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+          // Check file size (max 2MB)
+          if (file.size > 2 * 1024 * 1024) {
+            alert('Ukuran file terlalu besar. Maksimal 2MB.');
+            this.value = '';
+            return;
+          }
+          
+          // Check file type
+          if (!file.type.match('image.*')) {
+            alert('File harus berupa gambar (JPG, PNG, atau JPEG).');
+            this.value = '';
+            return;
+          }
+          
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            fotoPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          fotoPreview.innerHTML = `
+            <div class="file-preview-text">
+              <i class="fas fa-image text-2xl mb-2"></i>
+              <p>Belum ada foto</p>
+              <p class="text-xs">Ukuran maks. 2MB</p>
+            </div>
+          `;
+        }
+      });
+      
+      // Handle form submission
+      registrationForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (!validateSection3()) {
+          return;
+        }
+        
+        // Show loading overlay
+        loadingOverlay.classList.remove('hidden');
+        
+        // Prepare form data
+        const formData = new FormData(this);
+        
+        // Combine tempat and tanggal lahir
+        formData.set('Tempat, Tanggal Lahir', `${tempatLahir.value}, ${tanggalLahir.value}`);
+        
+        // Convert image to base64 for Google Apps Script
+        const fileReader = new FileReader();
+        fileReader.onload = function(e) {
+          // Get base64 data
+          const base64Data = e.target.result.split(',')[1];
+          formData.set('Pas foto', base64Data);
+          
+  
+  const sheetID = "2PACX-1vSs0ZwZojSyelB9PPD5LuKp7N1yBZjilNmrjTiCbBJ2JLfB24M5MKryX1JiprQDGMbI8dMAyxWcApyc";
+  const sheetName = "Data Pendaftar";
+  const url = `https://docs.google.com/spreadsheets/d/e/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+  fetch(url)
+    .then(res => res.text())
+    .then(rep => {
+      const data = JSON.parse(rep.substr(47).slice(0, -2));
+      const rows = data.table.rows;
+      let html = "<table border='1' cellpadding='6'><tr>";
+
+      // Tampilkan header
+      data.table.cols.forEach(col => {
+        html += `<th>${col.label}</th>`;
+      });
+      html += "</tr>";
+
+      // Tampilkan isi data
+      rows.forEach(row => {
+        html += "<tr>";
+        row.c.forEach(cell => {
+          html += `<td>${cell?.v || ""}</td>`;
+        });
+        html += "</tr>";
+      });
+
+      html += "</table>";
+      document.getElementById("data-output").innerHTML = html;
+    });
+
+
+            // Hide loading overlay
+            loadingOverlay.classList.add('hidden');
+            
+            // Show success message
+            registrationForm.classList.add('hidden');
+            successMessage.classList.remove('hidden');
+            updateProgress(4);
+          })
+          .catch(error => {
+            console.error('Error submitting form:', error);
+            
+            // Hide loading overlay
+            loadingOverlay.classList.add('hidden');
+            
+            // Show error message
+            registrationForm.classList.add('hidden');
+            errorMessage.classList.remove('hidden');
+          });
+        };
+        
+        // Read the file as data URL
+        if (pasFoto.files[0]) {
+          fileReader.readAsDataURL(pasFoto.files[0]);
+        } else {
+          // If no file, just submit the form without image
+          fetch('https://script.google.com/macros/s/AKfycbx8CkmLejBBE8HY50JApbXMISRsXo3ErOJEAll7u1OK-PhMoSSyjn_9dvCr-yunfhAa/exec', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.text();
+          })
+          .then(data => {
+            // Hide loading overlay
+            loadingOverlay.classList.add('hidden');
+            
+            // Show success message
+            registrationForm.classList.add('hidden');
+            successMessage.classList.remove('hidden');
+            updateProgress(4);
+          })
+          .catch(error => {
+            console.error('Error submitting form:', error);
+            
+            // Hide loading overlay
+            loadingOverlay.classList.add('hidden');
+            
+            // Show error message
+            registrationForm.classList.add('hidden');
+            errorMessage.classList.remove('hidden');
+          });
+        }
+      });
+      
+      // Retry button
+      retryButton.addEventListener('click', function() {
+        errorMessage.classList.add('hidden');
+        registrationForm.classList.remove('hidden');
+        section3.classList.remove('hidden');
+        updateProgress(3);
+      });
+      
+      // Initialize progress
+      updateProgress(1);
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'966bf820c0c29ba3',t:'MTc1Mzc4NTMyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+<script>
+  fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vSs0ZwZojSyelB9PPD5LuKp7N1yBZjilNmrjTiCbBJ2JLfB24M5MKryX1JiprQDGMbI8dMAyxWcApyc/pub?output=tsv")
+    .then(res => res.text())
+    .then(text => {
+      const rows = text.trim().split('\n').map(row => row.split('\t'));
+      let html = '<div class="overflow-auto"><table class="table-auto w-full border-collapse border border-gray-300">';
+      html += '<thead><tr class="bg-gray-100">';
+      rows[0].forEach(col => html += `<th class="border px-4 py-2 text-left">${col}</th>`);
+      html += '</tr></thead><tbody>';
+      rows.slice(1).forEach(row => {
+        html += '<tr>';
+        row.forEach(cell => html += `<td class="border px-4 py-2">${cell}</td>`);
+        html += '</tr>';
+      });
+      html += '</tbody></table></div>';
+      document.getElementById('data-output').innerHTML = html;
+    });
+</script>
+<!-- JS buat ambil data dari spreadsheet -->
+<script>
+  function loadSheetData() {
+    fetch("https://docs.google.com/spreadsheets/d/e/2PACX-1vSs0ZwZojSyelB9PPD5LuKp7N1yBZjilNmrjTiCbBJ2JLfB24M5MKryX1JiprQDGMbI8dMAyxWcApyc/pub?output=tsv")
+      .then(res => res.text())
+      .then(text => {
+        const rows = text.trim().split('\n').map(row => row.split('\t'));
+        let html = '<div class="overflow-auto"><table class="table-auto w-full border-collapse border border-gray-300">';
+        html += '<thead><tr class="bg-gray-100">';
+        rows[0].forEach(col => html += `<th class="border px-4 py-2 text-left">${col}</th>`);
+        html += '</tr></thead><tbody>';
+        rows.slice(1).forEach(row => {
+          html += '<tr>';
+          row.forEach(cell => html += `<td class="border px-4 py-2">${cell}</td>`);
+          html += '</tr>';
+        });
+        html += '</tbody></table></div>';
+        document.getElementById('data-output').innerHTML = html;
+      });
+  }
+
+  loadSheetData();
+  setInterval(loadSheetData, 15000);
+</script>
+
+</body>
 </html>
