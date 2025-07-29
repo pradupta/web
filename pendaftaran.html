@@ -166,6 +166,7 @@
             </div>
             <div>
               <h2 class="text-xl font-bold">Data Pendaftaran</h2>
+               <div id="data-output">
               <p class="text-gray-600 text-sm">Mohon isi data dengan lengkap dan benar</p>
             </div>
           </div>
@@ -749,18 +750,38 @@
           const base64Data = e.target.result.split(',')[1];
           formData.set('Pas foto', base64Data);
           
-          // Send data to Google Apps Script
-          fetch('https://script.google.com/macros/s/AKfycbx8CkmLejBBE8HY50JApbXMISRsXo3ErOJEAll7u1OK-PhMoSSyjn_9dvCr-yunfhAa/exec', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.text();
-          })
-          .then(data => {
+  
+  const sheetID = "2PACX-1vSs0ZwZojSyelB9PPD5LuKp7N1yBZjilNmrjTiCbBJ2JLfB24M5MKryX1JiprQDGMbI8dMAyxWcApyc";
+  const sheetName = "Data Pendaftar";
+  const url = `https://docs.google.com/spreadsheets/d/e/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+  fetch(url)
+    .then(res => res.text())
+    .then(rep => {
+      const data = JSON.parse(rep.substr(47).slice(0, -2));
+      const rows = data.table.rows;
+      let html = "<table border='1' cellpadding='6'><tr>";
+
+      // Tampilkan header
+      data.table.cols.forEach(col => {
+        html += `<th>${col.label}</th>`;
+      });
+      html += "</tr>";
+
+      // Tampilkan isi data
+      rows.forEach(row => {
+        html += "<tr>";
+        row.c.forEach(cell => {
+          html += `<td>${cell?.v || ""}</td>`;
+        });
+        html += "</tr>";
+      });
+
+      html += "</table>";
+      document.getElementById("data-output").innerHTML = html;
+    });
+
+
             // Hide loading overlay
             loadingOverlay.classList.add('hidden');
             
