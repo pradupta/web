@@ -750,7 +750,7 @@
           formData.set('Pas foto', base64Data);
           
           // Send data to Google Apps Script
-          fetch('https://script.google.com/macros/s/AKfycbyIOlPj7Oy6y4bPmfvStDDCwxuXOAMlZhxAZY2dHRuA8-fdn4MZtb4AAeubaix-9Na5/exec', {
+          fetch('https://script.google.com/macros/s/AKfycbwg4LGG7iD-29oTUJp3WsXAFcsdNunceonO-ppNgykPCG9f56tZmpurcI3krbo0_Blr/exec', {
             method: 'POST',
             body: formData
           })
@@ -786,7 +786,7 @@
           fileReader.readAsDataURL(pasFoto.files[0]);
         } else {
           // If no file, just submit the form without image
-          fetch('https://script.google.com/macros/s/AKfycbyIOlPj7Oy6y4bPmfvStDDCwxuXOAMlZhxAZY2dHRuA8-fdn4MZtb4AAeubaix-9Na5/exec', {
+          fetch('https://script.google.com/macros/s/AKfycbwg4LGG7iD-29oTUJp3WsXAFcsdNunceonO-ppNgykPCG9f56tZmpurcI3krbo0_Blr/exec', {
             method: 'POST',
             body: formData
           })
