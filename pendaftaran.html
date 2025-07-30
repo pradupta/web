@@ -2,80 +2,544 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Formulir Pendaftaran Pramuka</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    async function submitForm(event) {
-      event.preventDefault();
-      const form = document.getElementById('form');
-      const formData = new FormData(form);
-
-      const data = {
-        namaPanggilan: formData.get("namaPanggilan"),
-        namaLengkap: formData.get("namaLengkap"),
-        jenisKelamin: formData.get("jenisKelamin"),
-        agama: formData.get("agama"),
-        ttl: formData.get("tempat") + ", " + formData.get("tanggal"),
-        alamat: formData.get("alamat"),
-        kelas: formData.get("kelas"),
-        email: formData.get("email"),
-        wa: formData.get("wa"),
-        hobi: formData.get("hobi"),
-        citaCita: formData.get("citaCita"),
-        motoHidup: formData.get("motoHidup"),
-        alasan: formData.get("alasan")
-      };
-
-      try {
-        await fetch("https://script.google.com/macros/s/AKfycbwcl_A7n5rXRkszu0BxWYjTz2wGumboGipYjnP-EaRBMxHFsqvA3DlsiaJlyk612Y7k/exec", {
-          method: "POST",
-          body: JSON.stringify(data),
-        });
-
-        alert("Pendaftaran berhasil!");
-        form.reset();
-      } catch (error) {
-        alert("Terjadi kesalahan. Silakan coba lagi.");
-        console.error(error);
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            scout: {
+              brown: '#8B4513',
+              green: '#228B22',
+              red: '#A52A2A',
+              yellow: '#DAA520'
+            }
+          }
+        }
       }
     }
   </script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f9f9f9;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238b4513' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: #8B4513;
+      box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.2);
+    }
+    .form-label {
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+      color: #4B5563;
+    }
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #D1D5DB;
+      border-radius: 0.375rem;
+      transition: all 0.2s;
+    }
+    .form-input::placeholder,
+    .form-textarea::placeholder {
+      color: #9CA3AF;
+    }
+    .form-error {
+      color: #A52A2A;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+    .section-title {
+      position: relative;
+      padding-left: 1rem;
+      border-left: 4px solid #8B4513;
+    }
+    .required-field::after {
+      content: '*';
+      color: #A52A2A;
+      margin-left: 0.25rem;
+    }
+    .scout-card {
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      background-color: white;
+      overflow: hidden;
+    }
+  </style>
 </head>
-<body>
-  <h2>Formulir Pendaftaran Calon Anggota Pramuka</h2>
-  <form id="form" onsubmit="submitForm(event)">
-    <label>Nama Panggilan: <input type="text" name="namaPanggilan" required></label><br>
-    <label>Nama Lengkap: <input type="text" name="namaLengkap" required></label><br>
-    <label>Jenis Kelamin:
-      <select name="jenisKelamin" required>
-        <option value="">Pilih</option>
-        <option>Laki-laki</option>
-        <option>Perempuan</option>
-      </select>
-    </label><br>
-    <label>Agama:
-      <select name="agama" required>
-        <option value="">Pilih</option>
-        <option>Islam</option>
-        <option>Kristen</option>
-        <option>Katolik</option>
-        <option>Hindu</option>
-        <option>Buddha</option>
-        <option>Konghucu</option>
-      </select>
-    </label><br>
-    <label>Tempat Lahir: <input type="text" name="tempat" required></label><br>
-    <label>Tanggal Lahir: <input type="date" name="tanggal" required></label><br>
-    <label>Alamat Lengkap: <input type="text" name="alamat" required></label><br>
-    <label>Kelas/Ruangan: <input type="text" name="kelas" required></label><br>
-    <label>Email: <input type="email" name="email" required></label><br>
-    <label>No. Telp/WA: <input type="tel" name="wa" required></label><br>
-    <label>Hobi: <input type="text" name="hobi"></label><br>
-    <label>Cita-cita: <input type="text" name="citaCita"></label><br>
-    <label>Moto Hidup: <input type="text" name="motoHidup"></label><br>
-    <label>Alasan Masuk Pramuka:<br>
-      <textarea name="alasan" rows="3"></textarea>
-    </label><br>
-    <button type="submit">Kirim</button>
-  </form>
-</body>
+<body class="bg-gray-50 text-gray-800">
+  <div class="min-h-screen py-8 px-4">
+    <div class="max-w-3xl mx-auto">
+      <!-- Header -->
+      <div class="scout-card mb-6">
+        <div class="bg-scout-brown text-white p-6">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-scout-brown mr-4">
+              <i class="fas fa-campground text-xl"></i>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold">Formulir Pendaftaran</h1>
+              <p class="text-white/80">Calon Anggota Pramuka</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="p-6 bg-white">
+          <p class="text-gray-600">Silakan isi formulir di bawah ini dengan data yang benar. Kolom bertanda <span class="text-scout-red">*</span> wajib diisi.</p>
+        </div>
+      </div>
+      
+      <!-- Form Container -->
+      <div id="formContainer" class="scout-card mb-8">
+        <form id="registrationForm" class="p-6 space-y-8">
+          <!-- Data Diri -->
+          <div>
+            <h2 class="section-title text-lg font-semibold mb-4 text-scout-green flex items-center">
+              <i class="fas fa-user-circle mr-2"></i> Data Diri
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Nama Panggilan -->
+              <div>
+                <label for="nama_panggilan" class="form-label required-field">Nama Panggilan</label>
+                <input type="text" id="nama_panggilan" name="nama_panggilan" class="form-input" placeholder="Masukkan nama panggilan" required>
+                <div class="form-error hidden" id="nama_panggilanError">Nama panggilan harus diisi</div>
+              </div>
+              
+              <!-- Nama Lengkap -->
+              <div>
+                <label for="nama_lengkap" class="form-label required-field">Nama Lengkap</label>
+                <input type="text" id="nama_lengkap" name="nama_lengkap" class="form-input" placeholder="Masukkan nama lengkap" required>
+                <div class="form-error hidden" id="nama_lengkapError">Nama lengkap harus diisi</div>
+              </div>
+              
+              <!-- Jenis Kelamin -->
+              <div>
+                <label for="jenis_kelamin" class="form-label required-field">Jenis Kelamin</label>
+                <select id="jenis_kelamin" name="jenis_kelamin" class="form-select" required>
+                  <option value="">Pilih jenis kelamin</option>
+                  <option value="Laki-laki">Laki-laki</option>
+                  <option value="Perempuan">Perempuan</option>
+                </select>
+                <div class="form-error hidden" id="jenis_kelaminError">Jenis kelamin harus dipilih</div>
+              </div>
+              
+              <!-- Agama -->
+              <div>
+                <label for="agama" class="form-label required-field">Agama</label>
+                <select id="agama" name="agama" class="form-select" required>
+                  <option value="">Pilih agama</option>
+                  <option value="Islam">Islam</option>
+                  <option value="Kristen">Kristen</option>
+                  <option value="Katolik">Katolik</option>
+                  <option value="Hindu">Hindu</option>
+                  <option value="Buddha">Buddha</option>
+                  <option value="Konghucu">Konghucu</option>
+                </select>
+                <div class="form-error hidden" id="agamaError">Agama harus dipilih</div>
+              </div>
+              
+              <!-- TTL (Tempat Tanggal Lahir) -->
+              <div class="md:col-span-2">
+                <label for="ttl" class="form-label required-field">Tempat, Tanggal Lahir</label>
+                <div class="flex flex-col md:flex-row gap-4">
+                  <div class="flex-1">
+                    <input type="text" id="tempat_lahir" name="tempat_lahir" class="form-input" placeholder="Tempat lahir (contoh: Jakarta)" required>
+                  </div>
+                  <div class="flex-1">
+                    <input type="date" id="tanggal_lahir" name="tanggal_lahir" class="form-input" required>
+                  </div>
+                </div>
+                <div class="form-error hidden" id="ttlError">Tempat dan tanggal lahir harus diisi</div>
+              </div>
+              
+              <!-- Alamat -->
+              <div class="md:col-span-2">
+                <label for="alamat" class="form-label required-field">Alamat</label>
+                <textarea id="alamat" name="alamat" rows="3" class="form-textarea" placeholder="Masukkan alamat lengkap" required></textarea>
+                <div class="form-error hidden" id="alamatError">Alamat harus diisi</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Kontak & Informasi Sekolah -->
+          <div>
+            <h2 class="section-title text-lg font-semibold mb-4 text-scout-green flex items-center">
+              <i class="fas fa-address-card mr-2"></i> Kontak & Informasi Sekolah
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Kelas -->
+              <div>
+                <label for="kelas" class="form-label required-field">Kelas</label>
+                <input type="text" id="kelas" name="kelas" class="form-input" placeholder="Contoh: X IPA 1" required>
+                <div class="form-error hidden" id="kelasError">Kelas harus diisi</div>
+              </div>
+              
+              <!-- Email -->
+              <div>
+                <label for="email" class="form-label required-field">Email</label>
+                <input type="email" id="email" name="email" class="form-input" placeholder="Contoh: nama@email.com" required>
+                <div class="form-error hidden" id="emailError">Email harus diisi dengan format yang benar</div>
+              </div>
+              
+              <!-- No. WA -->
+              <div>
+                <label for="wa" class="form-label required-field">Nomor WhatsApp</label>
+                <div class="flex">
+                  <span class="inline-flex items-center px-3 text-gray-500 bg-gray-100 border border-r-0 border-gray-300 rounded-l-md">
+                    <i class="fab fa-whatsapp text-green-600"></i>
+                  </span>
+                  <input type="tel" id="wa" name="wa" class="form-input rounded-l-none" placeholder="Contoh: 08123456789" required>
+                </div>
+                <div class="form-error hidden" id="waError">Nomor WhatsApp harus diisi</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Informasi Tambahan -->
+          <div>
+            <h2 class="section-title text-lg font-semibold mb-4 text-scout-green flex items-center">
+              <i class="fas fa-info-circle mr-2"></i> Informasi Tambahan
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Hobi -->
+              <div>
+                <label for="hobi" class="form-label required-field">Hobi</label>
+                <input type="text" id="hobi" name="hobi" class="form-input" placeholder="Masukkan hobi Anda" required>
+                <div class="form-error hidden" id="hobiError">Hobi harus diisi</div>
+              </div>
+              
+              <!-- Cita-cita -->
+              <div>
+                <label for="cita_cita" class="form-label required-field">Cita-cita</label>
+                <input type="text" id="cita_cita" name="cita_cita" class="form-input" placeholder="Masukkan cita-cita Anda" required>
+                <div class="form-error hidden" id="cita_citaError">Cita-cita harus diisi</div>
+              </div>
+              
+              <!-- Motto Hidup -->
+              <div class="md:col-span-2">
+                <label for="motto_hidup" class="form-label required-field">Motto Hidup</label>
+                <input type="text" id="motto_hidup" name="motto_hidup" class="form-input" placeholder="Masukkan motto hidup Anda" required>
+                <div class="form-error hidden" id="motto_hidupError">Motto hidup harus diisi</div>
+              </div>
+              
+              <!-- Alasan -->
+              <div class="md:col-span-2">
+                <label for="alasan" class="form-label required-field">Alasan Masuk Pramuka</label>
+                <textarea id="alasan" name="alasan" rows="4" class="form-textarea" placeholder="Ceritakan alasan Anda ingin bergabung dengan Pramuka" required></textarea>
+                <div class="form-error hidden" id="alasanError">Alasan harus diisi</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Persetujuan -->
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="flex items-start">
+              <div class="flex items-center h-5">
+                <input id="persetujuan" name="persetujuan" type="checkbox" class="w-4 h-4 text-scout-brown focus:ring-scout-brown border-gray-300 rounded" required>
+              </div>
+              <div class="ml-3 text-sm">
+                <label for="persetujuan" class="font-medium text-gray-700">Saya menyatakan bahwa data yang saya isi adalah benar dan dapat dipertanggungjawabkan</label>
+                <div class="form-error hidden" id="persetujuanError">Anda harus menyetujui pernyataan ini</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Form Actions -->
+          <div class="pt-6 border-t border-gray-200">
+            <div class="flex flex-col sm:flex-row justify-between gap-4">
+              <button type="button" id="resetButton" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors">
+                <i class="fas fa-redo mr-2"></i> Reset Form
+              </button>
+              <button type="submit" id="submitButton" class="px-6 py-3 bg-scout-brown text-white rounded-md hover:bg-amber-800 transition-colors font-medium">
+                <i class="fas fa-paper-plane mr-2"></i> Kirim Pendaftaran
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+      
+      <!-- Success Message (Hidden by default) -->
+      <div id="successMessage" class="hidden scout-card p-8">
+        <div class="text-center mb-6">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-check text-green-500 text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 mb-2">Pendaftaran Berhasil!</h3>
+          <p class="text-gray-600">Data pendaftaran Anda telah berhasil dikirim dan disimpan.</p>
+        </div>
+        
+        <div class="bg-gray-50 rounded-lg p-4 mb-6">
+          <h4 class="font-semibold text-scout-green mb-2">Ringkasan Pendaftaran:</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+            <div>
+              <span class="font-medium">Nama:</span> <span id="summaryNama"></span>
+            </div>
+            <div>
+              <span class="font-medium">Kelas:</span> <span id="summaryKelas"></span>
+            </div>
+            <div>
+              <span class="font-medium">Email:</span> <span id="summaryEmail"></span>
+            </div>
+            <div>
+              <span class="font-medium">WA:</span> <span id="summaryWa"></span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center">
+          <p class="text-gray-600 mb-6">Kami akan menghubungi Anda untuk informasi selanjutnya.</p>
+          <button id="newRegistrationButton" class="px-6 py-3 bg-scout-brown text-white rounded-md hover:bg-amber-800 transition-colors font-medium">
+            <i class="fas fa-plus mr-2"></i> Daftar Baru
+          </button>
+        </div>
+      </div>
+      
+      <!-- Error Message (Hidden by default) -->
+      <div id="errorMessage" class="hidden scout-card p-8 text-center">
+        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-exclamation-triangle text-red-500 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Pendaftaran Gagal</h3>
+        <p class="text-gray-600 mb-6" id="errorDetails">Terjadi kesalahan saat mengirim data. Silakan coba lagi nanti.</p>
+        <button id="retryButton" class="px-6 py-3 bg-scout-brown text-white rounded-md hover:bg-amber-800 transition-colors font-medium">
+          <i class="fas fa-redo mr-2"></i> Coba Lagi
+        </button>
+      </div>
+      
+      <!-- Footer -->
+      <div class="text-center mt-6 text-sm text-gray-500">
+        <p>Salam Pramuka! &copy; 2023 Gerakan Pramuka Indonesia</p>
+        <div class="flex justify-center space-x-4 mt-2">
+          <div class="flex items-center">
+            <i class="fas fa-map-marker-alt text-scout-brown mr-1"></i>
+            <span>Kwartir Cabang</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-envelope text-scout-brown mr-1"></i>
+            <span>pramuka@example.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center">
+      <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-scout-brown mx-auto mb-4"></div>
+      <h3 class="text-xl font-bold mb-2">Mengirim Pendaftaran...</h3>
+      <p class="text-gray-600">Mohon tunggu sebentar, data Anda sedang diproses.</p>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Elements
+      const form = document.getElementById('registrationForm');
+      const formContainer = document.getElementById('formContainer');
+      const resetButton = document.getElementById('resetButton');
+      const loadingOverlay = document.getElementById('loadingOverlay');
+      const successMessage = document.getElementById('successMessage');
+      const errorMessage = document.getElementById('errorMessage');
+      const newRegistrationButton = document.getElementById('newRegistrationButton');
+      const retryButton = document.getElementById('retryButton');
+      const errorDetails = document.getElementById('errorDetails');
+      
+      // Summary elements
+      const summaryNama = document.getElementById('summaryNama');
+      const summaryKelas = document.getElementById('summaryKelas');
+      const summaryEmail = document.getElementById('summaryEmail');
+      const summaryWa = document.getElementById('summaryWa');
+      
+      // Google Apps Script URL
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbwcl_A7n5rXRkszu0BxWYjTz2wGumboGipYjnP-EaRBMxHFsqvA3DlsiaJlyk612Y7k/exec';
+      
+      // Reset form
+      resetButton.addEventListener('click', function() {
+        if (confirm('Apakah Anda yakin ingin mereset form? Semua data yang telah diisi akan hilang.')) {
+          form.reset();
+          // Clear all error messages
+          document.querySelectorAll('.form-error').forEach(el => el.classList.add('hidden'));
+        }
+      });
+      
+      // New registration button
+      newRegistrationButton.addEventListener('click', function() {
+        successMessage.classList.add('hidden');
+        errorMessage.classList.add('hidden');
+        formContainer.classList.remove('hidden');
+        form.reset();
+      });
+      
+      // Retry button
+      retryButton.addEventListener('click', function() {
+        errorMessage.classList.add('hidden');
+        formContainer.classList.remove('hidden');
+      });
+      
+      // Format date for display
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      }
+      
+      // Validate form
+      function validateForm() {
+        let isValid = true;
+        
+        // Get all required inputs
+        const requiredInputs = form.querySelectorAll('[required]');
+        
+        // Check each required input
+        requiredInputs.forEach(input => {
+          const errorElement = document.getElementById(`${input.name}Error`) || 
+                              (input.name === 'tempat_lahir' || input.name === 'tanggal_lahir' ? 
+                               document.getElementById('ttlError') : null);
+          
+          if (input.type === 'checkbox') {
+            if (!input.checked) {
+              if (errorElement) errorElement.classList.remove('hidden');
+              isValid = false;
+            } else {
+              if (errorElement) errorElement.classList.add('hidden');
+            }
+          } else {
+            if (!input.value.trim()) {
+              if (errorElement) errorElement.classList.remove('hidden');
+              isValid = false;
+            } else {
+              if (errorElement) errorElement.classList.add('hidden');
+            }
+          }
+        });
+        
+        // Validate email format
+        const email = document.getElementById('email');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email.value.trim() && !emailRegex.test(email.value.trim())) {
+          document.getElementById('emailError').textContent = 'Format email tidak valid';
+          document.getElementById('emailError').classList.remove('hidden');
+          isValid = false;
+        }
+        
+        // Validate phone number format
+        const wa = document.getElementById('wa');
+        const phoneRegex = /^[0-9]{10,15}$/;
+        if (wa.value.trim() && !phoneRegex.test(wa.value.replace(/\D/g, ''))) {
+          document.getElementById('waError').textContent = 'Format nomor WhatsApp tidak valid';
+          document.getElementById('waError').classList.remove('hidden');
+          isValid = false;
+        }
+        
+        return isValid;
+      }
+      
+      // Handle form submission
+      form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        
+        if (!validateForm()) {
+          // Scroll to first error
+          const firstError = document.querySelector('.form-error:not(.hidden)');
+          if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
+        
+        // Show loading overlay
+        loadingOverlay.classList.remove('hidden');
+        
+        try {
+          // Get form values
+          const namaPanggilan = document.getElementById('nama_panggilan').value;
+          const namaLengkap = document.getElementById('nama_lengkap').value;
+          const jenisKelamin = document.getElementById('jenis_kelamin').value;
+          const agama = document.getElementById('agama').value;
+          const tempatLahir = document.getElementById('tempat_lahir').value;
+          const tanggalLahir = document.getElementById('tanggal_lahir').value;
+          const alamat = document.getElementById('alamat').value;
+          const kelas = document.getElementById('kelas').value;
+          const email = document.getElementById('email').value;
+          const wa = document.getElementById('wa').value;
+          const hobi = document.getElementById('hobi').value;
+          const citaCita = document.getElementById('cita_cita').value;
+          const mottoHidup = document.getElementById('motto_hidup').value;
+          const alasan = document.getElementById('alasan').value;
+          
+          // Format tanggal lahir for display
+          const formattedDate = tanggalLahir ? formatDate(tanggalLahir) : '';
+          
+          // Combine TTL
+          const ttl = `${tempatLahir}, ${formattedDate}`;
+          
+          // Create FormData object for submission
+          const formData = new FormData();
+          formData.append('nama_panggilan', namaPanggilan);
+          formData.append('nama_lengkap', namaLengkap);
+          formData.append('jenis_kelamin', jenisKelamin);
+          formData.append('agama', agama);
+          formData.append('ttl', ttl);
+          formData.append('alamat', alamat);
+          formData.append('kelas', kelas);
+          formData.append('email', email);
+          formData.append('wa', wa);
+          formData.append('hobi', hobi);
+          formData.append('cita_cita', citaCita);
+          formData.append('motto_hidup', mottoHidup);
+          formData.append('alasan', alasan);
+          
+          // Send data to Google Apps Script
+          const response = await fetch(scriptURL, {
+            method: 'POST',
+            body: formData,
+            mode: 'no-cors' // Important for CORS issues with Google Apps Script
+          });
+          
+          // Hide loading overlay
+          loadingOverlay.classList.add('hidden');
+          
+          // Update summary
+          summaryNama.textContent = namaLengkap;
+          summaryKelas.textContent = kelas;
+          summaryEmail.textContent = email;
+          summaryWa.textContent = wa;
+          
+          // Show success message
+          formContainer.classList.add('hidden');
+          successMessage.classList.remove('hidden');
+          
+          // Scroll to top
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          
+        } catch (error) {
+          console.error('Error submitting form:', error);
+          
+          // Hide loading overlay
+          loadingOverlay.classList.add('hidden');
+          
+          // Show error message
+          formContainer.classList.add('hidden');
+          errorMessage.classList.remove('hidden');
+          errorDetails.textContent = `Terjadi kesalahan: ${error.message || 'Koneksi gagal'}. Silakan coba lagi nanti.`;
+          
+          // Scroll to top
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9674636325a4910a',t:'MTc1Mzg3MzYwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
