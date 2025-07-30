@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kirim Artikel ke GitHub</title>
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: 50px auto; }
+    input, textarea { width: 100%; margin-bottom: 15px; padding: 8px; }
+    button { padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h1>Formulir Kirim Artikel</h1>
+  <form id="form">
+    <input type="text" id="judul" placeholder="Judul Artikel" required>
+    <textarea id="isi" rows="10" placeholder="Isi artikel (HTML atau teks biasa)" required></textarea>
+    <input type="text" id="penulis" placeholder="Nama Penulis" required>
+    <input type="date" id="tanggal" required>
+    <input type="url" id="gambar" placeholder="URL Gambar (opsional)">
+    <button type="submit">Upload ke GitHub</button>
+  </form>
+  <div id="status"></div>
+
+  <script>
+    document.getElementById("form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const judul = document.getElementById("judul").value;
+      const slug = judul.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+      const isi = document.getElementById("isi").value;
+      const penulis = document.getElementById("penulis").value;
+      const tanggal = document.getElementById("tanggal").value;
+      const gambar = document.getElementById("gambar").value;
+
+      const html = `<!DOCTYPE html>
+<html lang="id">
+<head><meta charset="UTF-8"><title>${judul}</title></head>
+<body>
+  <h1>${judul}</h1>
+  <p><em>Ditulis oleh ${penulis} pada ${tanggal}</em></p>
+  ${gambar ? `<img src="${gambar}" alt="Gambar Artikel" width="400">` : ""}
+  <div>${isi.replace(/\n/g, "<br>")}</div>
+</body>
+</html>`;
+
+      const base64 = btoa(unescape(encodeURIComponent(html)));
+
+      const res = await fetch(`https://api.github.com/repos/pradupta/pradupta.github.io/contents/web/${slug}.html`, {
+        method: "PUT",
+        headers: {
+          "Authorization": "Bearer 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",
+          "Accept": "application/vnd.github.v3+json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: `Menambahkan artikel ${judul}`,
+          content: base64,
+          branch: "main"
+        })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        document.getElementById("status").innerHTML = `✅ Artikel berhasil dikirim! <a href="https://pradupta.github.io/web/${slug}.html" target="_blank">Lihat Artikel</a>`;
+      } else {
+        document.getElementById("status").innerHTML = `❌ Gagal: ${data.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
