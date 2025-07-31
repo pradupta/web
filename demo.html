@@ -172,7 +172,7 @@
         </div>
         
         <!-- Registration Form -->
-        <form id="registrationForm" class="space-y-6">
+        <form id="myForm" enctype="multipart/form-data" method="POST">
           <!-- Form Progress -->
           <div class="mb-8 hidden" id="formProgress">
             <div class="flex justify-between mb-2">
@@ -247,7 +247,7 @@
             <!-- Kelas/Ruangan -->
             <div>
               <label for="kelas" class="form-label">Kelas/Ruangan <span class="text-crimson">*</span></label>
-              <input type="text" id="kelas" name="Kelasl/Ruangan" class="form-input" placeholder="Contoh: X IPA 1" required>
+              <input type="text" id="kelas" name="Kelas/Ruangan" class="form-input" placeholder="Contoh: X IPA 1" required>
               <div class="form-error hidden" id="kelasError">Kelas/Ruangan harus diisi</div>
             </div>
             
@@ -292,7 +292,7 @@
                     <button type="button" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
                       <i class="fas fa-upload mr-2"></i> Pilih Foto
                     </button>
-                    <input type="file" id="pasFoto" name="Pas foto" accept="image/*" required>
+                    <input type="file" id="pasFoto" name="Pas_foto" accept="image/*" required>
                   </div>
                   <p class="text-sm text-gray-500 mt-2">Format: JPG, PNG, atau JPEG</p>
                   <div class="form-error hidden" id="fotoError">Pas foto harus diunggah</div>
@@ -439,396 +439,231 @@
   </footer>
 
   <!-- Scripts -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Form sections
-      const section1 = document.getElementById('section1');
-      const section2 = document.getElementById('section2');
-      const section3 = document.getElementById('section3');
-      
-      // Navigation buttons
-      const nextToSection2 = document.getElementById('nextToSection2');
-      const backToSection1 = document.getElementById('backToSection1');
-      const nextToSection3 = document.getElementById('nextToSection3');
-      const backToSection2 = document.getElementById('backToSection2');
-      const submitForm = document.getElementById('submitForm');
-      const retryButton = document.getElementById('retryButton');
-      
-      // Messages
-      const successMessage = document.getElementById('successMessage');
-      const errorMessage = document.getElementById('errorMessage');
-      const loadingOverlay = document.getElementById('loadingOverlay');
-      
-      // Progress bar
-      const formProgress = document.getElementById('formProgress');
-      const progressBar = document.querySelector('.progress-bar-fill');
-      const progressText = document.getElementById('progressText');
-      const progressStep = document.getElementById('progressStep');
-      
-      // Form and fields
-      const registrationForm = document.getElementById('registrationForm');
-      const pasFoto = document.getElementById('pasFoto');
-      const fotoPreview = document.getElementById('fotoPreview');
-      const tempatLahir = document.getElementById('tempatLahir');
-      const tanggalLahir = document.getElementById('tanggalLahir');
-      
-      // Show progress bar
-      formProgress.classList.remove('hidden');
-      
-      // Update progress
-      function updateProgress(step) {
-        let percentage = 0;
-        let stepText = '';
-        
-        switch(step) {
-          case 1:
-            percentage = 0;
-            stepText = 'Bagian 1 dari 3';
-            break;
-          case 2:
-            percentage = 33;
-            stepText = 'Bagian 2 dari 3';
-            break;
-          case 3:
-            percentage = 66;
-            stepText = 'Bagian 3 dari 3';
-            break;
-          case 4: // Completed
-            percentage = 100;
-            stepText = 'Selesai';
-            break;
-        }
-        
-        progressBar.style.width = `${percentage}%`;
-        progressText.textContent = `${percentage}% selesai`;
-        progressStep.textContent = stepText;
+ <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const section1 = document.getElementById('section1');
+  const section2 = document.getElementById('section2');
+  const section3 = document.getElementById('section3');
+
+  const nextToSection2 = document.getElementById('nextToSection2');
+  const backToSection1 = document.getElementById('backToSection1');
+  const nextToSection3 = document.getElementById('nextToSection3');
+  const backToSection2 = document.getElementById('backToSection2');
+  const submitForm = document.getElementById('submitForm');
+  const retryButton = document.getElementById('retryButton');
+
+  const successMessage = document.getElementById('successMessage');
+  const errorMessage = document.getElementById('errorMessage');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+
+  const formProgress = document.getElementById('formProgress');
+  const progressBar = document.querySelector('.progress-bar-fill');
+  const progressText = document.getElementById('progressText');
+  const progressStep = document.getElementById('progressStep');
+
+  const registrationForm = document.getElementById('registrationForm');
+  const pasFoto = document.getElementById('pasFoto');
+  const fotoPreview = document.getElementById('fotoPreview');
+  const tempatLahir = document.getElementById('tempatLahir');
+  const tanggalLahir = document.getElementById('tanggalLahir');
+
+  formProgress.classList.remove('hidden');
+
+  function updateProgress(step) {
+    const steps = [0, 33, 66, 100];
+    const texts = ['Bagian 1 dari 3', 'Bagian 2 dari 3', 'Bagian 3 dari 3', 'Selesai'];
+    progressBar.style.width = `${steps[step - 1]}%`;
+    progressText.textContent = `${steps[step - 1]}% selesai`;
+    progressStep.textContent = texts[step - 1];
+  }
+
+  function validateSection1() {
+    let isValid = true;
+
+    const fields = [
+      ['namaPanggilan', 'namaPanggilanError'],
+      ['namaLengkap', 'namaLengkapError'],
+      ['agama', 'agamaError'],
+      ['kelas', 'kelasError']
+    ];
+
+    fields.forEach(([id, errorId]) => {
+      const input = document.getElementById(id);
+      const error = document.getElementById(errorId);
+      if (!input.value.trim()) {
+        error.classList.remove('hidden');
+        isValid = false;
+      } else {
+        error.classList.add('hidden');
       }
-      
-      // Validate section 1
-      function validateSection1() {
-        let isValid = true;
-        
-        // Validate Nama Panggilan
-        const namaPanggilan = document.getElementById('namaPanggilan');
-        const namaPanggilanError = document.getElementById('namaPanggilanError');
-        if (!namaPanggilan.value.trim()) {
-          namaPanggilanError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          namaPanggilanError.classList.add('hidden');
-        }
-        
-        // Validate Nama Lengkap
-        const namaLengkap = document.getElementById('namaLengkap');
-        const namaLengkapError = document.getElementById('namaLengkapError');
-        if (!namaLengkap.value.trim()) {
-          namaLengkapError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          namaLengkapError.classList.add('hidden');
-        }
-        
-        // Validate Jenis Kelamin
-        const jenisKelamin = document.querySelector('input[name="Jenis Kelamin"]:checked');
-        const jenisKelaminError = document.getElementById('jenisKelaminError');
-        if (!jenisKelamin) {
-          jenisKelaminError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          jenisKelaminError.classList.add('hidden');
-        }
-        
-        // Validate Agama
-        const agama = document.getElementById('agama');
-        const agamaError = document.getElementById('agamaError');
-        if (!agama.value) {
-          agamaError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          agamaError.classList.add('hidden');
-        }
-        
-        // Validate TTL
-        const ttlError = document.getElementById('ttlError');
-        if (!tempatLahir.value.trim() || !tanggalLahir.value) {
-          ttlError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          ttlError.classList.add('hidden');
-        }
-        
-        // Validate Kelas
-        const kelas = document.getElementById('kelas');
-        const kelasError = document.getElementById('kelasError');
-        if (!kelas.value.trim()) {
-          kelasError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          kelasError.classList.add('hidden');
-        }
-        
-        return isValid;
-      }
-      
-      // Validate section 2
-      function validateSection2() {
-        let isValid = true;
-        
-        // Validate Email
-        const email = document.getElementById('email');
-        const emailError = document.getElementById('emailError');
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!email.value.trim() || !emailRegex.test(email.value)) {
-          emailError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          emailError.classList.add('hidden');
-        }
-        
-        // Validate Telepon
-        const telepon = document.getElementById('telepon');
-        const teleponError = document.getElementById('teleponError');
-        const teleponRegex = /^[0-9]{10,15}$/;
-        if (!telepon.value.trim() || !teleponRegex.test(telepon.value.replace(/\D/g, ''))) {
-          teleponError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          teleponError.classList.add('hidden');
-        }
-        
-        // Validate Pas Foto
-        const fotoError = document.getElementById('fotoError');
-        if (!pasFoto.files || !pasFoto.files[0]) {
-          fotoError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          fotoError.classList.add('hidden');
-        }
-        
-        return isValid;
-      }
-      
-      // Validate section 3
-      function validateSection3() {
-        let isValid = true;
-        
-        // Validate Hobi
-        const hobi = document.getElementById('hobi');
-        const hobiError = document.getElementById('hobiError');
-        if (!hobi.value.trim()) {
-          hobiError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          hobiError.classList.add('hidden');
-        }
-        
-        // Validate Cita-cita
-        const cita = document.getElementById('cita');
-        const citaError = document.getElementById('citaError');
-        if (!cita.value.trim()) {
-          citaError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          citaError.classList.add('hidden');
-        }
-        
-        // Validate Motto
-        const motto = document.getElementById('motto');
-        const mottoError = document.getElementById('mottoError');
-        if (!motto.value.trim()) {
-          mottoError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          mottoError.classList.add('hidden');
-        }
-        
-        // Validate Alasan
-        const alasan = document.getElementById('alasan');
-        const alasanError = document.getElementById('alasanError');
-        if (!alasan.value.trim()) {
-          alasanError.classList.remove('hidden');
-          isValid = false;
-        } else {
-          alasanError.classList.add('hidden');
-        }
-        
-        return isValid;
-      }
-      
-      // Navigation: Section 1 to Section 2
-      nextToSection2.addEventListener('click', function() {
-        if (validateSection1()) {
-          section1.classList.add('hidden');
-          section2.classList.remove('hidden');
-          updateProgress(2);
-          window.scrollTo(0, 0);
-        }
-      });
-      
-      // Navigation: Section 2 to Section 1
-      backToSection1.addEventListener('click', function() {
-        section2.classList.add('hidden');
-        section1.classList.remove('hidden');
-        updateProgress(1);
-        window.scrollTo(0, 0);
-      });
-      
-      // Navigation: Section 2 to Section 3
-      nextToSection3.addEventListener('click', function() {
-        if (validateSection2()) {
-          section2.classList.add('hidden');
-          section3.classList.remove('hidden');
-          updateProgress(3);
-          window.scrollTo(0, 0);
-        }
-      });
-      
-      // Navigation: Section 3 to Section 2
-      backToSection2.addEventListener('click', function() {
-        section3.classList.add('hidden');
-        section2.classList.remove('hidden');
-        updateProgress(2);
-        window.scrollTo(0, 0);
-      });
-      
-      // Handle image preview
-      pasFoto.addEventListener('change', function() {
-        const file = this.files[0];
-        if (file) {
-          // Check file size (max 2MB)
-          if (file.size > 2 * 1024 * 1024) {
-            alert('Ukuran file terlalu besar. Maksimal 2MB.');
-            this.value = '';
-            return;
-          }
-          
-          // Check file type
-          if (!file.type.match('image.*')) {
-            alert('File harus berupa gambar (JPG, PNG, atau JPEG).');
-            this.value = '';
-            return;
-          }
-          
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            fotoPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-          };
-          reader.readAsDataURL(file);
-        } else {
-          fotoPreview.innerHTML = `
-            <div class="file-preview-text">
-              <i class="fas fa-image text-2xl mb-2"></i>
-              <p>Belum ada foto</p>
-              <p class="text-xs">Ukuran maks. 2MB</p>
-            </div>
-          `;
-        }
-      });
-      
-      // Handle form submission
-      registrationForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        if (!validateSection3()) {
-          return;
-        }
-        
-        // Show loading overlay
-        loadingOverlay.classList.remove('hidden');
-        
-        // Prepare form data
-        const formData = new FormData(this);
-        
-        // Combine tempat and tanggal lahir
-        formData.set('Tempat, Tanggal Lahir', `${tempatLahir.value}, ${tanggalLahir.value}`);
-        
-        // Convert image to base64 for Google Apps Script
-        const fileReader = new FileReader();
-        fileReader.onload = function(e) {
-          // Get base64 data
-          const base64Data = e.target.result.split(',')[1];
-          formData.set('Pas foto', base64Data);
-          
-          // Send data to Google Apps Script
-          fetch('https://script.google.com/macros/s/AKfycbyIOlPj7Oy6y4bPmfvStDDCwxuXOAMlZhxAZY2dHRuA8-fdn4MZtb4AAeubaix-9Na5/exec', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.text();
-          })
-          .then(data => {
-            // Hide loading overlay
-            loadingOverlay.classList.add('hidden');
-            
-            // Show success message
-            registrationForm.classList.add('hidden');
-            successMessage.classList.remove('hidden');
-            updateProgress(4);
-          })
-          .catch(error => {
-            console.error('Error submitting form:', error);
-            
-            // Hide loading overlay
-            loadingOverlay.classList.add('hidden');
-            
-            // Show error message
-            registrationForm.classList.add('hidden');
-            errorMessage.classList.remove('hidden');
-          });
-        };
-        
-        // Read the file as data URL
-        if (pasFoto.files[0]) {
-          fileReader.readAsDataURL(pasFoto.files[0]);
-        } else {
-          // If no file, just submit the form without image
-          fetch('https://script.google.com/macros/s/AKfycbyIOlPj7Oy6y4bPmfvStDDCwxuXOAMlZhxAZY2dHRuA8-fdn4MZtb4AAeubaix-9Na5/exec', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.text();
-          })
-          .then(data => {
-            // Hide loading overlay
-            loadingOverlay.classList.add('hidden');
-            
-            // Show success message
-            registrationForm.classList.add('hidden');
-            successMessage.classList.remove('hidden');
-            updateProgress(4);
-          })
-          .catch(error => {
-            console.error('Error submitting form:', error);
-            
-            // Hide loading overlay
-            loadingOverlay.classList.add('hidden');
-            
-            // Show error message
-            registrationForm.classList.add('hidden');
-            errorMessage.classList.remove('hidden');
-          });
-        }
-      });
-      
-      // Retry button
-      retryButton.addEventListener('click', function() {
-        errorMessage.classList.add('hidden');
-        registrationForm.classList.remove('hidden');
-        section3.classList.remove('hidden');
-        updateProgress(3);
-      });
-      
-      // Initialize progress
-      updateProgress(1);
     });
-  </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'967a3a16c664659e',t:'MTc1MzkzNDgyNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+    const jenisKelamin = document.querySelector('input[name="Jenis Kelamin"]:checked');
+    const jenisKelaminError = document.getElementById('jenisKelaminError');
+    if (!jenisKelamin) {
+      jenisKelaminError.classList.remove('hidden');
+      isValid = false;
+    } else {
+      jenisKelaminError.classList.add('hidden');
+    }
+
+    const ttlError = document.getElementById('ttlError');
+    if (!tempatLahir.value.trim() || !tanggalLahir.value) {
+      ttlError.classList.remove('hidden');
+      isValid = false;
+    } else {
+      ttlError.classList.add('hidden');
+    }
+
+    return isValid;
+  }
+
+  function validateSection2() {
+    let isValid = true;
+
+    const email = document.getElementById('email');
+    const emailError = document.getElementById('emailError');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.value.trim() || !emailRegex.test(email.value)) {
+      emailError.classList.remove('hidden');
+      isValid = false;
+    } else {
+      emailError.classList.add('hidden');
+    }
+
+    const telepon = document.getElementById('telepon');
+    const teleponError = document.getElementById('teleponError');
+    const teleponRegex = /^[0-9]{10,15}$/;
+    if (!telepon.value.trim() || !teleponRegex.test(telepon.value.replace(/\D/g, ''))) {
+      teleponError.classList.remove('hidden');
+      isValid = false;
+    } else {
+      teleponError.classList.add('hidden');
+    }
+
+    const fotoError = document.getElementById('fotoError');
+    if (!pasFoto.files || !pasFoto.files[0]) {
+      fotoError.classList.remove('hidden');
+      isValid = false;
+    } else {
+      fotoError.classList.add('hidden');
+    }
+
+    return isValid;
+  }
+
+  function validateSection3() {
+    let isValid = true;
+
+    const fields = [
+      ['hobi', 'hobiError'],
+      ['cita', 'citaError'],
+      ['motto', 'mottoError'],
+      ['alasan', 'alasanError']
+    ];
+
+    fields.forEach(([id, errorId]) => {
+      const input = document.getElementById(id);
+      const error = document.getElementById(errorId);
+      if (!input.value.trim()) {
+        error.classList.remove('hidden');
+        isValid = false;
+      } else {
+        error.classList.add('hidden');
+      }
+    });
+
+    return isValid;
+  }
+
+  nextToSection2.addEventListener('click', () => {
+    if (validateSection1()) {
+      section1.classList.add('hidden');
+      section2.classList.remove('hidden');
+      updateProgress(2);
+      window.scrollTo(0, 0);
+    }
+  });
+
+  backToSection1.addEventListener('click', () => {
+    section2.classList.add('hidden');
+    section1.classList.remove('hidden');
+    updateProgress(1);
+    window.scrollTo(0, 0);
+  });
+
+  nextToSection3.addEventListener('click', () => {
+    if (validateSection2()) {
+      section2.classList.add('hidden');
+      section3.classList.remove('hidden');
+      updateProgress(3);
+      window.scrollTo(0, 0);
+    }
+  });
+
+  backToSection2.addEventListener('click', () => {
+    section3.classList.add('hidden');
+    section2.classList.remove('hidden');
+    updateProgress(2);
+    window.scrollTo(0, 0);
+  });
+
+  pasFoto.addEventListener('change', function () {
+    const file = this.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Ukuran file terlalu besar. Maksimal 2MB.');
+        this.value = '';
+        return;
+      }
+      if (!file.type.match('image.*')) {
+        alert('File harus berupa gambar (JPG, PNG, JPEG).');
+        this.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        fotoPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  registrationForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!validateSection3()) return;
+
+    loadingOverlay.classList.remove('hidden');
+    const formData = new FormData(this);
+
+   try {
+  await fetch('https://script.google.com/macros/s/AKfycbzTo1yUNxUmlkN1Mqr8C8IuLpxnSgPmyT0hyxpMQ2X4StEeF5uESuT3eqA6iZ0_cWu4/exec', {
+    method: 'POST',
+    body: formData,
+    mode: 'no-cors'
+  });
+
+  loadingOverlay.classList.add('hidden');
+  registrationForm.classList.add('hidden');
+  successMessage.classList.remove('hidden');
+  updateProgress(4);
+} catch (err) {
+  console.error(err);
+  loadingOverlay.classList.add('hidden');
+  registrationForm.classList.add('hidden');
+  errorMessage.classList.remove('hidden');
+}
+
+
+  retryButton.addEventListener('click', () => {
+    errorMessage.classList.add('hidden');
+    registrationForm.classList.remove('hidden');
+    section3.classList.remove('hidden');
+    updateProgress(3);
+  });
+
+  updateProgress(1);
+});
+</script>
+</body>
 </html>
