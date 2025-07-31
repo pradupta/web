@@ -344,198 +344,168 @@
     </div>
   </div>
   
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Elements
-      const form = document.getElementById('registrationForm');
-      const formContainer = document.getElementById('formContainer');
-      const resetButton = document.getElementById('resetButton');
-      const loadingOverlay = document.getElementById('loadingOverlay');
-      const successMessage = document.getElementById('successMessage');
-      const errorMessage = document.getElementById('errorMessage');
-      const newRegistrationButton = document.getElementById('newRegistrationButton');
-      const retryButton = document.getElementById('retryButton');
-      const errorDetails = document.getElementById('errorDetails');
-      
-      // Summary elements
-      const summaryNama = document.getElementById('summaryNama');
-      const summaryKelas = document.getElementById('summaryKelas');
-      const summaryEmail = document.getElementById('summaryEmail');
-      const summaryWa = document.getElementById('summaryWa');
-      
-      // Google Apps Script URL
-      const scriptURL = 'https://script.google.com/macros/s/AKfycbzBxX_jrYRmeQBlG5llkDxmBacrj-jdzpIKaaGgZIFidm5fl1T8JaEGJ-8NKI028US0/exec';
-      
-      // Reset form
-      resetButton.addEventListener('click', function() {
-        if (confirm('Apakah Anda yakin ingin mereset form? Semua data yang telah diisi akan hilang.')) {
-          form.reset();
-          // Clear all error messages
-          document.querySelectorAll('.form-error').forEach(el => el.classList.add('hidden'));
-        }
-      });
-      
-      // New registration button
-      newRegistrationButton.addEventListener('click', function() {
-        successMessage.classList.add('hidden');
-        errorMessage.classList.add('hidden');
-        formContainer.classList.remove('hidden');
-        form.reset();
-      });
-      
-      // Retry button
-      retryButton.addEventListener('click', function() {
-        errorMessage.classList.add('hidden');
-        formContainer.classList.remove('hidden');
-      });
-      
-      // Format date for display
-      function formatDate(dateString) {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+ <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const section1 = document.getElementById('section1');
+  const section2 = document.getElementById('section2');
+  const section3 = document.getElementById('section3');
+
+  const nextToSection2 = document.getElementById('nextToSection2');
+  const backToSection1 = document.getElementById('backToSection1');
+  const nextToSection3 = document.getElementById('nextToSection3');
+  const backToSection2 = document.getElementById('backToSection2');
+  const registrationForm = document.getElementById('myForm');
+
+  const pasFoto = document.getElementById('pasFoto');
+  const fotoPreview = document.getElementById('fotoPreview');
+
+  const successMessage = document.getElementById('successMessage');
+  const errorMessage = document.getElementById('errorMessage');
+  const loadingOverlay = document.getElementById('loadingOverlay');
+
+  const formProgress = document.getElementById('formProgress');
+  const progressBar = document.querySelector('.progress-bar-fill');
+  const progressText = document.getElementById('progressText');
+  const progressStep = document.getElementById('progressStep');
+
+  formProgress.classList.remove('hidden');
+
+  function updateProgress(step) {
+    const steps = [0, 33, 66, 100];
+    const texts = ['Bagian 1 dari 3', 'Bagian 2 dari 3', 'Bagian 3 dari 3', 'Selesai'];
+    progressBar.style.width = `${steps[step - 1]}%`;
+    progressText.textContent = `${steps[step - 1]}% selesai`;
+    progressStep.textContent = texts[step - 1];
+  }
+
+  function validateSection1() {
+    return document.getElementById('namaPanggilan').value.trim() &&
+           document.getElementById('namaLengkap').value.trim() &&
+           document.getElementById('agama').value &&
+           document.getElementById('kelas').value.trim() &&
+           document.querySelector('input[name="Jenis Kelamin"]:checked') &&
+           document.getElementById('tempatLahir').value.trim() &&
+           document.getElementById('tanggalLahir').value;
+  }
+
+  function validateSection2() {
+    return document.getElementById('email').value.trim() &&
+           document.getElementById('telepon').value.trim() &&
+           pasFoto.files[0];
+  }
+
+  function validateSection3() {
+    return document.getElementById('hobi').value.trim() &&
+           document.getElementById('cita').value.trim() &&
+           document.getElementById('motto').value.trim() &&
+           document.getElementById('alasan').value.trim();
+  }
+
+  nextToSection2.addEventListener('click', () => {
+    if (validateSection1()) {
+      section1.classList.add('hidden');
+      section2.classList.remove('hidden');
+      updateProgress(2);
+      window.scrollTo(0, 0);
+    } else {
+      alert('Lengkapi data di Bagian 1 terlebih dahulu.');
+    }
+  });
+
+  backToSection1.addEventListener('click', () => {
+    section2.classList.add('hidden');
+    section1.classList.remove('hidden');
+    updateProgress(1);
+    window.scrollTo(0, 0);
+  });
+
+  nextToSection3.addEventListener('click', () => {
+    if (validateSection2()) {
+      section2.classList.add('hidden');
+      section3.classList.remove('hidden');
+      updateProgress(3);
+      window.scrollTo(0, 0);
+    } else {
+      alert('Lengkapi data di Bagian 2 terlebih dahulu.');
+    }
+  });
+
+  backToSection2.addEventListener('click', () => {
+    section3.classList.add('hidden');
+    section2.classList.remove('hidden');
+    updateProgress(2);
+    window.scrollTo(0, 0);
+  });
+
+  // Preview pas foto
+  pasFoto.addEventListener('change', function () {
+    const file = this.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Ukuran file maksimal 2MB.');
+        this.value = '';
+        return;
       }
-      
-      // Validate form
-      function validateForm() {
-        let isValid = true;
-        
-        // Get all required inputs
-        const requiredInputs = form.querySelectorAll('[required]');
-        
-        // Check each required input
-        requiredInputs.forEach(input => {
-          const errorElement = document.getElementById(`${input.name}Error`) || 
-                              (input.name === 'tempat_lahir' || input.name === 'tanggal_lahir' ? 
-                               document.getElementById('ttlError') : null);
-          
-          if (input.type === 'checkbox') {
-            if (!input.checked) {
-              if (errorElement) errorElement.classList.remove('hidden');
-              isValid = false;
-            } else {
-              if (errorElement) errorElement.classList.add('hidden');
-            }
-          } else {
-            if (!input.value.trim()) {
-              if (errorElement) errorElement.classList.remove('hidden');
-              isValid = false;
-            } else {
-              if (errorElement) errorElement.classList.add('hidden');
-            }
-          }
-        });
-        
-        // Validate email format
-        const email = document.getElementById('email');
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (email.value.trim() && !emailRegex.test(email.value.trim())) {
-          document.getElementById('emailError').textContent = 'Format email tidak valid';
-          document.getElementById('emailError').classList.remove('hidden');
-          isValid = false;
-        }
-        
-        // Validate phone number format
-        const wa = document.getElementById('wa');
-        const phoneRegex = /^[0-9]{10,15}$/;
-        if (wa.value.trim() && !phoneRegex.test(wa.value.replace(/\D/g, ''))) {
-          document.getElementById('waError').textContent = 'Format nomor WhatsApp tidak valid';
-          document.getElementById('waError').classList.remove('hidden');
-          isValid = false;
-        }
-        
-        return isValid;
-      }
-      
-      // Handle form submission
-      form.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        
-        if (!validateForm()) {
-          // Scroll to first error
-          const firstError = document.querySelector('.form-error:not(.hidden)');
-          if (firstError) {
-            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
-          return;
-        }
-        
-        // Show loading overlay
-        loadingOverlay.classList.remove('hidden');
-        
-        try {
-          // Get form values
-          const namaPanggilan = document.getElementById('nama_panggilan').value;
-          const namaLengkap = document.getElementById('nama_lengkap').value;
-          const jenisKelamin = document.getElementById('jenis_kelamin').value;
-          const agama = document.getElementById('agama').value;
-          const tempatLahir = document.getElementById('tempat_lahir').value;
-          const tanggalLahir = document.getElementById('tanggal_lahir').value;
-          const alamat = document.getElementById('alamat').value;
-          const kelas = document.getElementById('kelas').value;
-          const email = document.getElementById('email').value;
-          const wa = document.getElementById('wa').value;
-          const hobi = document.getElementById('hobi').value;
-          const citaCita = document.getElementById('cita_cita').value;
-          const mottoHidup = document.getElementById('motto_hidup').value;
-          const alasan = document.getElementById('alasan').value;
-          
-       
-          // Create FormData object for submission
-          const formData = new FormData();
-          formData.append('nama_panggilan', namaPanggilan);
-          formData.append('nama_lengkap', namaLengkap);
-          formData.append('jenis_kelamin', jenisKelamin);
-          formData.append('agama', agama);
-          formData.append('tempat_lahir', tempatLahir);
-          formData.append('tanggal_lahir', tanggalLahir);
-          formData.append('alamat', alamat);
-          formData.append('kelas', kelas);
-          formData.append('email', email);
-          formData.append('wa', wa);
-          formData.append('hobi', hobi);
-          formData.append('cita_cita', citaCita);
-          formData.append('motto_hidup', mottoHidup);
-          formData.append('alasan', alasan);
-          
-          // Send data to Google Apps Script
-          const response = await fetch(scriptURL, {
-            method: 'POST',
-            body: formData,
-            mode: 'no-cors' // Important for CORS issues with Google Apps Script
-          });
-          
-          // Hide loading overlay
-          loadingOverlay.classList.add('hidden');
-          
-          // Update summary
-          summaryNama.textContent = namaLengkap;
-          summaryKelas.textContent = kelas;
-          summaryEmail.textContent = email;
-          summaryWa.textContent = wa;
-          
-          // Show success message
-          formContainer.classList.add('hidden');
-          successMessage.classList.remove('hidden');
-          
-          // Scroll to top
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          
-        } catch (error) {
-          console.error('Error submitting form:', error);
-          
-          // Hide loading overlay
-          loadingOverlay.classList.add('hidden');
-          
-          // Show error message
-          formContainer.classList.add('hidden');
-          errorMessage.classList.remove('hidden');
-          errorDetails.textContent = `Terjadi kesalahan: ${error.message || 'Koneksi gagal'}. Silakan coba lagi nanti.`;
-          
-          // Scroll to top
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        fotoPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Submit form
+  registrationForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    if (!validateSection3()) {
+      alert('Lengkapi data di Bagian 3 terlebih dahulu.');
+      return;
+    }
+
+    loadingOverlay.classList.remove('hidden');
+
+    // Konversi file ke base64
+    let base64Foto = "";
+    if (pasFoto.files[0]) {
+      base64Foto = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          resolve(event.target.result.split(',')[1]); // Hanya ambil base64 tanpa prefix
+        };
+        reader.readAsDataURL(pasFoto.files[0]);
       });
-    });
-  </script>
+    }
+
+    // Ambil data form
+    const formData = new FormData(registrationForm);
+    formData.append("pas_foto_base64", base64Foto);
+
+    try {
+      const response = await fetch(
+        "https://script.google.com/macros/s/AKfycbzTo1yUNxUmlkN1Mqr8C8IuLpxnSgPmyT0hyxpMQ2X4StEeF5uESuT3eqA6iZ0_cWu4/exec",
+        { method: "POST", body: formData }
+      );
+
+      const result = await response.text();
+      loadingOverlay.classList.add('hidden');
+
+      if (result.includes("Berhasil")) {
+        registrationForm.classList.add('hidden');
+        successMessage.classList.remove('hidden');
+        updateProgress(4);
+      } else {
+        throw new Error("Gagal kirim");
+      }
+    } catch (error) {
+      loadingOverlay.classList.add('hidden');
+      registrationForm.classList.add('hidden');
+      errorMessage.classList.remove('hidden');
+    }
+  });
+
+  updateProgress(1);
+});
+</script>
+
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9674636325a4910a',t:'MTc1Mzg3MzYwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
