@@ -439,7 +439,7 @@
   </footer>
 
   <!-- Scripts -->
- <script>
+<script>
 document.addEventListener('DOMContentLoaded', function () {
   const section1 = document.getElementById('section1');
   const section2 = document.getElementById('section2');
@@ -461,7 +461,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const progressText = document.getElementById('progressText');
   const progressStep = document.getElementById('progressStep');
 
-  const registrationForm = document.getElementById('registrationForm');
+  const registrationForm = document.getElementById('myForm'); // ✅ disamakan dengan form
   const pasFoto = document.getElementById('pasFoto');
   const fotoPreview = document.getElementById('fotoPreview');
   const tempatLahir = document.getElementById('tempatLahir');
@@ -479,14 +479,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function validateSection1() {
     let isValid = true;
-
     const fields = [
       ['namaPanggilan', 'namaPanggilanError'],
       ['namaLengkap', 'namaLengkapError'],
       ['agama', 'agamaError'],
       ['kelas', 'kelasError']
     ];
-
     fields.forEach(([id, errorId]) => {
       const input = document.getElementById(id);
       const error = document.getElementById(errorId);
@@ -497,39 +495,31 @@ document.addEventListener('DOMContentLoaded', function () {
         error.classList.add('hidden');
       }
     });
-
     const jenisKelamin = document.querySelector('input[name="Jenis Kelamin"]:checked');
     const jenisKelaminError = document.getElementById('jenisKelaminError');
     if (!jenisKelamin) {
       jenisKelaminError.classList.remove('hidden');
       isValid = false;
-    } else {
-      jenisKelaminError.classList.add('hidden');
-    }
+    } else jenisKelaminError.classList.add('hidden');
 
     const ttlError = document.getElementById('ttlError');
     if (!tempatLahir.value.trim() || !tanggalLahir.value) {
       ttlError.classList.remove('hidden');
       isValid = false;
-    } else {
-      ttlError.classList.add('hidden');
-    }
+    } else ttlError.classList.add('hidden');
 
     return isValid;
   }
 
   function validateSection2() {
     let isValid = true;
-
     const email = document.getElementById('email');
     const emailError = document.getElementById('emailError');
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email.value.trim() || !emailRegex.test(email.value)) {
       emailError.classList.remove('hidden');
       isValid = false;
-    } else {
-      emailError.classList.add('hidden');
-    }
+    } else emailError.classList.add('hidden');
 
     const telepon = document.getElementById('telepon');
     const teleponError = document.getElementById('teleponError');
@@ -537,45 +527,37 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!telepon.value.trim() || !teleponRegex.test(telepon.value.replace(/\D/g, ''))) {
       teleponError.classList.remove('hidden');
       isValid = false;
-    } else {
-      teleponError.classList.add('hidden');
-    }
+    } else teleponError.classList.add('hidden');
 
     const fotoError = document.getElementById('fotoError');
     if (!pasFoto.files || !pasFoto.files[0]) {
       fotoError.classList.remove('hidden');
       isValid = false;
-    } else {
-      fotoError.classList.add('hidden');
-    }
+    } else fotoError.classList.add('hidden');
 
     return isValid;
   }
 
   function validateSection3() {
     let isValid = true;
-
     const fields = [
       ['hobi', 'hobiError'],
       ['cita', 'citaError'],
       ['motto', 'mottoError'],
       ['alasan', 'alasanError']
     ];
-
     fields.forEach(([id, errorId]) => {
       const input = document.getElementById(id);
       const error = document.getElementById(errorId);
       if (!input.value.trim()) {
         error.classList.remove('hidden');
         isValid = false;
-      } else {
-        error.classList.add('hidden');
-      }
+      } else error.classList.add('hidden');
     });
-
     return isValid;
   }
 
+  // Navigasi antar section
   nextToSection2.addEventListener('click', () => {
     if (validateSection1()) {
       section1.classList.add('hidden');
@@ -584,14 +566,12 @@ document.addEventListener('DOMContentLoaded', function () {
       window.scrollTo(0, 0);
     }
   });
-
   backToSection1.addEventListener('click', () => {
     section2.classList.add('hidden');
     section1.classList.remove('hidden');
     updateProgress(1);
     window.scrollTo(0, 0);
   });
-
   nextToSection3.addEventListener('click', () => {
     if (validateSection2()) {
       section2.classList.add('hidden');
@@ -600,7 +580,6 @@ document.addEventListener('DOMContentLoaded', function () {
       window.scrollTo(0, 0);
     }
   });
-
   backToSection2.addEventListener('click', () => {
     section3.classList.add('hidden');
     section2.classList.remove('hidden');
@@ -608,6 +587,7 @@ document.addEventListener('DOMContentLoaded', function () {
     window.scrollTo(0, 0);
   });
 
+  // Preview Foto
   pasFoto.addEventListener('change', function () {
     const file = this.files[0];
     if (file) {
@@ -629,6 +609,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
+  // Submit Form
   registrationForm.addEventListener('submit', async function (e) {
     e.preventDefault();
     if (!validateSection3()) return;
@@ -636,24 +617,24 @@ document.addEventListener('DOMContentLoaded', function () {
     loadingOverlay.classList.remove('hidden');
     const formData = new FormData(this);
 
-   try {
-  await fetch('https://script.google.com/macros/s/AKfycbzTo1yUNxUmlkN1Mqr8C8IuLpxnSgPmyT0hyxpMQ2X4StEeF5uESuT3eqA6iZ0_cWu4/exec', {
-    method: 'POST',
-    body: formData,
+    try {
+      await fetch('https://script.google.com/macros/s/AKfycbzTo1yUNxUmlkN1Mqr8C8IuLpxnSgPmyT0hyxpMQ2X4StEeF5uESuT3eqA6iZ0_cWu4/exec', {
+        method: 'POST',
+        body: formData,
+      });
+      loadingOverlay.classList.add('hidden');
+      registrationForm.classList.add('hidden');
+      successMessage.classList.remove('hidden');
+      updateProgress(4);
+    } catch (err) {
+      console.error(err);
+      loadingOverlay.classList.add('hidden');
+      registrationForm.classList.add('hidden');
+      errorMessage.classList.remove('hidden');
+    }
   });
 
-  loadingOverlay.classList.add('hidden');
-  registrationForm.classList.add('hidden');
-  successMessage.classList.remove('hidden');
-  updateProgress(4);
-} catch (err) {
-  console.error(err);
-  loadingOverlay.classList.add('hidden');
-  registrationForm.classList.add('hidden');
-  errorMessage.classList.remove('hidden');
-}
-
-
+  // Retry
   retryButton.addEventListener('click', () => {
     errorMessage.classList.add('hidden');
     registrationForm.classList.remove('hidden');
@@ -664,5 +645,6 @@ document.addEventListener('DOMContentLoaded', function () {
   updateProgress(1);
 });
 </script>
+
 </body>
 </html>
