@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serunya Menjadi Sekretaris Pelantikan Pramuka</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap">
+    <style>
+        :root {
+            --color-primary: #8B4513;
+            --color-secondary: #D2B48C;
+            --color-background: #F5F5DC;
+            --color-text: #3A3A3A;
+            --color-paper: #FFFAF0;
+            --color-accent: #A0522D;
+            
+            --dark-color-primary: #D2B48C;
+            --dark-color-secondary: #8B4513;
+            --dark-color-background: #2A2A2A;
+            --dark-color-text: #E0E0E0;
+            --dark-color-paper: #3A3A3A;
+            --dark-color-accent: #CD853F;
+        }
+        
+        .dark {
+            --color-primary: var(--dark-color-primary);
+            --color-secondary: var(--dark-color-secondary);
+            --color-background: var(--dark-color-background);
+            --color-text: var(--dark-color-text);
+            --color-paper: var(--dark-color-paper);
+            --color-accent: var(--dark-color-accent);
+        }
+        
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            transition: all 0.3s ease;
+        }
+        
+        h1, h2, h3, h4, h5, h6, .chapter-title, .nav-title {
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .content-container {
+            background-color: var(--color-paper);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        
+        .chapter-content {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            letter-spacing: 0.01em;
+        }
+        
+        .nav-button {
+            background-color: var(--color-primary);
+            color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-button:hover {
+            background-color: var(--color-accent);
+            transform: translateY(-2px);
+        }
+        
+        .nav-button:disabled {
+            background-color: var(--color-secondary);
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .chapter-nav {
+            background-color: var(--color-paper);
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .chapter-nav-item {
+            transition: all 0.2s ease;
+            border-left: 2px solid transparent;
+        }
+        
+        .chapter-nav-item:hover {
+            border-left: 2px solid var(--color-primary);
+            background-color: rgba(210, 180, 140, 0.1);
+        }
+        
+        .chapter-nav-item.active {
+            border-left: 2px solid var(--color-primary);
+            background-color: rgba(210, 180, 140, 0.2);
+            font-weight: 600;
+        }
+        
+        /* Book page turn effect */
+        .page-container {
+            perspective: 1500px;
+        }
+        
+        .page {
+            transform-origin: center left;
+            transition: transform 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        
+        .page.turn {
+            transform: rotateY(-180deg);
+        }
+        
+        .page-content {
+            backface-visibility: hidden;
+        }
+        
+        /* Paper texture */
+        .paper-texture {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d2b48c' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            background-attachment: fixed;
+        }
+        
+        /* Library background */
+        .library-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238b4513' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-attachment: fixed;
+        }
+        
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--color-background);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--color-secondary);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-primary);
+        }
+        
+        /* Mobile navigation */
+        .mobile-nav {
+            background-color: var(--color-paper);
+            border-top: 1px solid var(--color-secondary);
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            height: 4px;
+            background-color: rgba(210, 180, 140, 0.2);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background-color: var(--color-primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        /* Bookmark effect */
+        .bookmark {
+            position: absolute;
+            top: 0;
+            right: 20px;
+            width: 30px;
+            height: 50px;
+            background-color: var(--color-primary);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .bookmark:hover {
+            transform: translateY(5px);
+        }
+        
+        /* Dialog styling */
+        .dialog {
+            font-style: italic;
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            border-left: 3px solid var(--color-secondary);
+        }
+        
+        /* The End styling */
+        .the-end {
+            font-family: 'Playfair Display', serif;
+            color: var(--color-primary);
+            text-align: center;
+            font-size: 2.5rem;
+            margin: 3rem 0;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .the-end::before,
+        .the-end::after {
+            content: "";
+            position: absolute;
+            height: 2px;
+            background-color: var(--color-secondary);
+            top: 50%;
+            width: 100px;
+        }
+        
+        .the-end::before {
+            right: 100%;
+            margin-right: 20px;
+        }
+        
+        .the-end::after {
+            left: 100%;
+            margin-left: 20px;
+        }
+        
+        .home-button {
+            background-color: var(--color-primary);
+            color: white;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 2rem auto;
+            text-align: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .home-button:hover {
+            background-color: var(--color-accent);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body class="library-bg min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <header class="mb-8">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl md:text-4xl font-bold text-center text-primary mb-2 text-[var(--color-primary)]">
+                    Serunya Menjadi Sekretaris Pelantikan Pramuka
+                </h1>
+                <button id="darkModeToggle" class="p-2 rounded-full bg-[var(--color-secondary)] text-[var(--color-paper)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </div>
+            <h2 class="text-lg md:text-xl text-center text-[var(--color-accent)] mb-4">
+                Penegak Bantara dan Laksana Ambalan Raden Aria Wangsakara Nyimas Melati SMAN 20 Kabupaten Tangerang
+            </h2>
+        </header>
+        
+        <div class="flex flex-col lg:flex-row gap-6">
+            <!-- Sidebar Navigation for Desktop -->
+            <aside class="hidden lg:block w-64 h-fit sticky top-8">
+                <div class="chapter-nav rounded-lg overflow-hidden shadow-lg">
+                    <div class="bg-[var(--color-primary)] text-white p-4">
+                        <h3 class="font-semibold text-lg nav-title">Daftar Isi</h3>
+                    </div>
+                    <ul class="p-2">
+                        <li class="chapter-nav-item active p-3 rounded" data-chapter="1">
+                            <span class="font-medium">Bagian 1:</span> Awal Mula Persiapan
+                        </li>
+                        <li class="chapter-nav-item p-3 rounded" data-chapter="2">
+                            <span class="font-medium">Bagian 2:</span> Menyusun Proposal
+                        </li>
+                        <li class="chapter-nav-item p-3 rounded" data-chapter="3">
+                            <span class="font-medium">Bagian 3:</span> Pengajuan Proposal
+                        </li>
+                        <li class="chapter-nav-item p-3 rounded" data-chapter="4">
+                            <span class="font-medium">Bagian 4:</span> Kesibukan Sebelum Hari H
+                        </li>
+                        <li class="chapter-nav-item p-3 rounded" data-chapter="5">
+                            <span class="font-medium">Bagian 5:</span> Hari Pelantikan
+                        </li>
+                        <li class="chapter-nav-item p-3 rounded" data-chapter="6">
+                            <span class="font-medium">Bagian 6:</span> Kegiatan Pelantikan
+                        </li>
+                        <li class="chapter-nav-item p-3 rounded" data-chapter="7">
+                            <span class="font-medium">Bagian 7:</span> Tantangan Malam Hari
+                        </li>
+                        <li class="chapter-nav-item p-3 rounded" data-chapter="8">
+                            <span class="font-medium">Bagian 8:</span> Jurit Malam
+                        </li>
+                        <li class="chapter-nav-item p-3 rounded" data-chapter="9">
+                            <span class="font-medium">Bagian 9:</span> Penutup dan Pelantikan Bantara
+                        </li>
+                    </ul>
+                </div>
+            </aside>
+            
+            <!-- Main Content -->
+            <main class="flex-1">
+                <div class="page-container">
+                    <div class="page">
+                        <div class="content-container paper-texture rounded-lg shadow-xl p-6 md:p-10 relative">
+                            <!-- Bookmark -->
+                            <div class="bookmark"></div>
+                            
+                            <!-- Progress bar -->
+                            <div class="progress-container mb-6">
+                                <div class="progress-bar" id="readingProgress"></div>
+                            </div>
+                            
+                            <!-- Chapter title -->
+                            <div class="mb-8 pb-4 border-b border-[var(--color-secondary)]">
+                                <h2 id="chapterTitle" class="text-2xl md:text-3xl font-bold text-[var(--color-primary)] chapter-title">
+                                    Bagian 1: Awal Mula Persiapan
+                                </h2>
+                            </div>
+                            
+                            <!-- Chapter content -->
+                            <div id="chapterContent" class="chapter-content">
+                                <!-- Content will be loaded here -->
+                                <p class="mb-4">
+                                    Nama gua Hafidz Sazili, siswa di SMAN 20 Kabupaten Tangerang dan sekretaris panitia pelantikan Pramuka Penegak Bantara dan Laksana. Acara ini program kerja dari ambalan kami, Raden Aria Wangsakara Nyimas Melati. Bersama Ketua Pelaksana Hikmatul Khamila, kami berusaha keras memastikan semua persiapan berjalan lancar. Kegiatan pelantikan ini rencananya bakal berlangsung pada 27-28 Juli 2024, tapi sebelum acara ini jalan, banyak cerita menarik yang terjadi.
+                                </p>
+                                <p class="mb-4">
+                                    Semua mulai dari rapat-rapat persiapan yang sering tertunda. Selalu ada aja halangan yang bikin rapat kami mundur, kayak jadwal anggota yang bentrok sama latihan demo ekskul yang mendadak. Kami terus berusaha menyesuaikan jadwal dan tetap semangat dalam mempersiapkan segala sesuatunya. Rapat anggaran dana dengan bendahara, laporan kegiatan dari seksi acara, dan tim perlengkapan yang dipimpin oleh Kak Kemal, semuanya dibahas dengan teliti.
+                                </p>
+                                <p class="dialog">
+                                    "Kenapa rapat selalu tertunda, sih?" keluh Hikmah di dalam obrolan grup.
+                                </p>
+                                <p class="dialog">
+                                    "Gua juga bingung. Kayaknya jadwal kita bentrok terus sama latihan demo ekskul," gua jawab sambil mencatat poin-poin penting di notulen rapat.
+                                </p>
+                                <p class="dialog">
+                                    "Yang penting, kita tetap semangat dan fokus sama persiapan ini," tambah Fahri, sebagai Pradana.
+                                </p>
+                                <p class="mb-4">
+                                    Setiap kali kami rapat, selalu ada hal-hal menarik yang terjadi. Misalnya, saat kami diskusi soal anggaran dana, sering kali terjadi perdebatan kecil tapi semua itu kami anggap sebagai bagian dari proses untuk mencapai hasil terbaik.
+                                </p>
+                            </div>
+                            
+                            <!-- Navigation buttons -->
+                            <div class="flex justify-between mt-10 pt-6 border-t border-[var(--color-secondary)]">
+                                <button id="prevChapter" class="nav-button px-5 py-3 rounded-lg flex items-center gap-2 disabled:opacity-50" disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                    Bab Sebelumnya
+                                </button>
+                                <button id="nextChapter" class="nav-button px-5 py-3 rounded-lg flex items-center gap-2">
+                                    Bab Berikutnya
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <div class="lg:hidden fixed bottom-0 left-0 right-0 mobile-nav p-4 shadow-lg">
+            <button id="mobileMenuBtn" class="w-full py-3 bg-[var(--color-primary)] text-white rounded-lg flex items-center justify-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+                </svg>
+                Daftar Isi
+            </button>
+        </div>
+        
+        <!-- Mobile Chapter Navigation Modal -->
+        <div id="mobileNavModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-[var(--color-paper)] rounded-lg w-full max-w-md max-h-[80vh] overflow-y-auto">
+                <div class="bg-[var(--color-primary)] text-white p-4 sticky top-0">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-semibold text-lg">Daftar Isi</h3>
+                        <button id="closeModal" class="text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <ul class="p-4">
+                    <li class="mobile-chapter-nav-item active p-3 border-b border-[var(--color-secondary)] last:border-0" data-chapter="1">
+                        <span class="font-medium">Bagian 1:</span> Awal Mula Persiapan
+                    </li>
+                    <li class="mobile-chapter-nav-item p-3 border-b border-[var(--color-secondary)] last:border-0" data-chapter="2">
+                        <span class="font-medium">Bagian 2:</span> Menyusun Proposal
+                    </li>
+                    <li class="mobile-chapter-nav-item p-3 border-b border-[var(--color-secondary)] last:border-0" data-chapter="3">
+                        <span class="font-medium">Bagian 3:</span> Pengajuan Proposal
+                    </li>
+                    <li class="mobile-chapter-nav-item p-3 border-b border-[var(--color-secondary)] last:border-0" data-chapter="4">
+                        <span class="font-medium">Bagian 4:</span> Kesibukan Sebelum Hari H
+                    </li>
+                    <li class="mobile-chapter-nav-item p-3 border-b border-[var(--color-secondary)] last:border-0" data-chapter="5">
+                        <span class="font-medium">Bagian 5:</span> Hari Pelantikan
+                    </li>
+                    <li class="mobile-chapter-nav-item p-3 border-b border-[var(--color-secondary)] last:border-0" data-chapter="6">
+                        <span class="font-medium">Bagian 6:</span> Kegiatan Pelantikan
+                    </li>
+                    <li class="mobile-chapter-nav-item p-3 border-b border-[var(--color-secondary)] last:border-0" data-chapter="7">
+                        <span class="font-medium">Bagian 7:</span> Tantangan Malam Hari
+                    </li>
+                    <li class="mobile-chapter-nav-item p-3 border-b border-[var(--color-secondary)] last:border-0" data-chapter="8">
+                        <span class="font-medium">Bagian 8:</span> Jurit Malam
+                    </li>
+                    <li class="mobile-chapter-nav-item p-3 border-b border-[var(--color-secondary)] last:border-0" data-chapter="9">
+                        <span class="font-medium">Bagian 9:</span> Penutup dan Pelantikan Bantara
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <script>
+            // Chapter data
+            const chapters = [
+                {
+                    id: 1,
+                    title: "Bagian 1: Awal Mula Persiapan",
+                    content: `
+                        <p class="mb-4">
+                            Nama gua Hafidz Sazili, siswa di SMAN 20 Kabupaten Tangerang dan sekretaris panitia pelantikan Pramuka Penegak Bantara dan Laksana. Acara ini program kerja dari ambalan kami, Raden Aria Wangsakara Nyimas Melati. Bersama Ketua Pelaksana Hikmatul Khamila, kami berusaha keras memastikan semua persiapan berjalan lancar. Kegiatan pelantikan ini rencananya bakal berlangsung pada 27-28 Juli 2024, tapi sebelum acara ini jalan, banyak cerita menarik yang terjadi.
+                        </p>
+                        <p class="mb-4">
+                            Semua mulai dari rapat-rapat persiapan yang sering tertunda. Selalu ada aja halangan yang bikin rapat kami mundur, kayak jadwal anggota yang bentrok sama latihan demo ekskul yang mendadak. Kami terus berusaha menyesuaikan jadwal dan tetap semangat dalam mempersiapkan segala sesuatunya. Rapat anggaran dana dengan bendahara, laporan kegiatan dari seksi acara, dan tim perlengkapan yang dipimpin oleh Kak Kemal, semuanya dibahas dengan teliti.
+                        </p>
+                        <p class="dialog">
+                            "Kenapa rapat selalu tertunda, sih?" keluh Hikmah di dalam obrolan grup.
+                        </p>
+                        <p class="dialog">
+                            "Gua juga bingung. Kayaknya jadwal kita bentrok terus sama latihan demo ekskul," gua jawab sambil mencatat poin-poin penting di notulen rapat.
+                        </p>
+                        <p class="dialog">
+                            "Yang penting, kita tetap semangat dan fokus sama persiapan ini," tambah Fahri, sebagai Pradana.
+                        </p>
+                        <p class="mb-4">
+                            Setiap kali kami rapat, selalu ada hal-hal menarik yang terjadi. Misalnya, saat kami diskusi soal anggaran dana, sering kali terjadi perdebatan kecil tapi semua itu kami anggap sebagai bagian dari proses untuk mencapai hasil terbaik.
+                        </p>
+                    `
+                },
+                {
+                    id: 2,
+                    title: "Bagian 2: Menyusun Proposal",
+                    content: `
+                        <p class="mb-4">
+                            Tantangan pertama yang harus kami hadapi adalah bikin proposal kegiatan. Sebagai sekretaris, gua bertanggung jawab nyusun proposal dan berbagai surat lainnya kayak surat peminjaman tempat, surat peminjaman barang, surat undangan purna, surat pemateri, dan berkas lainnya. Banyak cerita seru saat bikin proposal ini, mulai dari diskusi mendalam dengan Kak Age, seorang purna yang sangat membantu kami ngasih arahan dan masukan, termasuk tema acara "Api Unggun Raksala."
+                        </p>
+                        <p class="dialog">
+                            "Gua rasa tema 'Api Unggun Raksala' cocok banget buat acara kita," kata Kak Age saat rapat dengan kami di sekretariat Kwarran Pakuhaji.
+                        </p>
+                        <p class="dialog">
+                            "Iya, Kak. Tema ini keren dan bakal bikin acara kita lebih meriah," tambah Hikmah sambil mencatat masukan dari Kak Age.
+                        </p>
+                        <p class="dialog">
+                            "Jangan lupa, proposal harus detail dan jelas ya. Kita perlu dukungan penuh dari sekolah," gua ingatkan teman-teman.
+                        </p>
+                        <p class="mb-4">
+                            Menyusun proposal ini bukan tugas yang mudah. Ada banyak hal yang harus dipikirkan dan diatur dengan baik. Salah satu momen yang paling bikin gua dan teman-teman stress adalah saat rapat anggaran dana. Kami harus benar-benar detail dalam mencatat setiap pengeluaran dan pendapatan agar tidak ada yang terlewat.
+                        </p>
+                    `
+                },
+                {
+                    id: 3,
+                    title: "Bagian 3: Pengajuan Proposal",
+                    content: `
+                        <p class="mb-4">
+                            Akhirnya, proposal dan segala kesiapan acara sudah jadi. Kami bertiga, gua, Hikmah, dan Fahri sebagai Pradana, mengajukan proposal kepada pembina kami, Kak Wawan Sutiawan, yang juga guru BK di sekolah kami. Suasana di ruang BK saat itu cukup tegang karena kami harus meyakinkan beliau supaya menyetujui proposal kami.
+                        </p>
+                        <p class="dialog">
+                            "Pak Wawan, ini proposal kegiatan pelantikan Pramuka Penegak Bantara dan Laksana. Kami mohon Bapak bisa memberikan persetujuan," gua membuka pembicaraan.
+                        </p>
+                        <p class="dialog">
+                            "Proposalnya bagus, tapi dana yang dibutuhkan cukup besar. Dana BOS belum turun. Kegiatan ini juga terlalu mendadak," kata Pak Wawan sambil membaca proposal kami.
+                        </p>
+                        <p class="dialog">
+                            "Bagaimana kalau kegiatan diundur ke minggu selanjutnya, 3-4 Agustus 2024, dan dananya dari uang fee peserta sebesar 50 ribu?" lanjut Pak Wawan.
+                        </p>
+                        <p class="mb-4">
+                            Kami sempat keberatan karena sudah banyak pengeluaran untuk DP baju PDL, tapi akhirnya kami setuju setelah Pak Wawan menegaskan pentingnya pelantikan dibandingkan baju. Kami mengadakan pertemuan dadakan dengan pembina dan peserta, dan semua setuju dengan perubahan jadwal dan dana tersebut.
+                        </p>
+                    `
+                },
+                {
+                    id: 4,
+                    title: "Bagian 4: Kesibukan Sebelum Hari H",
+                    content: `
+                        <p class="mb-4">
+                            Sebagai sekretaris, gua harus mengecek semua surat yang udah dibuat dan memastikan semuanya siap disebar oleh humas, Repaldi. Gua sempat mengalami miskomunikasi saat Repaldi ngirim surat baru dan lama kepada pemateri, Kak Umam, yang seharusnya cuma nerima surat baru. Meskipun terjadi kesalahan, kami tetap berusaha nyelesaikan segala persiapan dengan baik dan nggak ngulangi kesalahan yang sama.
+                        </p>
+                        <p class="dialog">
+                            "Pal, surat yang dikirim cuma yang baru, ya. Yang lama nggak usah," gua ingatkan Repaldi.
+                        </p>
+                        <p class="dialog">
+                            "Oh, iya, sori, gua kira dua-duanya harus dikirim," jawab Repaldi.
+                        </p>
+                        <p class="mb-4">
+                            Hari-hari menjelang acara sangat sibuk. Kami harus memastikan semua perlengkapan sudah siap, tempat sudah disiapkan, dan semua surat undangan sudah terkirim. Gua bahkan harus mengurus Surat peminjaman tempat dan barang untuk acara. Ada banyak hal yang harus dikerjakan dan semua harus dilakukan dengan teliti dan cepat.
+                        </p>
+                    `
+                },
+                {
+                    id: 5,
+                    title: "Bagian 5: Hari Pelantikan",
+                    content: `
+                        <p class="mb-4">
+                            Hari yang ditunggu pun tiba, Sabtu 3 Agustus 2024. Konsep acara kami adalah Perkemahan Sabtu Minggu (Persami). Pelantikan Penegak Laksana dimulai pukul 7 pagi, tapi kami panik saat semua peserta laksana sudah siap untuk mengadakan upacara pembukaan, ada yang membuat panitia sekaligus peserta laksana sedikit kesal termasuk gua. Kesal karena keempat pembina tidak ada yang datang saat upacara hendak dimulai.
+                        </p>
+                        <p class="dialog">
+                            "Pradana, tolong hubungi keempat pembina tersebut," pinta gua ke Fahri.
+                        </p>
+                        <p class="dialog">
+                            "Siap, gua akan coba hubungi mereka sekarang," jawab Fahri.
+                        </p>
+                        <p class="mb-4">
+                            Setelah beberapa kali komunikasi, akhirnya Kak Usman tiba dan upacara pembukaan bisa dimulai dengan khidmat. Setelah itu, Kak Wawan datang sebagai pemateri pertama, menyampaikan materi yang sangat inspiratif.
+                        </p>
+                    `
+                },
+                {
+                    id: 6,
+                    title: "Bagian 6: Kegiatan Pelantikan",
+                    content: `
+                        <p class="mb-4">
+                            Setelah upacara pembukaan, kegiatan dilanjutkan dengan berbagai materi dan ujian SKU. Namun, Kak Wawan memutuskan mengganti ujian dengan membuat api unggun. Kami segera bekerja sama menyiapkan api unggun tersebut.
+                        </p>
+                        <p class="mb-4">
+                            Upacara pelantikan Laksana berlangsung pukul 11.30 dengan khidmat. Setelah istirahat, peserta Bantara mulai berdatangan. Gua sebagai sekretaris bertugas mengurus kedatangan mereka dan mencatat daftar hadir. Kak Epul dari seksi acara mengecek barang bawaan peserta untuk penilaian.
+                        </p>
+                        <p class="dialog">
+                            "Check-in selesai, Pul. Banyak yang nggak lengkap bawa barang," lapor gua ke Kak Epul.
+                        </p>
+                        <p class="dialog">
+                            "Ya, itu bagian dari penilaian mereka. Kita lanjut ke acara selanjutnya," jawab Kak Epul.
+                        </p>
+                        <p class="mb-4">
+                            Setelah itu, acara dilanjutkan dengan materi dari Kak Abeng dan Kak Umam, sholat berjamaah, serta persiapan untuk malam hari.
+                        </p>
+                    `
+                },
+                {
+                    id: 7,
+                    title: "Bagian 7: Tantangan Malam Hari",
+                    content: `
+                        <p class="mb-4">
+                            Setelah semua peserta Bantara selesai check-in, acara dilanjutkan dengan pemberian materi oleh Kak Abeng. Gua juga bertugas sebagai operator proyektor pada materi kali ini. Materi yang disampaikan sangat menarik dan memberikan banyak pengetahuan baru bagi peserta.
+                        </p>
+                        <p class="dialog">
+                            "Pak Abeng benar-benar bagus dalam menyampaikan materi. Gua banyak belajar dari beliau," kata gua ke Hikmah.
+                        </p>
+                        <p class="dialog">
+                            "Iya, gua juga. Materinya bener-bener inspiratif," jawab Hikmah.
+                        </p>
+                        <p class="mb-4">
+                            Namun, masalah muncul lagi saat Kak Umam yang seharusnya mengisi materi sore, belum datang. Kami segera menghubungi Kak Umam dan ternyata ada kesalahan dalam undangan yang dikirim. Akhirnya, materi sore diganti dengan kegiatan makan bekal dan menunggu Kak Umam datang.
+                        </p>
+                        <p class="mb-4">
+                            Setelah Kak Umam datang dan memberikan materi, acara dilanjutkan dengan sholat Maghrib dan Isya berjamaah. Malam hari, peserta kembali mengikuti materi dari Kak Ag yang sangat menginspirasi. Meski waktu molor, semangat peserta tetap tinggi.
+                        </p>
+                        <p class="mb-4">
+                            Pukul 20.58, Kak Daus mulai memberikan materi retorika, namun singkat karena waktu sudah malam. Lalu acara api unggun dimulai meski ada kesalahan kecil dalam pengucapan Dasa Dharma, tapi suasana tetap meriah. Pentas seni malam itu jadi momen paling seru, dan gua bertugas sebagai soundman.
+                        </p>
+                    `
+                },
+                {
+                    id: 8,
+                    title: "Bagian 8: Jurit Malam",
+                    content: `
+                        <p class="mb-4">
+                            Saat peserta tidur, kami panitia rapat dengan purna membahas jurit malam. Kak Epul menjelaskan konsep jurit malam dan meminta bantuan purna membangunkan peserta jam 00.30. Kami juga menyiapkan tanda panah di rute.
+                        </p>
+                        <p class="mb-4">
+                            Pukul 00.30, peserta dibangunkan untuk jurit malam. Sementara itu, kami panitia Laksana juga disuruh baris dan ditanya soal pelantikan. Karena pelantikan tanpa tes dianggap belum lengkap, kami harus menjalani tes malam itu juga.
+                        </p>
+                        <p class="dialog">
+                            "Kenapa kalian dilantik tanpa tes?" tanya Kak Diki dengan nada serius.
+                        </p>
+                        <p class="mb-4">
+                            Karena tidak ada yang bisa menjawab jelas, kami dihukum push-up 500 kali. Kak Ag kemudian memberikan gua tugas membuat cerpen tentang serunya pelantikan sebagai ganti hukuman.
+                        </p>
+                        <p class="mb-4">
+                            Setelah kegiatan selesai sekitar pukul 02.30, kami istirahat. Pagi harinya, kami bersiap untuk acara penutup dan pelantikan Bantara.
+                        </p>
+                    `
+                },
+                {
+                    id: 9,
+                    title: "Bagian 9: Penutup dan Pelantikan Bantara",
+                    content: `
+                        <p class="mb-4">
+                            Pagi hari, upacara pelantikan Bantara dimulai. Semua peserta dengan seragam lengkap mengikuti upacara khidmat. Setelah dilantik, kami membersihkan lapangan dan merapikan semua perlengkapan.
+                        </p>
+                        <p class="dialog">
+                            "Meskipun capek, kita harus pastikan tempat ini bersih lagi," kata gua.
+                        </p>
+                        <p class="dialog">
+                            "Iya, gua setuju. Kerja sama kita pasti bisa beresin ini semua," jawab Hikmah.
+                        </p>
+                        <p class="mb-4">
+                            Setelah semua rapi, kami pulang dengan rasa lega dan bangga. Pengalaman ini mengajarkan kami tentang kerja sama, tanggung jawab, dan cara mengatasi masalah di kegiatan besar.
+                        </p>
+                        <div class="flex justify-center my-12">
+                            <div class="the-end">Tamat</div>
+                        </div>
+                        <button id="homeButton" class="home-button">
+                            Kembali ke Halaman Awal
+                        </button>
+                    `
+                }
+            ];
+            
+            // Current chapter
+            let currentChapter = 1;
+            
+            // DOM elements
+            const chapterTitle = document.getElementById('chapterTitle');
+            const chapterContent = document.getElementById('chapterContent');
+            const prevChapterBtn = document.getElementById('prevChapter');
+            const nextChapterBtn = document.getElementById('nextChapter');
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileNavModal = document.getElementById('mobileNavModal');
+            const closeModalBtn = document.getElementById('closeModal');
+            const readingProgress = document.getElementById('readingProgress');
+            const page = document.querySelector('.page');
+            
+            // Load chapter content
+            function loadChapter(chapterId) {
+                const chapter = chapters.find(ch => ch.id === chapterId);
+                if (!chapter) return;
+                
+                // Add page turn effect
+                page.classList.add('turn');
+                
+                setTimeout(() => {
+                    // Update content
+                    chapterTitle.textContent = chapter.title;
+                    chapterContent.innerHTML = chapter.content;
+                    
+                    // Update navigation buttons
+                    prevChapterBtn.disabled = chapterId === 1;
+                    nextChapterBtn.disabled = chapterId === chapters.length;
+                    
+                    // Update active chapter in navigation
+                    document.querySelectorAll('.chapter-nav-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    document.querySelector(`.chapter-nav-item[data-chapter="${chapterId}"]`).classList.add('active');
+                    
+                    // Update mobile navigation
+                    document.querySelectorAll('.mobile-chapter-nav-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    document.querySelector(`.mobile-chapter-nav-item[data-chapter="${chapterId}"]`).classList.add('active');
+                    
+                    // Reset reading progress
+                    readingProgress.style.width = '0%';
+                    
+                    // Remove page turn effect
+                    page.classList.remove('turn');
+                    
+                    // Scroll to top
+                    window.scrollTo(0, 0);
+                    
+                    // Update current chapter
+                    currentChapter = chapterId;
+                    
+                    // Add event listener to home button if it exists
+                    const homeButton = document.getElementById('homeButton');
+                    if (homeButton) {
+                        homeButton.addEventListener('click', () => {
+                            loadChapter(1);
+                        });
+                    }
+                }, 300);
+            }
+            
+            // Navigation event listeners
+            prevChapterBtn.addEventListener('click', () => {
+                if (currentChapter > 1) {
+                    loadChapter(currentChapter - 1);
+                }
+            });
+            
+            nextChapterBtn.addEventListener('click', () => {
+                if (currentChapter < chapters.length) {
+                    loadChapter(currentChapter + 1);
+                }
+            });
+            
+            // Chapter navigation event listeners
+            document.querySelectorAll('.chapter-nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const chapterId = parseInt(item.getAttribute('data-chapter'));
+                    loadChapter(chapterId);
+                });
+            });
+            
+            // Mobile navigation event listeners
+            document.querySelectorAll('.mobile-chapter-nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const chapterId = parseInt(item.getAttribute('data-chapter'));
+                    loadChapter(chapterId);
+                    mobileNavModal.classList.add('hidden');
+                });
+            });
+            
+            // Mobile menu button
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileNavModal.classList.remove('hidden');
+            });
+            
+            // Close modal button
+            closeModalBtn.addEventListener('click', () => {
+                mobileNavModal.classList.add('hidden');
+            });
+            
+            // Close modal when clicking outside
+            mobileNavModal.addEventListener('click', (e) => {
+                if (e.target === mobileNavModal) {
+                    mobileNavModal.classList.add('hidden');
+                }
+            });
+            
+            // Dark mode toggle
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark');
+                
+                // Update icon
+                if (document.body.classList.contains('dark')) {
+                    darkModeToggle.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    `;
+                } else {
+                    darkModeToggle.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    `;
+                }
+            });
+            
+            // Reading progress
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY;
+                const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const scrollPercentage = (scrollTop / scrollHeight) * 100;
+                readingProgress.style.width = `${scrollPercentage}%`;
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft' && currentChapter > 1) {
+                    loadChapter(currentChapter - 1);
+                } else if (e.key === 'ArrowRight' && currentChapter < chapters.length) {
+                    loadChapter(currentChapter + 1);
+                }
+            });
+            
+            // Initialize
+            loadChapter(1);
+        </script>
+    </div>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9686e3fc107dea89',t:'MTc1NDA2NzYxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
