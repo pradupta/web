@@ -405,6 +405,121 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Preview Modal Styles */
+        .preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .preview-modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .preview-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .preview-header {
+            background: linear-gradient(135deg, var(--primary-brown), var(--secondary-brown));
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .preview-header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .preview-body {
+            padding: 30px;
+        }
+
+        .preview-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--light-cream);
+            border-radius: 15px;
+            border-left: 5px solid var(--primary-brown);
+        }
+
+        .preview-section h3 {
+            color: var(--primary-brown);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .preview-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .preview-item label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .preview-item .value {
+            color: #555;
+            font-size: 1rem;
+            word-wrap: break-word;
+        }
+
+        .preview-item.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .photo-preview {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .photo-preview img {
+            max-width: 200px;
+            max-height: 250px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .preview-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            padding: 30px;
+            border-top: 2px solid var(--light-cream);
+        }
+
         .success-message {
             position: fixed;
             top: 50%;
@@ -509,6 +624,24 @@
                 transform: none;
                 margin-top: 10px;
             }
+
+            .preview-content {
+                margin: 10px;
+                max-height: 95vh;
+            }
+
+            .preview-body {
+                padding: 20px;
+            }
+
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-actions {
+                flex-direction: column;
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -517,27 +650,10 @@
         <div class="header">
             <i class="fas fa-campground"></i>
             <h1>Formulir Pendaftaran Anggota Pramuka</h1>
-            <p>Bergabunglah dengan gerakan kepanduan Indonesia</p>
+            <p>Ambalan Raden Aria Wangsakara - Nyimas Melati, Pramuka SMAN 20 Kabupaten Tangerang</p>
         </div>
 
         <div class="form-container">
-            <div class="progress-bar">
-                <div class="progress-steps">
-                    <div class="progress-line" id="progressLine"></div>
-                    <div class="step active" data-step="1">
-                        1
-                        <div class="step-label">Data Pribadi</div>
-                    </div>
-                    <div class="step" data-step="2">
-                        2
-                        <div class="step-label">Alamat & Kontak</div>
-                    </div>
-                    <div class="step" data-step="3">
-                        3
-                        <div class="step-label">Informasi Tambahan</div>
-                    </div>
-                </div>
-            </div>
 
             <div class="form-content">
                 <form id="registrationForm">
@@ -798,12 +914,134 @@
                             Lanjut
                             <i class="fas fa-arrow-right"></i>
                         </button>
-                        <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">
-                            <i class="fas fa-paper-plane"></i>
-                            Kirim
+                        <button type="button" class="btn btn-primary" id="submitBtn" style="display: none;">
+                            <i class="fas fa-eye"></i>
+                            Preview & Kirim
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-content">
+            <div class="preview-header">
+                <h2><i class="fas fa-eye"></i> Preview Data Pendaftaran</h2>
+                <p>Periksa kembali data Anda sebelum mengirim</p>
+            </div>
+            <div class="preview-body">
+                <!-- Data Pribadi -->
+                <div class="preview-section">
+                    <h3><i class="fas fa-user"></i> Data Pribadi</h3>
+                    <div class="preview-grid">
+                        <div class="preview-item">
+                            <label>Nama Panggilan:</label>
+                            <div class="value" id="preview-namaPanggilan"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>Nama Lengkap:</label>
+                            <div class="value" id="preview-namaLengkap"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>Jenis Kelamin:</label>
+                            <div class="value" id="preview-jenisKelamin"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>Agama:</label>
+                            <div class="value" id="preview-agama"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>Tempat Lahir:</label>
+                            <div class="value" id="preview-tempatLahir"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>Tanggal Lahir:</label>
+                            <div class="value" id="preview-tanggalLahir"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alamat & Kontak -->
+                <div class="preview-section">
+                    <h3><i class="fas fa-home"></i> Alamat & Kontak</h3>
+                    <div class="preview-grid">
+                        <div class="preview-item">
+                            <label>Provinsi:</label>
+                            <div class="value" id="preview-provinsi"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>Kabupaten/Kota:</label>
+                            <div class="value" id="preview-kabupaten"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>Kecamatan:</label>
+                            <div class="value" id="preview-kecamatan"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>Kelurahan:</label>
+                            <div class="value" id="preview-kelurahan"></div>
+                        </div>
+                        <div class="preview-item full-width">
+                            <label>Alamat Lengkap:</label>
+                            <div class="value" id="preview-alamatLengkap"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>Kelas:</label>
+                            <div class="value" id="preview-kelas"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>Email:</label>
+                            <div class="value" id="preview-email"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>WhatsApp:</label>
+                            <div class="value" id="preview-whatsapp"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Informasi Tambahan -->
+                <div class="preview-section">
+                    <h3><i class="fas fa-info-circle"></i> Informasi Tambahan</h3>
+                    <div class="preview-grid">
+                        <div class="preview-item">
+                            <label>Hobi:</label>
+                            <div class="value" id="preview-hobi"></div>
+                        </div>
+                        <div class="preview-item">
+                            <label>Cita-cita:</label>
+                            <div class="value" id="preview-citaCita"></div>
+                        </div>
+                        <div class="preview-item full-width">
+                            <label>Motto Hidup:</label>
+                            <div class="value" id="preview-mottoHidup"></div>
+                        </div>
+                        <div class="preview-item full-width">
+                            <label>Alasan Masuk Pramuka:</label>
+                            <div class="value" id="preview-alasanMendaftar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pas Foto -->
+                <div class="preview-section">
+                    <h3><i class="fas fa-camera"></i> Pas Foto</h3>
+                    <div class="photo-preview" id="preview-pasFoto">
+                        <!-- Photo will be displayed here -->
+                    </div>
+                </div>
+            </div>
+            <div class="preview-actions">
+                <button type="button" class="btn btn-secondary" onclick="closePreview()">
+                    <i class="fas fa-edit"></i>
+                    Edit Data
+                </button>
+                <button type="button" class="btn btn-primary" onclick="confirmSubmit()">
+                    <i class="fas fa-paper-plane"></i>
+                    Kirim Data
+                </button>
             </div>
         </div>
     </div>
@@ -1075,6 +1313,13 @@
             }
         });
 
+        // Submit button to show preview
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            if (validateCurrentStep()) {
+                showPreview();
+            }
+        });
+
         function showStep(step) {
             // Hide all steps
             document.querySelectorAll('.form-step').forEach(stepEl => {
@@ -1186,6 +1431,63 @@
             return isValid;
         }
 
+        // Show preview modal
+        function showPreview() {
+            const form = document.getElementById('registrationForm');
+            const formData = new FormData(form);
+            
+            // Populate preview data
+            document.getElementById('preview-namaPanggilan').textContent = formData.get('namaPanggilan');
+            document.getElementById('preview-namaLengkap').textContent = formData.get('namaLengkap');
+            document.getElementById('preview-jenisKelamin').textContent = formData.get('jenisKelamin');
+            document.getElementById('preview-agama').textContent = formData.get('agama');
+            document.getElementById('preview-tempatLahir').textContent = formData.get('tempatLahir');
+            
+            // Format tanggal lahir
+            const tanggalLahir = new Date(formData.get('tanggalLahir'));
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('preview-tanggalLahir').textContent = tanggalLahir.toLocaleDateString('id-ID', options);
+            
+            document.getElementById('preview-provinsi').textContent = formData.get('provinsi');
+            document.getElementById('preview-kabupaten').textContent = formData.get('kabupaten');
+            document.getElementById('preview-kecamatan').textContent = formData.get('kecamatan');
+            document.getElementById('preview-kelurahan').textContent = formData.get('kelurahan');
+            document.getElementById('preview-alamatLengkap').textContent = formData.get('alamatLengkap');
+            document.getElementById('preview-kelas').textContent = formData.get('kelas');
+            document.getElementById('preview-email').textContent = formData.get('email');
+            document.getElementById('preview-whatsapp').textContent = formData.get('whatsapp');
+            document.getElementById('preview-hobi').textContent = formData.get('hobi');
+            document.getElementById('preview-citaCita').textContent = formData.get('citaCita');
+            document.getElementById('preview-mottoHidup').textContent = formData.get('mottoHidup');
+            document.getElementById('preview-alasanMendaftar').textContent = formData.get('alasanMendaftar');
+            
+            // Show photo preview
+            const file = document.getElementById('pasFoto').files[0];
+            const photoPreview = document.getElementById('preview-pasFoto');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    photoPreview.innerHTML = `
+                        <img src="${e.target.result}" alt="Pas Foto">
+                        <p style="margin-top: 10px; color: #666;">
+                            <strong>Nama File:</strong> ${file.name}<br>
+                            <strong>Ukuran:</strong> ${(file.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            // Show modal
+            document.getElementById('previewModal').classList.add('show');
+        }
+
+        // Close preview modal
+        function closePreview() {
+            document.getElementById('previewModal').classList.remove('show');
+        }
+
         // Convert file to base64
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
@@ -1196,108 +1498,77 @@
             });
         }
 
-        // Form submission
-        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            if (!validateCurrentStep()) {
-                return;
-            }
-
-            const submitBtn = document.getElementById('submitBtn');
+        // Confirm and submit form
+        async function confirmSubmit() {
             const loading = document.getElementById('loading');
             
-            submitBtn.disabled = true;
+            // Close preview modal
+            closePreview();
+            
+            // Show loading
             loading.style.display = 'block';
 
             try {
-                const formData = new FormData(this);
+                const form = document.getElementById('registrationForm');
+                const formData = new FormData(form);
                 
-                // Prepare data for Google Sheets submission
-                const submitData = new FormData();
-                
-                // Add all form fields
-                submitData.append('timestamp', new Date().toLocaleString('id-ID'));
-                submitData.append('namaPanggilan', formData.get('namaPanggilan'));
-                submitData.append('namaLengkap', formData.get('namaLengkap'));
-                submitData.append('jenisKelamin', formData.get('jenisKelamin'));
-                submitData.append('agama', formData.get('agama'));
-                submitData.append('tempatLahir', formData.get('tempatLahir'));
-                submitData.append('tanggalLahir', formData.get('tanggalLahir'));
-                submitData.append('provinsi', formData.get('provinsi'));
-                submitData.append('kabupaten', formData.get('kabupaten'));
-                submitData.append('kecamatan', formData.get('kecamatan'));
-                submitData.append('kelurahan', formData.get('kelurahan'));
-                submitData.append('alamatLengkap', formData.get('alamatLengkap'));
-                submitData.append('kelas', formData.get('kelas'));
-                submitData.append('email', formData.get('email'));
-                submitData.append('whatsapp', formData.get('whatsapp'));
-                submitData.append('hobi', formData.get('hobi'));
-                submitData.append('citaCita', formData.get('citaCita'));
-                submitData.append('mottoHidup', formData.get('mottoHidup'));
-                submitData.append('alasanMendaftar', formData.get('alasanMendaftar'));
-                
-                // Add file if exists
+                // Convert file to base64
                 const file = document.getElementById('pasFoto').files[0];
+                let pasFotoBase64 = '';
+                
                 if (file) {
-                    submitData.append('pasFoto', file);
+                    pasFotoBase64 = await fileToBase64(file);
                 }
-
-                // Working Google Apps Script URL for form submission
-                const scriptURL = 'https://script.google.com/macros/s/AKfycbxaszSafEr0iTdwRX4V8k8rKsIvubTxw0gjqPabSQxYdj8h2buECIhAufHtZzcXRGxXPw/exec';
                 
-                // Try multiple submission methods for better compatibility
-                let response;
-                
-                try {
-                    // Method 1: Direct fetch with FormData
-                    response = await fetch(scriptURL, {
-                        method: 'POST',
-                        body: submitData,
-                        mode: 'no-cors' // Important for Google Apps Script
-                    });
-                    
-                    // Since no-cors mode doesn't allow reading response, assume success
-                    console.log('Data submitted successfully');
-                    
-                } catch (fetchError) {
-                    console.log('Fetch method failed, trying alternative method');
-                    
-                    // Method 2: Using XMLHttpRequest as fallback
-                    await new Promise((resolve, reject) => {
-                        const xhr = new XMLHttpRequest();
-                        xhr.open('POST', scriptURL);
-                        
-                        xhr.onload = function() {
-                            if (xhr.status === 200 || xhr.status === 0) {
-                                resolve();
-                            } else {
-                                reject(new Error('XHR failed'));
-                            }
-                        };
-                        
-                        xhr.onerror = function() {
-                            reject(new Error('XHR error'));
-                        };
-                        
-                        xhr.send(submitData);
-                    });
-                }
+                // Prepare data for Google Sheets
+                const submitData = {
+                    timestamp: new Date().toISOString(),
+                    namaPanggilan: formData.get('namaPanggilan'),
+                    namaLengkap: formData.get('namaLengkap'),
+                    jenisKelamin: formData.get('jenisKelamin'),
+                    agama: formData.get('agama'),
+                    tempatLahir: formData.get('tempatLahir'),
+                    tanggalLahir: formData.get('tanggalLahir'),
+                    provinsi: formData.get('provinsi'),
+                    kabupaten: formData.get('kabupaten'),
+                    kecamatan: formData.get('kecamatan'),
+                    kelurahan: formData.get('kelurahan'),
+                    alamatLengkap: formData.get('alamatLengkap'),
+                    kelas: formData.get('kelas'),
+                    email: formData.get('email'),
+                    whatsapp: formData.get('whatsapp'),
+                    hobi: formData.get('hobi'),
+                    citaCita: formData.get('citaCita'),
+                    mottoHidup: formData.get('mottoHidup'),
+                    alasanMendaftar: formData.get('alasanMendaftar'),
+                    pasFoto: pasFotoBase64
+                };
 
+                console.log('Sending data:', submitData);
+
+                // Replace with your actual Google Apps Script URL
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbxYOUR_SCRIPT_ID_HERE/exec';
+                
+                const response = await fetch(scriptURL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(submitData),
+                    mode: 'no-cors' // Required for Google Apps Script
+                });
+                
+                // Since we're using no-cors, we can't read the response
+                // Assume success if no error is thrown
+                console.log('Data sent successfully');
+                
                 // Show success message
                 document.getElementById('successName').textContent = formData.get('namaLengkap');
                 document.getElementById('overlay').classList.add('show');
                 document.getElementById('successMessage').classList.add('show');
                 
-                // Log data for debugging
-                console.log('Form data submitted:', {
-                    nama: formData.get('namaLengkap'),
-                    email: formData.get('email'),
-                    timestamp: new Date().toLocaleString('id-ID')
-                });
-                
                 // Reset form
-                this.reset();
+                form.reset();
                 document.getElementById('fileInfo').style.display = 'none';
                 
                 // Reset to first step
@@ -1309,25 +1580,14 @@
                 document.getElementById('kabupaten').disabled = true;
                 document.getElementById('kecamatan').disabled = true;
                 document.getElementById('kelurahan').disabled = true;
-
+                
             } catch (error) {
                 console.error('Submission error:', error);
-                
-                // Show user-friendly error message
-                alert('Terjadi kesalahan saat mengirim data. Pastikan koneksi internet stabil dan coba lagi.\n\nJika masalah berlanjut, hubungi administrator.');
-                
-                // Log detailed error for debugging
-                console.log('Detailed error info:', {
-                    message: error.message,
-                    stack: error.stack,
-                    formData: Object.fromEntries(new FormData(this))
-                });
-                
+                alert('Terjadi kesalahan saat mengirim data. Silakan coba lagi.');
             } finally {
-                submitBtn.disabled = false;
                 loading.style.display = 'none';
             }
-        });
+        }
 
         function closeSuccessMessage() {
             document.getElementById('overlay').classList.remove('show');
@@ -1336,6 +1596,13 @@
 
         // Close success message when clicking overlay
         document.getElementById('overlay').addEventListener('click', closeSuccessMessage);
+
+        // Close preview when clicking outside
+        document.getElementById('previewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePreview();
+            }
+        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96bf09f03489ea81',t:'MTc1NDY1NjM3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96bf3560422b5c61',t:'MTc1NDY1ODE1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
