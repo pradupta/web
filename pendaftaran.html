@@ -1502,11 +1502,7 @@
         // Confirm and submit form
         async function confirmSubmit() {
             const loading = document.getElementById('loading');
-            
-            // Close preview modal
             closePreview();
-            
-            // Show loading
             loading.style.display = 'block';
 
             try {
@@ -1516,7 +1512,6 @@
                 // Convert file to base64
                 const file = document.getElementById('pasFoto').files[0];
                 let pasFotoBase64 = '';
-                
                 if (file) {
                     pasFotoBase64 = await fileToBase64(file);
                 }
@@ -1549,46 +1544,51 @@
 
                 // Replace with your actual Google Apps Script URL
                 const scriptURL = 'https://script.google.com/macros/s/AKfycbxaszSafEr0iTdwRX4V8k8rKsIvubTxw0gjqPabSQxYdj8h2buECIhAufHtZzcXRGxXPw/exec';
-                
                 const response = await fetch(scriptURL, {
                     method: 'POST',
+                    mode: 'cors',
                     headers: {
-                        'Content-Type': 'application/json'
-                        },
-                    body: JSON.stringify(submitData),
-                 
+                        'Content-Type': 'application/json' },
+                    body: JSON.stringify(submitData)
                 });
                 
                 // Since we're using no-cors, we can't read the response
                 // Assume success if no error is thrown
-                console.log('Data sent successfully');
-                
-                // Show success message
+                const result = await response.json();
+                console.log("Hasil response:", result);
+
+            if (result.status === "success") {
                 document.getElementById('successName').textContent = formData.get('namaLengkap');
                 document.getElementById('overlay').classList.add('show');
                 document.getElementById('successMessage').classList.add('show');
-                
-                // Reset form
                 form.reset();
                 document.getElementById('fileInfo').style.display = 'none';
-                
-                // Reset to first step
                 currentStep = 1;
                 showStep(currentStep);
                 updateProgressBar();
-                
-                // Reset dropdowns
                 document.getElementById('kabupaten').disabled = true;
                 document.getElementById('kecamatan').disabled = true;
                 document.getElementById('kelurahan').disabled = true;
+            } else {
+                alert("Gagal: " + result.message);
+            }
                 
             } catch (error) {
-                console.error('Submission error:', error);
-                alert('Terjadi kesalahan saat mengirim data. Silakan coba lagi.');
-            } finally {
-                loading.style.display = 'none';
-            }
+                console.error(error);
+                alert('Terjadi kesalahan saat mengirim data.');
+         } finally {
+            loading.style.display = 'none';
         }
+}
+
+        function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
 
         function closeSuccessMessage() {
             document.getElementById('overlay').classList.remove('show');
@@ -1607,6 +1607,7 @@
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96bf3560422b5c61',t:'MTc1NDY1ODE1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
 
 
 
