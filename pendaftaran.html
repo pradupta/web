@@ -801,7 +801,7 @@
                             <div class="form-group full-width">
                                 <label for="alamatLengkap">
                                     <i class="fas fa-map-pin"></i>
-                                    Alamat Lengkap (Jalan, RT/RW, Patokan, dll) <span class="required">*</span>
+                                    Alamat Lengkap (Jalan, Nama Kampung, RT/RW, dll) <span class="required">*</span>
                                 </label>
                                 <textarea id="alamatLengkap" name="alamatLengkap" class="form-control" rows="3" required placeholder="Contoh: Jl. Merdeka No. 123, RT 01/RW 05, Dekat Masjid Al-Ikhlas"></textarea>
                                 <div class="error-message" id="error-alamatLengkap">Alamat lengkap wajib diisi</div>
@@ -1241,6 +1241,15 @@
             }
         }
 
+        function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
         // Event listeners for cascading dropdowns
         document.getElementById('provinsi').addEventListener('change', function() {
             populateKabupaten(this.value);
@@ -1553,9 +1562,8 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                    },
                     body: JSON.stringify(submitData),
-                    mode: 'no-cors' // Required for Google Apps Script
+                 
                 });
                 
                 // Since we're using no-cors, we can't read the response
@@ -1606,3 +1614,4 @@
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96bf3560422b5c61',t:'MTc1NDY1ODE1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
