@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Pendaftaran & Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px 30px;
+            margin-bottom: 20px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        h1 {
+            color: #1e293b;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #374151;
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #0B69FF;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(11, 105, 255, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: #0B69FF;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056d6;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            color: #FF3B30;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            color: #10b981;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+            padding: 10px;
+            background: #ecfdf5;
+            border-radius: 6px;
+            border: 1px solid #d1fae5;
+        }
+
+        .general-error {
+            color: #FF3B30;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+            padding: 10px;
+            background: #fef2f2;
+            border-radius: 6px;
+            border: 1px solid #fecaca;
+        }
+
+        .switch-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .switch-link a {
+            color: #0B69FF;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .switch-link a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading .btn {
+            background: #94a3b8;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            input[type="text"],
+            input[type="email"],
+            input[type="password"] {
+                font-size: 16px;
+            }
+        }
+
+        .password-requirements {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        .requirement {
+            display: block;
+        }
+
+        .requirement.valid {
+            color: #10b981;
+        }
+
+        .requirement.invalid {
+            color: #FF3B30;
+        }
+
+        .password-input-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6b7280;
+            font-size: 18px;
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: #0B69FF;
+        }
+
+        .password-toggle:focus {
+            outline: none;
+            color: #0B69FF;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Halaman Pendaftaran -->
+        <div id="registerPage" class="page active">
+            <div class="card">
+                <h1>Pendaftaran Akun</h1>
+                
+                <div class="success-message" id="registerSuccess"></div>
+                <div class="general-error" id="registerError"></div>
+                
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="nama">Nama Lengkap</label>
+                        <input type="text" id="nama" name="nama" required>
+                        <div class="error-message" id="namaError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="divisi">Divisi</label>
+                        <input type="text" id="divisi" name="divisi" required>
+                        <div class="error-message" id="divisiError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="jabatan">Jabatan</label>
+                        <input type="text" id="jabatan" name="jabatan" required>
+                        <div class="error-message" id="jabatanError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                        <div class="error-message" id="usernameError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="password" name="password" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('password')" aria-label="Toggle password visibility">
+                                👁️
+                            </button>
+                        </div>
+                        <div class="password-requirements">
+                            <span class="requirement" id="lengthReq">• Minimal 8 karakter</span>
+                            <span class="requirement" id="upperReq">• Minimal 1 huruf besar</span>
+                            <span class="requirement" id="lowerReq">• Minimal 1 huruf kecil</span>
+                            <span class="requirement" id="numberReq">• Minimal 1 angka</span>
+                        </div>
+                        <div class="error-message" id="passwordError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Konfirmasi Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')" aria-label="Toggle password visibility">
+                                👁️
+                            </button>
+                        </div>
+                        <div class="error-message" id="confirmPasswordError"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Daftar</button>
+                </form>
+                
+                <div class="switch-link">
+                    <a href="#" onclick="switchToLogin()">Sudah punya akun? Login</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Halaman Login -->
+        <div id="loginPage" class="page">
+            <div class="card">
+                <h1>Login</h1>
+                
+                <div class="success-message" id="loginSuccess"></div>
+                <div class="general-error" id="loginError"></div>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginIdentifier">Username atau Email</label>
+                        <input type="text" id="loginIdentifier" name="loginIdentifier" required>
+                        <div class="error-message" id="loginIdentifierError"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <div class="password-input-wrapper">
+                            <input type="password" id="loginPassword" name="loginPassword" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')" aria-label="Toggle password visibility">
+                                👁️
+                            </button>
+                        </div>
+                        <div class="error-message" id="loginPasswordError"></div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+                
+                <div class="switch-link">
+                    <a href="#" onclick="switchToRegister()">Belum punya akun? Daftar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu2jOM58LdZLqy350QvHHiaoM0Zwxw4fVrAlzhrp2dt2n9hg6lA2Ip9O3s1ihfhSY8/exec';
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRrKo3L1UMer1lzuDeFEbP10l04krO2mjKHlTFRYvEA4P_8kLOLblB8n7-Gs3JKUXn7IlzqWRgMgJk/pub?output=csv';
+
+        // Fungsi untuk hash password dengan SHA-256
+        async function hashPassword(password, salt = 'defaultSalt') {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password + salt);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Fungsi untuk parsing CSV
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+            const data = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                data.push(row);
+            }
+            
+            return data;
+        }
+
+        // Fungsi validasi password
+        function validatePassword(password) {
+            const requirements = {
+                length: password.length >= 8,
+                upper: /[A-Z]/.test(password),
+                lower: /[a-z]/.test(password),
+                number: /\d/.test(password)
+            };
+            
+            // Update visual indicators
+            document.getElementById('lengthReq').className = requirements.length ? 'requirement valid' : 'requirement invalid';
+            document.getElementById('upperReq').className = requirements.upper ? 'requirement valid' : 'requirement invalid';
+            document.getElementById('lowerReq').className = requirements.lower ? 'requirement valid' : 'requirement invalid';
+            document.getElementById('numberReq').className = requirements.number ? 'requirement valid' : 'requirement invalid';
+            
+            return Object.values(requirements).every(req => req);
+        }
+
+        // Event listener untuk real-time password validation
+        document.getElementById('password').addEventListener('input', function() {
+            validatePassword(this.value);
+        });
+
+        // Fungsi untuk menampilkan error
+        function showError(fieldId, message) {
+            const errorElement = document.getElementById(fieldId + 'Error');
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+        }
+
+        // Fungsi untuk menyembunyikan error
+        function hideError(fieldId) {
+            const errorElement = document.getElementById(fieldId + 'Error');
+            if (errorElement) {
+                errorElement.style.display = 'none';
+            }
+        }
+
+        // Fungsi untuk menyembunyikan semua error
+        function hideAllErrors() {
+            const errorElements = document.querySelectorAll('.error-message, .general-error, .success-message');
+            errorElements.forEach(el => el.style.display = 'none');
+        }
+
+        // Fungsi untuk toggle password visibility
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const toggleButton = passwordField.nextElementSibling;
+            
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleButton.textContent = '🙈';
+                toggleButton.setAttribute('aria-label', 'Hide password');
+            } else {
+                passwordField.type = 'password';
+                toggleButton.textContent = '👁️';
+                toggleButton.setAttribute('aria-label', 'Show password');
+            }
+        }
+
+        // Fungsi untuk switch halaman
+        function switchToLogin() {
+            document.getElementById('registerPage').classList.remove('active');
+            document.getElementById('loginPage').classList.add('active');
+            hideAllErrors();
+        }
+
+        function switchToRegister() {
+            document.getElementById('loginPage').classList.remove('active');
+            document.getElementById('registerPage').classList.add('active');
+            hideAllErrors();
+        }
+
+        // Handle form pendaftaran
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideAllErrors();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            // Validasi
+            let hasError = false;
+            
+            if (!data.nama.trim()) {
+                showError('nama', 'Nama lengkap harus diisi');
+                hasError = true;
+            }
+            
+            if (!data.divisi.trim()) {
+                showError('divisi', 'Divisi harus diisi');
+                hasError = true;
+            }
+            
+            if (!data.jabatan.trim()) {
+                showError('jabatan', 'Jabatan harus diisi');
+                hasError = true;
+            }
+            
+            if (!data.email.trim() || !/\S+@\S+\.\S+/.test(data.email)) {
+                showError('email', 'Email tidak valid');
+                hasError = true;
+            }
+            
+            if (!data.username.trim() || data.username.length < 3) {
+                showError('username', 'Username minimal 3 karakter');
+                hasError = true;
+            }
+            
+            if (!validatePassword(data.password)) {
+                showError('password', 'Password tidak memenuhi syarat');
+                hasError = true;
+            }
+            
+            if (data.password !== data.confirmPassword) {
+                showError('confirmPassword', 'Konfirmasi password tidak cocok');
+                hasError = true;
+            }
+            
+            if (hasError) return;
+            
+            // Set loading state
+            this.classList.add('loading');
+            
+            try {
+                // Hash password sebelum dikirim
+                const hashedPassword = await hashPassword(data.password);
+                
+                const payload = {
+                    action: 'register',
+                    nama: data.nama,
+                    divisi: data.divisi,
+                    jabatan: data.jabatan,
+                    email: data.email,
+                    username: data.username,
+                    password: hashedPassword
+                };
+                
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                    mode: 'cors'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('registerSuccess').textContent = 'Pendaftaran berhasil! Silakan login.';
+                    document.getElementById('registerSuccess').style.display = 'block';
+                    this.reset();
+                    
+                    // Auto switch ke login setelah 2 detik
+                    setTimeout(() => {
+                        switchToLogin();
+                    }, 2000);
+                } else {
+                    document.getElementById('registerError').textContent = result.message || 'Terjadi kesalahan saat mendaftar';
+                    document.getElementById('registerError').style.display = 'block';
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('registerError').textContent = 'Terjadi kesalahan jaringan. Silakan coba lagi.';
+                document.getElementById('registerError').style.display = 'block';
+            } finally {
+                this.classList.remove('loading');
+            }
+        });
+
+        // Handle form login
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            hideAllErrors();
+            
+            const formData = new FormData(this);
+            const identifier = formData.get('loginIdentifier').trim();
+            const password = formData.get('loginPassword');
+            
+            // Validasi
+            if (!identifier) {
+                showError('loginIdentifier', 'Username atau email harus diisi');
+                return;
+            }
+            
+            if (!password) {
+                showError('loginPassword', 'Password harus diisi');
+                return;
+            }
+            
+            // Set loading state
+            this.classList.add('loading');
+            
+            try {
+                // Ambil data dari CSV
+                const response = await fetch(CSV_URL);
+                const csvText = await response.text();
+                const users = parseCSV(csvText);
+                
+                // Hash password yang diinput
+                const hashedPassword = await hashPassword(password);
+                
+                // Cari user berdasarkan username atau email
+                const user = users.find(u => 
+                    (u.username && u.username.toLowerCase() === identifier.toLowerCase()) ||
+                    (u.email && u.email.toLowerCase() === identifier.toLowerCase())
+                );
+                
+                if (user && user.password === hashedPassword) {
+                    document.getElementById('loginSuccess').textContent = `Selamat datang, ${user.nama}!`;
+                    document.getElementById('loginSuccess').style.display = 'block';
+                    this.reset();
+                    
+                    // Simpan data user ke localStorage (opsional)
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        nama: user.nama,
+                        divisi: user.divisi,
+                        jabatan: user.jabatan,
+                        email: user.email,
+                        username: user.username
+                    }));
+                    
+                } else {
+                    document.getElementById('loginError').textContent = 'Username/email atau password salah';
+                    document.getElementById('loginError').style.display = 'block';
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loginError').textContent = 'Terjadi kesalahan saat mengambil data. Silakan coba lagi.';
+                document.getElementById('loginError').style.display = 'block';
+            } finally {
+                this.classList.remove('loading');
+            }
+        });
+
+        // Clear errors saat user mulai mengetik
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', function() {
+                hideError(this.name || this.id);
+            });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'983a65a126a3ce2f',t:'MTc1ODYzNDIzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
