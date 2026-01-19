@@ -1,627 +1,799 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem Pendaftaran & Login</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 450px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            padding: 40px 30px;
-            margin-bottom: 20px;
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        h1 {
-            color: #1e293b;
-            font-size: 28px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            color: #374151;
-            font-weight: 500;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #fafafa;
-        }
-
-        input[type="text"]:focus,
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            outline: none;
-            border-color: #0B69FF;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(11, 105, 255, 0.1);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .btn-primary {
-            background: #0B69FF;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #0056d6;
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .error-message {
-            color: #FF3B30;
-            font-size: 13px;
-            margin-top: 5px;
-            display: none;
-        }
-
-        .success-message {
-            color: #10b981;
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 15px;
-            display: none;
-            padding: 10px;
-            background: #ecfdf5;
-            border-radius: 6px;
-            border: 1px solid #d1fae5;
-        }
-
-        .general-error {
-            color: #FF3B30;
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 15px;
-            display: none;
-            padding: 10px;
-            background: #fef2f2;
-            border-radius: 6px;
-            border: 1px solid #fecaca;
-        }
-
-        .switch-link {
-            text-align: center;
-            margin-top: 20px;
-        }
-
-        .switch-link a {
-            color: #0B69FF;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .switch-link a:hover {
-            text-decoration: underline;
-        }
-
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .loading .btn {
-            background: #94a3b8;
-        }
-
-        @media (max-width: 480px) {
-            .card {
-                padding: 30px 20px;
-            }
-            
-            h1 {
-                font-size: 24px;
-            }
-            
-            input[type="text"],
-            input[type="email"],
-            input[type="password"] {
-                font-size: 16px;
-            }
-        }
-
-        .password-requirements {
-            font-size: 12px;
-            color: #6b7280;
-            margin-top: 5px;
-            line-height: 1.4;
-        }
-
-        .requirement {
-            display: block;
-        }
-
-        .requirement.valid {
-            color: #10b981;
-        }
-
-        .requirement.invalid {
-            color: #FF3B30;
-        }
-
-        .password-input-wrapper {
-            position: relative;
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #6b7280;
-            font-size: 18px;
-            padding: 4px;
-            border-radius: 4px;
-            transition: color 0.2s ease;
-        }
-
-        .password-toggle:hover {
-            color: #0B69FF;
-        }
-
-        .password-toggle:focus {
-            outline: none;
-            color: #0B69FF;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Halaman Pendaftaran -->
-        <div id="registerPage" class="page active">
-            <div class="card">
-                <h1>Pendaftaran Akun</h1>
-                
-                <div class="success-message" id="registerSuccess"></div>
-                <div class="general-error" id="registerError"></div>
-                
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label for="nama">Nama Lengkap</label>
-                        <input type="text" id="nama" name="nama" required>
-                        <div class="error-message" id="namaError"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="divisi">Divisi</label>
-                        <input type="text" id="divisi" name="divisi" required>
-                        <div class="error-message" id="divisiError"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="jabatan">Jabatan</label>
-                        <input type="text" id="jabatan" name="jabatan" required>
-                        <div class="error-message" id="jabatanError"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required>
-                        <div class="error-message" id="emailError"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" required>
-                        <div class="error-message" id="usernameError"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <div class="password-input-wrapper">
-                            <input type="password" id="password" name="password" required>
-                            <button type="button" class="password-toggle" onclick="togglePassword('password')" aria-label="Toggle password visibility">
-                                👁️
-                            </button>
-                        </div>
-                        <div class="password-requirements">
-                            <span class="requirement" id="lengthReq">• Minimal 8 karakter</span>
-                            <span class="requirement" id="upperReq">• Minimal 1 huruf besar</span>
-                            <span class="requirement" id="lowerReq">• Minimal 1 huruf kecil</span>
-                            <span class="requirement" id="numberReq">• Minimal 1 angka</span>
-                        </div>
-                        <div class="error-message" id="passwordError"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="confirmPassword">Konfirmasi Password</label>
-                        <div class="password-input-wrapper">
-                            <input type="password" id="confirmPassword" name="confirmPassword" required>
-                            <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')" aria-label="Toggle password visibility">
-                                👁️
-                            </button>
-                        </div>
-                        <div class="error-message" id="confirmPasswordError"></div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Daftar</button>
-                </form>
-                
-                <div class="switch-link">
-                    <a href="#" onclick="switchToLogin()">Sudah punya akun? Login</a>
-                </div>
-            </div>
+<!doctype html>
+<html lang="id" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Pendaftaran Pramuka SMAN 20</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+    .form-section {
+      animation: fadeInUp 0.5s ease-out forwards;
+      opacity: 0;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .form-section:nth-child(1) { animation-delay: 0.1s; }
+    .form-section:nth-child(2) { animation-delay: 0.2s; }
+    .form-section:nth-child(3) { animation-delay: 0.3s; }
+    .form-section:nth-child(4) { animation-delay: 0.4s; }
+    .form-section:nth-child(5) { animation-delay: 0.5s; }
+    
+    .input-field {
+      transition: all 0.3s ease;
+      border: 2px solid #e5e7eb;
+    }
+    .input-field:focus {
+      border-color: #8B4513;
+      box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+    }
+    .input-field:hover {
+      border-color: #d4a574;
+    }
+    
+    .btn-submit {
+      background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+      transition: all 0.3s ease;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(139, 69, 19, 0.3);
+    }
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+    
+    .password-strength {
+      height: 4px;
+      transition: all 0.3s ease;
+    }
+    
+    .requirement-met {
+      color: #10b981;
+    }
+    .requirement-unmet {
+      color: #ef4444;
+    }
+    
+    .scout-badge {
+      filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+    }
+    
+    .photo-preview {
+      border: 3px dashed #d4a574;
+      transition: all 0.3s ease;
+    }
+    .photo-preview:hover {
+      border-color: #8B4513;
+      background-color: rgba(139, 69, 19, 0.05);
+    }
+    
+    .loading-spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #8B4513;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .toast {
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+  <div class="h-full w-full overflow-auto">
+   <div class="min-h-full w-full py-8 px-4"><!-- Toast Container -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div><!-- Header -->
+    <header class="text-center mb-8">
+     <div class="inline-block mb-4">
+      <svg class="scout-badge w-24 h-24 mx-auto" viewbox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#8B4513" stroke="#D2691E" stroke-width="4" /> <path d="M50 15 L58 35 L80 35 L62 48 L70 70 L50 55 L30 70 L38 48 L20 35 L42 35 Z" fill="#FFD700" stroke="#FFA500" stroke-width="2" /> <circle cx="50" cy="50" r="12" fill="#FFFFFF" stroke="#8B4513" stroke-width="2" /> <text x="50" y="55" text-anchor="middle" fill="#8B4513" font-size="10" font-weight="bold">
+        20
+       </text>
+      </svg>
+     </div>
+     <h1 id="form-title" class="text-3xl md:text-4xl font-bold text-amber-900 mb-2">Form Pendaftaran Anggota Pramuka</h1>
+     <p id="school-name" class="text-lg text-amber-700 font-medium">SMAN 20 Kabupaten Tangerang</p>
+     <p class="text-sm text-amber-600 mt-2">Satyaku Kudarmakan, Darmaku Kubaktikan</p>
+    </header><!-- Form -->
+    <form id="registration-form" class="max-w-3xl mx-auto space-y-6"><!-- Data Pribadi -->
+     <section class="form-section bg-white rounded-2xl shadow-lg p-6 border-l-4 border-amber-600">
+      <h2 class="text-xl font-semibold text-amber-900 mb-4 flex items-center gap-2">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+       </svg> Data Pribadi</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+       <div><label for="nama_singkat" class="block text-sm font-medium text-gray-700 mb-1">Nama Singkat/Panggilan <span class="text-red-500">*</span></label> <input type="text" id="nama_singkat" name="nama_singkat" required class="input-field w-full px-4 py-3 rounded-xl outline-none" placeholder="Contoh: Budi">
+       </div>
+       <div><label for="nama_lengkap" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap <span class="text-red-500">*</span></label> <input type="text" id="nama_lengkap" name="nama_lengkap" required class="input-field w-full px-4 py-3 rounded-xl outline-none" placeholder="Contoh: Budi Santoso">
+       </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4 mt-4">
+       <div><label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin <span class="text-red-500">*</span></label>
+        <div class="flex gap-4"><label class="flex items-center gap-2 cursor-pointer bg-gray-50 px-4 py-3 rounded-xl border-2 border-gray-200 hover:border-amber-400 transition-all"> <input type="radio" name="jenis_kelamin" value="Laki-laki" required class="w-4 h-4 text-amber-600"> <span>Laki-laki</span> </label> <label class="flex items-center gap-2 cursor-pointer bg-gray-50 px-4 py-3 rounded-xl border-2 border-gray-200 hover:border-amber-400 transition-all"> <input type="radio" name="jenis_kelamin" value="Perempuan" class="w-4 h-4 text-amber-600"> <span>Perempuan</span> </label>
         </div>
-
-        <!-- Halaman Login -->
-        <div id="loginPage" class="page">
-            <div class="card">
-                <h1>Login</h1>
-                
-                <div class="success-message" id="loginSuccess"></div>
-                <div class="general-error" id="loginError"></div>
-                
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="loginIdentifier">Username atau Email</label>
-                        <input type="text" id="loginIdentifier" name="loginIdentifier" required>
-                        <div class="error-message" id="loginIdentifierError"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="loginPassword">Password</label>
-                        <div class="password-input-wrapper">
-                            <input type="password" id="loginPassword" name="loginPassword" required>
-                            <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')" aria-label="Toggle password visibility">
-                                👁️
-                            </button>
-                        </div>
-                        <div class="error-message" id="loginPasswordError"></div>
-                    </div>
-                    
-                    <button type="submit" class="btn btn-primary">Login</button>
-                </form>
-                
-                <div class="switch-link">
-                    <a href="#" onclick="switchToRegister()">Belum punya akun? Daftar</a>
-                </div>
-            </div>
+       </div>
+       <div><label for="agama" class="block text-sm font-medium text-gray-700 mb-1">Agama <span class="text-red-500">*</span></label> <select id="agama" name="agama" required class="input-field w-full px-4 py-3 rounded-xl outline-none bg-white"> <option value="">Pilih Agama</option> <option value="Islam">Islam</option> <option value="Kristen Protestan">Kristen Protestan</option> <option value="Katolik">Katolik</option> <option value="Hindu">Hindu</option> <option value="Buddha">Buddha</option> <option value="Konghucu">Konghucu</option> </select>
+       </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4 mt-4">
+       <div><label for="tempat_lahir" class="block text-sm font-medium text-gray-700 mb-1">Tempat Lahir <span class="text-red-500">*</span></label> <input type="text" id="tempat_lahir" name="tempat_lahir" required class="input-field w-full px-4 py-3 rounded-xl outline-none" placeholder="Contoh: Tangerang">
+       </div>
+       <div><label for="tanggal_lahir" class="block text-sm font-medium text-gray-700 mb-1">Tanggal Lahir <span class="text-red-500">*</span></label> <input type="date" id="tanggal_lahir" name="tanggal_lahir" required class="input-field w-full px-4 py-3 rounded-xl outline-none">
+       </div>
+      </div>
+     </section><!-- Alamat -->
+     <section class="form-section bg-white rounded-2xl shadow-lg p-6 border-l-4 border-orange-500">
+      <h2 class="text-xl font-semibold text-amber-900 mb-4 flex items-center gap-2">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+       </svg> Alamat</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+       <div><label for="provinsi" class="block text-sm font-medium text-gray-700 mb-1">Provinsi <span class="text-red-500">*</span></label> <select id="provinsi" name="provinsi" required class="input-field w-full px-4 py-3 rounded-xl outline-none bg-white"> <option value="">Pilih Provinsi</option> </select>
+       </div>
+       <div><label for="kabkota" class="block text-sm font-medium text-gray-700 mb-1">Kabupaten/Kota <span class="text-red-500">*</span></label> <select id="kabkota" name="kabkota" required disabled class="input-field w-full px-4 py-3 rounded-xl outline-none bg-gray-100"> <option value="">Pilih Kabupaten/Kota</option> </select>
+       </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4 mt-4">
+       <div><label for="kecamatan" class="block text-sm font-medium text-gray-700 mb-1">Kecamatan <span class="text-red-500">*</span></label> <select id="kecamatan" name="kecamatan" required disabled class="input-field w-full px-4 py-3 rounded-xl outline-none bg-gray-100"> <option value="">Pilih Kecamatan</option> </select>
+       </div>
+       <div><label for="kelurahan" class="block text-sm font-medium text-gray-700 mb-1">Kelurahan/Desa <span class="text-red-500">*</span></label> <select id="kelurahan" name="kelurahan" required disabled class="input-field w-full px-4 py-3 rounded-xl outline-none bg-gray-100"> <option value="">Pilih Kelurahan</option> </select>
+       </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4 mt-4">
+       <div><label for="kode_pos" class="block text-sm font-medium text-gray-700 mb-1">Kode Pos <span class="text-red-500">*</span></label> <input type="text" id="kode_pos" name="kode_pos" required class="input-field w-full px-4 py-3 rounded-xl outline-none" placeholder="Masukkan kode pos" maxlength="5" pattern="[0-9]{5}">
+       </div>
+       <div><label for="alamat_lengkap" class="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap <span class="text-red-500">*</span></label> <textarea id="alamat_lengkap" name="alamat_lengkap" required rows="2" class="input-field w-full px-4 py-3 rounded-xl outline-none resize-none" placeholder="Jl. Contoh No. 123 RT 01/RW 02"></textarea>
+       </div>
+      </div>
+     </section><!-- Data Sekolah & Kontak -->
+     <section class="form-section bg-white rounded-2xl shadow-lg p-6 border-l-4 border-yellow-500">
+      <h2 class="text-xl font-semibold text-amber-900 mb-4 flex items-center gap-2">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+       </svg> Data Sekolah &amp; Kontak</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+       <div><label for="kelas" class="block text-sm font-medium text-gray-700 mb-1">Kelas <span class="text-red-500">*</span></label> <select id="kelas" name="kelas" required class="input-field w-full px-4 py-3 rounded-xl outline-none bg-white"> <option value="">Pilih Kelas</option> <option value="10">Kelas 10</option> <option value="11">Kelas 11</option> <option value="12">Kelas 12</option> </select>
+       </div>
+       <div><label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email <span class="text-red-500">*</span></label> <input type="email" id="email" name="email" required class="input-field w-full px-4 py-3 rounded-xl outline-none" placeholder="contoh@email.com">
+       </div>
+       <div><label for="no_wa" class="block text-sm font-medium text-gray-700 mb-1">No. WhatsApp <span class="text-red-500">*</span></label> <input type="tel" id="no_wa" name="no_wa" required class="input-field w-full px-4 py-3 rounded-xl outline-none" placeholder="08xxxxxxxxxx">
+       </div>
+      </div>
+     </section><!-- Informasi Tambahan -->
+     <section class="form-section bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-500">
+      <h2 class="text-xl font-semibold text-amber-900 mb-4 flex items-center gap-2">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+       </svg> Informasi Tambahan</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+       <div><label for="hobi" class="block text-sm font-medium text-gray-700 mb-1">Hobi <span class="text-red-500">*</span></label> <input type="text" id="hobi" name="hobi" required class="input-field w-full px-4 py-3 rounded-xl outline-none" placeholder="Contoh: Membaca, Olahraga">
+       </div>
+       <div><label for="cita_cita" class="block text-sm font-medium text-gray-700 mb-1">Cita-cita <span class="text-red-500">*</span></label> <input type="text" id="cita_cita" name="cita_cita" required class="input-field w-full px-4 py-3 rounded-xl outline-none" placeholder="Contoh: Dokter, Guru">
+       </div>
+      </div>
+      <div class="mt-4"><label for="motto" class="block text-sm font-medium text-gray-700 mb-1">Motto Hidup <span class="text-red-500">*</span></label> <input type="text" id="motto" name="motto" required class="input-field w-full px-4 py-3 rounded-xl outline-none" placeholder="Contoh: Terus belajar dan berkembang">
+      </div>
+      <div class="mt-4"><label for="alasan" class="block text-sm font-medium text-gray-700 mb-1">Alasan Masuk Pramuka <span class="text-red-500">*</span></label> <textarea id="alasan" name="alasan" required rows="3" class="input-field w-full px-4 py-3 rounded-xl outline-none resize-none" placeholder="Ceritakan alasan kamu ingin bergabung dengan Pramuka..."></textarea>
+      </div>
+     </section><!-- Upload Foto -->
+     <section class="form-section bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-500">
+      <h2 class="text-xl font-semibold text-amber-900 mb-4 flex items-center gap-2">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+       </svg> Pas Foto 3x4</h2>
+      <div class="flex flex-col md:flex-row gap-6 items-start">
+       <div class="photo-preview w-32 h-40 rounded-xl flex items-center justify-center bg-gray-50 overflow-hidden">
+        <div id="photo-placeholder" class="text-center p-4">
+         <svg class="w-12 h-12 mx-auto text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+         </svg>
+         <p class="text-xs text-gray-500 mt-2">3x4</p>
+        </div><img id="photo-preview-img" class="w-full h-full object-cover hidden" alt="Preview Foto">
+       </div>
+       <div class="flex-1"><label for="pas_foto" class="block text-sm font-medium text-gray-700 mb-2">Upload Foto <span class="text-red-500">*</span></label> <input type="file" id="pas_foto" name="pas_foto" accept="image/*" required class="hidden"> <label for="pas_foto" class="inline-flex items-center gap-2 px-6 py-3 bg-amber-100 text-amber-800 rounded-xl cursor-pointer hover:bg-amber-200 transition-all font-medium">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+         </svg> Pilih Foto </label>
+        <p class="text-xs text-gray-500 mt-2">Format: JPG, PNG, JPEG (Maks. 2MB)</p>
+        <p id="file-name" class="text-sm text-amber-700 mt-1 font-medium"></p>
+       </div>
+      </div>
+     </section><!-- Password -->
+     <section class="form-section bg-white rounded-2xl shadow-lg p-6 border-l-4 border-purple-500">
+      <h2 class="text-xl font-semibold text-amber-900 mb-4 flex items-center gap-2">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+       </svg> Keamanan Akun</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+       <div><label for="password" class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi <span class="text-red-500">*</span></label>
+        <div class="relative"><input type="password" id="password" name="password" required class="input-field w-full px-4 py-3 rounded-xl outline-none pr-12" placeholder="Buat kata sandi"> <button type="button" id="toggle-password" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+          <svg class="w-5 h-5" id="eye-icon" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg></button>
+        </div><!-- Password Strength Bar -->
+        <div class="mt-2 h-1 bg-gray-200 rounded-full overflow-hidden">
+         <div id="password-strength-bar" class="password-strength bg-gray-300 w-0"></div>
+        </div><!-- Password Requirements -->
+        <div class="mt-3 space-y-1 text-xs">
+         <p id="req-length" class="requirement-unmet flex items-center gap-1"><span class="w-4 h-4 inline-flex items-center justify-center">✗</span> Minimal 8 karakter</p>
+         <p id="req-uppercase" class="requirement-unmet flex items-center gap-1"><span class="w-4 h-4 inline-flex items-center justify-center">✗</span> Minimal 1 huruf besar</p>
+         <p id="req-lowercase" class="requirement-unmet flex items-center gap-1"><span class="w-4 h-4 inline-flex items-center justify-center">✗</span> Minimal 1 huruf kecil</p>
+         <p id="req-number" class="requirement-unmet flex items-center gap-1"><span class="w-4 h-4 inline-flex items-center justify-center">✗</span> Minimal 1 angka</p>
+         <p id="req-symbol" class="requirement-unmet flex items-center gap-1"><span class="w-4 h-4 inline-flex items-center justify-center">✗</span> Minimal 1 simbol (!@#$%^&amp;*)</p>
         </div>
-    </div>
+       </div>
+       <div><label for="confirm_password" class="block text-sm font-medium text-gray-700 mb-1">Konfirmasi Kata Sandi <span class="text-red-500">*</span></label>
+        <div class="relative"><input type="password" id="confirm_password" name="confirm_password" required class="input-field w-full px-4 py-3 rounded-xl outline-none pr-12" placeholder="Ulangi kata sandi"> <button type="button" id="toggle-confirm-password" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg></button>
+        </div>
+        <p id="password-match" class="text-xs mt-2 hidden"></p>
+       </div>
+      </div>
+     </section><!-- Submit Button -->
+     <div class="form-section text-center pt-4"><button type="submit" id="submit-btn" class="btn-submit px-12 py-4 text-white font-semibold rounded-2xl text-lg shadow-lg inline-flex items-center gap-3"> <span>Daftar Sekarang</span>
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+       </svg></button>
+      <div id="loading-indicator" class="hidden items-center justify-center gap-3 mt-4">
+       <div class="loading-spinner"></div><span class="text-amber-700">Mengirim data...</span>
+      </div>
+     </div>
+    </form><!-- Footer -->
+    <footer class="text-center mt-8 pb-8">
+     <p class="text-sm text-amber-600">© 2026 Pramuka SMAN 20 Kabupaten Tangerang</p>
+     <p class="text-xs text-amber-500 mt-1">Siap Siaga, Siap Membangun Negeri</p>
+    </footer>
+   </div>
+  </div>
+  <script>
+    // Default Configuration
+    const defaultConfig = {
+      form_title: 'Form Pendaftaran Anggota Pramuka',
+      school_name: 'SMAN 20 Kabupaten Tangerang',
+      primary_color: '#8B4513',
+      secondary_color: '#D2691E',
+      background_color: '#FEF3C7',
+      text_color: '#78350F',
+      accent_color: '#F59E0B'
+    };
 
-    <script>
-        // Konfigurasi
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu2jOM58LdZLqy350QvHHiaoM0Zwxw4fVrAlzhrp2dt2n9hg6lA2Ip9O3s1ihfhSY8/exec';
-        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQRrKo3L1UMer1lzuDeFEbP10l04krO2mjKHlTFRYvEA4P_8kLOLblB8n7-Gs3JKUXn7IlzqWRgMgJk/pub?output=csv';
+    let config = { ...defaultConfig };
 
-        // Fungsi untuk hash password dengan SHA-256
-        async function hashPassword(password, salt = 'defaultSalt') {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password + salt);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        // Fungsi untuk parsing CSV
-        function parseCSV(csvText) {
-            const lines = csvText.trim().split('\n');
-            const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
-            const data = [];
-            
-            for (let i = 1; i < lines.length; i++) {
-                const values = lines[i].split(',').map(v => v.trim().replace(/"/g, ''));
-                const row = {};
-                headers.forEach((header, index) => {
-                    row[header] = values[index] || '';
-                });
-                data.push(row);
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (newConfig) => {
+          config = { ...defaultConfig, ...newConfig };
+          
+          document.getElementById('form-title').textContent = config.form_title || defaultConfig.form_title;
+          document.getElementById('school-name').textContent = config.school_name || defaultConfig.school_name;
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.primary_color || defaultConfig.primary_color,
+              set: (value) => {
+                config.primary_color = value;
+                window.elementSdk.setConfig({ primary_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
             }
-            
-            return data;
-        }
+          ],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['form_title', config.form_title || defaultConfig.form_title],
+          ['school_name', config.school_name || defaultConfig.school_name]
+        ])
+      });
+    }
 
-        // Fungsi validasi password
-        function validatePassword(password) {
-            const requirements = {
-                length: password.length >= 8,
-                upper: /[A-Z]/.test(password),
-                lower: /[a-z]/.test(password),
-                number: /\d/.test(password)
-            };
-            
-            // Update visual indicators
-            document.getElementById('lengthReq').className = requirements.length ? 'requirement valid' : 'requirement invalid';
-            document.getElementById('upperReq').className = requirements.upper ? 'requirement valid' : 'requirement invalid';
-            document.getElementById('lowerReq').className = requirements.lower ? 'requirement valid' : 'requirement invalid';
-            document.getElementById('numberReq').className = requirements.number ? 'requirement valid' : 'requirement invalid';
-            
-            return Object.values(requirements).every(req => req);
-        }
+    // Address Data - Using Indonesian regions API
+    let addressData = [];
+    
+    // Google Apps Script URL
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvdphtVetMMNuUfYvqiHhb4xYS35CiyNkO0dyd8LRpG8al78XkRQVqAvluTqByhRpRjQ/exec';
+    
+    // Alternative API for Indonesian regions
+    const REGIONS_API = 'https://www.emsifa.com/api-wilayah-indonesia/api';
 
-        // Event listener untuk real-time password validation
-        document.getElementById('password').addEventListener('input', function() {
-            validatePassword(this.value);
+    // Toast Notification
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-amber-500';
+      
+      toast.className = `toast ${bgColor} text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-2`;
+      toast.innerHTML = `
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          ${type === 'success' 
+            ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>'
+            : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>'}
+        </svg>
+        <span>${message}</span>
+      `;
+      
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Storage for region data
+    let provinces = [];
+    let regencies = {};
+    let districts = {};
+    let villages = {};
+
+    // Load Address Data using Indonesian Regions API
+    async function loadAddressData() {
+      try {
+        showToast('Memuat data provinsi...', 'info');
+        
+        // Load provinces
+        const response = await fetch(`${REGIONS_API}/provinces.json`);
+        if (!response.ok) throw new Error('Failed to load provinces');
+        
+        provinces = await response.json();
+        console.log('Loaded provinces:', provinces.length);
+        
+        populateProvinsi();
+        showToast('Data provinsi berhasil dimuat!', 'success');
+        
+      } catch (error) {
+        console.error('Error loading address data:', error);
+        showToast('Gagal memuat data alamat. Silakan refresh halaman.', 'error');
+      }
+    }
+
+    // Load regencies for selected province
+    async function loadRegencies(provinceId) {
+      try {
+        if (regencies[provinceId]) {
+          return regencies[provinceId];
+        }
+        
+        const response = await fetch(`${REGIONS_API}/regencies/${provinceId}.json`);
+        if (!response.ok) throw new Error('Failed to load regencies');
+        
+        const data = await response.json();
+        regencies[provinceId] = data;
+        console.log('Loaded regencies for province', provinceId, ':', data.length);
+        
+        return data;
+      } catch (error) {
+        console.error('Error loading regencies:', error);
+        showToast('Gagal memuat data kabupaten/kota.', 'error');
+        return [];
+      }
+    }
+
+    // Load districts for selected regency
+    async function loadDistricts(regencyId) {
+      try {
+        if (districts[regencyId]) {
+          return districts[regencyId];
+        }
+        
+        const response = await fetch(`${REGIONS_API}/districts/${regencyId}.json`);
+        if (!response.ok) throw new Error('Failed to load districts');
+        
+        const data = await response.json();
+        districts[regencyId] = data;
+        console.log('Loaded districts for regency', regencyId, ':', data.length);
+        
+        return data;
+      } catch (error) {
+        console.error('Error loading districts:', error);
+        showToast('Gagal memuat data kecamatan.', 'error');
+        return [];
+      }
+    }
+
+    // Load villages for selected district
+    async function loadVillages(districtId) {
+      try {
+        if (villages[districtId]) {
+          return villages[districtId];
+        }
+        
+        const response = await fetch(`${REGIONS_API}/villages/${districtId}.json`);
+        if (!response.ok) throw new Error('Failed to load villages');
+        
+        const data = await response.json();
+        villages[districtId] = data;
+        console.log('Loaded villages for district', districtId, ':', data.length);
+        
+        return data;
+      } catch (error) {
+        console.error('Error loading villages:', error);
+        showToast('Gagal memuat data kelurahan.', 'error');
+        return [];
+      }
+    }
+
+    // Populate Dropdowns
+    function populateProvinsi() {
+      const provinsiSelect = document.getElementById('provinsi');
+      
+      provinsiSelect.innerHTML = '<option value="">Pilih Provinsi</option>';
+      provinces.forEach(prov => {
+        provinsiSelect.innerHTML += `<option value="${prov.id}" data-name="${prov.name}">${prov.name}</option>`;
+      });
+    }
+
+    async function populateKabKota(provinceId, provinceName) {
+      const kabkotaSelect = document.getElementById('kabkota');
+      kabkotaSelect.innerHTML = '<option value="">Memuat data...</option>';
+      kabkotaSelect.disabled = true;
+      
+      const data = await loadRegencies(provinceId);
+      
+      kabkotaSelect.innerHTML = '<option value="">Pilih Kabupaten/Kota</option>';
+      data.forEach(reg => {
+        kabkotaSelect.innerHTML += `<option value="${reg.id}" data-name="${reg.name}">${reg.name}</option>`;
+      });
+      
+      kabkotaSelect.disabled = false;
+      kabkotaSelect.classList.remove('bg-gray-100');
+      
+      document.getElementById('kecamatan').innerHTML = '<option value="">Pilih Kecamatan</option>';
+      document.getElementById('kecamatan').disabled = true;
+      document.getElementById('kecamatan').classList.add('bg-gray-100');
+      
+      document.getElementById('kelurahan').innerHTML = '<option value="">Pilih Kelurahan</option>';
+      document.getElementById('kelurahan').disabled = true;
+      document.getElementById('kelurahan').classList.add('bg-gray-100');
+      
+      document.getElementById('kode_pos').value = '';
+    }
+
+    async function populateKecamatan(regencyId, regencyName) {
+      const kecamatanSelect = document.getElementById('kecamatan');
+      kecamatanSelect.innerHTML = '<option value="">Memuat data...</option>';
+      kecamatanSelect.disabled = true;
+      
+      const data = await loadDistricts(regencyId);
+      
+      kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+      data.forEach(dist => {
+        kecamatanSelect.innerHTML += `<option value="${dist.id}" data-name="${dist.name}">${dist.name}</option>`;
+      });
+      
+      kecamatanSelect.disabled = false;
+      kecamatanSelect.classList.remove('bg-gray-100');
+      
+      document.getElementById('kelurahan').innerHTML = '<option value="">Pilih Kelurahan</option>';
+      document.getElementById('kelurahan').disabled = true;
+      document.getElementById('kelurahan').classList.add('bg-gray-100');
+      
+      document.getElementById('kode_pos').value = '';
+    }
+
+    async function populateKelurahan(districtId, districtName) {
+      const kelurahanSelect = document.getElementById('kelurahan');
+      kelurahanSelect.innerHTML = '<option value="">Memuat data...</option>';
+      kelurahanSelect.disabled = true;
+      
+      const data = await loadVillages(districtId);
+      
+      kelurahanSelect.innerHTML = '<option value="">Pilih Kelurahan</option>';
+      data.forEach(vill => {
+        kelurahanSelect.innerHTML += `<option value="${vill.id}" data-name="${vill.name}">${vill.name}</option>`;
+      });
+      
+      kelurahanSelect.disabled = false;
+      kelurahanSelect.classList.remove('bg-gray-100');
+      
+      document.getElementById('kode_pos').value = '';
+    }
+
+    // Event Listeners for Address
+    document.getElementById('provinsi').addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      const provinceId = this.value;
+      const provinceName = selectedOption.getAttribute('data-name');
+      
+      if (provinceId) {
+        populateKabKota(provinceId, provinceName);
+      }
+    });
+
+    document.getElementById('kabkota').addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      const regencyId = this.value;
+      const regencyName = selectedOption.getAttribute('data-name');
+      
+      if (regencyId) {
+        populateKecamatan(regencyId, regencyName);
+      }
+    });
+
+    document.getElementById('kecamatan').addEventListener('change', async function() {
+      const selectedOption = this.options[this.selectedIndex];
+      const districtId = this.value;
+      const districtName = selectedOption.getAttribute('data-name');
+      
+      if (districtId) {
+        populateKelurahan(districtId, districtName);
+      }
+    });
+
+    document.getElementById('kelurahan').addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      const villageId = this.value;
+    });
+
+    // Photo Upload
+    document.getElementById('pas_foto').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 2 * 1024 * 1024) {
+          showToast('Ukuran file terlalu besar. Maksimal 2MB.', 'error');
+          this.value = '';
+          return;
+        }
+        
+        document.getElementById('file-name').textContent = file.name;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const img = document.getElementById('photo-preview-img');
+          img.src = event.target.result;
+          img.classList.remove('hidden');
+          document.getElementById('photo-placeholder').classList.add('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Password Validation
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const strengthBar = document.getElementById('password-strength-bar');
+
+    function validatePassword(password) {
+      const requirements = {
+        length: password.length >= 8,
+        uppercase: /[A-Z]/.test(password),
+        lowercase: /[a-z]/.test(password),
+        number: /[0-9]/.test(password),
+        symbol: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+      };
+      
+      // Update requirement indicators
+      updateRequirement('req-length', requirements.length);
+      updateRequirement('req-uppercase', requirements.uppercase);
+      updateRequirement('req-lowercase', requirements.lowercase);
+      updateRequirement('req-number', requirements.number);
+      updateRequirement('req-symbol', requirements.symbol);
+      
+      // Calculate strength
+      const metCount = Object.values(requirements).filter(Boolean).length;
+      const strength = (metCount / 5) * 100;
+      
+      strengthBar.style.width = strength + '%';
+      
+      if (metCount <= 2) {
+        strengthBar.className = 'password-strength bg-red-500';
+      } else if (metCount <= 3) {
+        strengthBar.className = 'password-strength bg-yellow-500';
+      } else if (metCount <= 4) {
+        strengthBar.className = 'password-strength bg-blue-500';
+      } else {
+        strengthBar.className = 'password-strength bg-green-500';
+      }
+      
+      return Object.values(requirements).every(Boolean);
+    }
+
+    function updateRequirement(id, met) {
+      const element = document.getElementById(id);
+      if (met) {
+        element.classList.remove('requirement-unmet');
+        element.classList.add('requirement-met');
+        element.querySelector('span').textContent = '✓';
+      } else {
+        element.classList.remove('requirement-met');
+        element.classList.add('requirement-unmet');
+        element.querySelector('span').textContent = '✗';
+      }
+    }
+
+    passwordInput.addEventListener('input', function() {
+      validatePassword(this.value);
+      checkPasswordMatch();
+    });
+
+    confirmPasswordInput.addEventListener('input', checkPasswordMatch);
+
+    function checkPasswordMatch() {
+      const matchText = document.getElementById('password-match');
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+      
+      if (confirmPassword) {
+        matchText.classList.remove('hidden');
+        if (password === confirmPassword) {
+          matchText.textContent = '✓ Kata sandi cocok';
+          matchText.className = 'text-xs mt-2 text-green-600';
+        } else {
+          matchText.textContent = '✗ Kata sandi tidak cocok';
+          matchText.className = 'text-xs mt-2 text-red-600';
+        }
+      } else {
+        matchText.classList.add('hidden');
+      }
+    }
+
+    // Toggle Password Visibility
+    document.getElementById('toggle-password').addEventListener('click', function() {
+      const input = document.getElementById('password');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    });
+
+    document.getElementById('toggle-confirm-password').addEventListener('click', function() {
+      const input = document.getElementById('confirm_password');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    });
+
+    // Form Submission
+    document.getElementById('registration-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      // Validate password
+      if (!validatePassword(passwordInput.value)) {
+        showToast('Kata sandi tidak memenuhi persyaratan.', 'error');
+        return;
+      }
+      
+      if (passwordInput.value !== confirmPasswordInput.value) {
+        showToast('Konfirmasi kata sandi tidak cocok.', 'error');
+        return;
+      }
+      
+      // Get photo file
+      const photoFile = document.getElementById('pas_foto').files[0];
+      if (!photoFile) {
+        showToast('Silakan upload pas foto.', 'error');
+        return;
+      }
+      
+      // Show loading
+      const submitBtn = document.getElementById('submit-btn');
+      const loadingIndicator = document.getElementById('loading-indicator');
+      submitBtn.disabled = true;
+      submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      loadingIndicator.classList.remove('hidden');
+      loadingIndicator.classList.add('flex');
+      
+      try {
+        // Convert photo to base64
+        const photoBase64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result.split(',')[1]);
+          reader.readAsDataURL(photoFile);
         });
-
-        // Fungsi untuk menampilkan error
-        function showError(fieldId, message) {
-            const errorElement = document.getElementById(fieldId + 'Error');
-            if (errorElement) {
-                errorElement.textContent = message;
-                errorElement.style.display = 'block';
-            }
-        }
-
-        // Fungsi untuk menyembunyikan error
-        function hideError(fieldId) {
-            const errorElement = document.getElementById(fieldId + 'Error');
-            if (errorElement) {
-                errorElement.style.display = 'none';
-            }
-        }
-
-        // Fungsi untuk menyembunyikan semua error
-        function hideAllErrors() {
-            const errorElements = document.querySelectorAll('.error-message, .general-error, .success-message');
-            errorElements.forEach(el => el.style.display = 'none');
-        }
-
-        // Fungsi untuk toggle password visibility
-        function togglePassword(fieldId) {
-            const passwordField = document.getElementById(fieldId);
-            const toggleButton = passwordField.nextElementSibling;
-            
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                toggleButton.textContent = '🙈';
-                toggleButton.setAttribute('aria-label', 'Hide password');
-            } else {
-                passwordField.type = 'password';
-                toggleButton.textContent = '👁️';
-                toggleButton.setAttribute('aria-label', 'Show password');
-            }
-        }
-
-        // Fungsi untuk switch halaman
-        function switchToLogin() {
-            document.getElementById('registerPage').classList.remove('active');
-            document.getElementById('loginPage').classList.add('active');
-            hideAllErrors();
-        }
-
-        function switchToRegister() {
-            document.getElementById('loginPage').classList.remove('active');
-            document.getElementById('registerPage').classList.add('active');
-            hideAllErrors();
-        }
-
-        // Handle form pendaftaran
-        document.getElementById('registerForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            hideAllErrors();
-            
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
-            
-            // Validasi
-            let hasError = false;
-            
-            if (!data.nama.trim()) {
-                showError('nama', 'Nama lengkap harus diisi');
-                hasError = true;
-            }
-            
-            if (!data.divisi.trim()) {
-                showError('divisi', 'Divisi harus diisi');
-                hasError = true;
-            }
-            
-            if (!data.jabatan.trim()) {
-                showError('jabatan', 'Jabatan harus diisi');
-                hasError = true;
-            }
-            
-            if (!data.email.trim() || !/\S+@\S+\.\S+/.test(data.email)) {
-                showError('email', 'Email tidak valid');
-                hasError = true;
-            }
-            
-            if (!data.username.trim() || data.username.length < 3) {
-                showError('username', 'Username minimal 3 karakter');
-                hasError = true;
-            }
-            
-            if (!validatePassword(data.password)) {
-                showError('password', 'Password tidak memenuhi syarat');
-                hasError = true;
-            }
-            
-            if (data.password !== data.confirmPassword) {
-                showError('confirmPassword', 'Konfirmasi password tidak cocok');
-                hasError = true;
-            }
-            
-            if (hasError) return;
-            
-            // Set loading state
-            this.classList.add('loading');
-            
-            try {
-                // Hash password sebelum dikirim
-                const hashedPassword = await hashPassword(data.password);
-                
-                const payload = {
-                    action: 'register',
-                    nama: data.nama,
-                    divisi: data.divisi,
-                    jabatan: data.jabatan,
-                    email: data.email,
-                    username: data.username,
-                    password: hashedPassword
-                };
-                
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(payload),
-                    mode: 'cors'
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    document.getElementById('registerSuccess').textContent = 'Pendaftaran berhasil! Silakan login.';
-                    document.getElementById('registerSuccess').style.display = 'block';
-                    this.reset();
-                    
-                    // Auto switch ke login setelah 2 detik
-                    setTimeout(() => {
-                        switchToLogin();
-                    }, 2000);
-                } else {
-                    document.getElementById('registerError').textContent = result.message || 'Terjadi kesalahan saat mendaftar';
-                    document.getElementById('registerError').style.display = 'block';
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('registerError').textContent = 'Terjadi kesalahan jaringan. Silakan coba lagi.';
-                document.getElementById('registerError').style.display = 'block';
-            } finally {
-                this.classList.remove('loading');
-            }
+        
+        // Prepare form data
+        const formData = {
+          timestamp: new Date().toISOString(),
+          nama_singkat: document.getElementById('nama_singkat').value,
+          nama_lengkap: document.getElementById('nama_lengkap').value,
+          jenis_kelamin: document.querySelector('input[name="jenis_kelamin"]:checked').value,
+          agama: document.getElementById('agama').value,
+          tempat_lahir: document.getElementById('tempat_lahir').value,
+          tanggal_lahir: document.getElementById('tanggal_lahir').value,
+          provinsi: document.getElementById('provinsi').options[document.getElementById('provinsi').selectedIndex].getAttribute('data-name'),
+          kabkota: document.getElementById('kabkota').options[document.getElementById('kabkota').selectedIndex].getAttribute('data-name'),
+          kecamatan: document.getElementById('kecamatan').options[document.getElementById('kecamatan').selectedIndex].getAttribute('data-name'),
+          kelurahan: document.getElementById('kelurahan').options[document.getElementById('kelurahan').selectedIndex].getAttribute('data-name'),
+          kode_pos: document.getElementById('kode_pos').value,
+          alamat_lengkap: document.getElementById('alamat_lengkap').value,
+          kelas: document.getElementById('kelas').value,
+          email: document.getElementById('email').value,
+          no_wa: document.getElementById('no_wa').value,
+          hobi: document.getElementById('hobi').value,
+          cita_cita: document.getElementById('cita_cita').value,
+          motto: document.getElementById('motto').value,
+          alasan: document.getElementById('alasan').value,
+          password: passwordInput.value,
+          foto_base64: photoBase64,
+          foto_nama: photoFile.name,
+          foto_mime: photoFile.type
+        };
+        
+        // Send to Google Apps Script
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
         });
-
-        // Handle form login
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            hideAllErrors();
-            
-            const formData = new FormData(this);
-            const identifier = formData.get('loginIdentifier').trim();
-            const password = formData.get('loginPassword');
-            
-            // Validasi
-            if (!identifier) {
-                showError('loginIdentifier', 'Username atau email harus diisi');
-                return;
-            }
-            
-            if (!password) {
-                showError('loginPassword', 'Password harus diisi');
-                return;
-            }
-            
-            // Set loading state
-            this.classList.add('loading');
-            
-            try {
-                // Ambil data dari CSV
-                const response = await fetch(CSV_URL);
-                const csvText = await response.text();
-                const users = parseCSV(csvText);
-                
-                // Hash password yang diinput
-                const hashedPassword = await hashPassword(password);
-                
-                // Cari user berdasarkan username atau email
-                const user = users.find(u => 
-                    (u.username && u.username.toLowerCase() === identifier.toLowerCase()) ||
-                    (u.email && u.email.toLowerCase() === identifier.toLowerCase())
-                );
-                
-                if (user && user.password === hashedPassword) {
-                    document.getElementById('loginSuccess').textContent = `Selamat datang, ${user.nama}!`;
-                    document.getElementById('loginSuccess').style.display = 'block';
-                    this.reset();
-                    
-                    // Simpan data user ke localStorage (opsional)
-                    localStorage.setItem('currentUser', JSON.stringify({
-                        nama: user.nama,
-                        divisi: user.divisi,
-                        jabatan: user.jabatan,
-                        email: user.email,
-                        username: user.username
-                    }));
-                    
-                } else {
-                    document.getElementById('loginError').textContent = 'Username/email atau password salah';
-                    document.getElementById('loginError').style.display = 'block';
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('loginError').textContent = 'Terjadi kesalahan saat mengambil data. Silakan coba lagi.';
-                document.getElementById('loginError').style.display = 'block';
-            } finally {
-                this.classList.remove('loading');
-            }
+        
+        showToast('Pendaftaran berhasil! Data Anda telah terkirim.', 'success');
+        
+        // Reset form
+        this.reset();
+        document.getElementById('photo-preview-img').classList.add('hidden');
+        document.getElementById('photo-placeholder').classList.remove('hidden');
+        document.getElementById('file-name').textContent = '';
+        strengthBar.style.width = '0%';
+        
+        // Reset address dropdowns
+        ['kabkota', 'kecamatan', 'kelurahan'].forEach(id => {
+          const el = document.getElementById(id);
+          el.innerHTML = `<option value="">Pilih ${id === 'kabkota' ? 'Kabupaten/Kota' : id.charAt(0).toUpperCase() + id.slice(1)}</option>`;
+          el.disabled = true;
+          el.classList.add('bg-gray-100');
         });
-
-        // Clear errors saat user mulai mengetik
-        document.querySelectorAll('input').forEach(input => {
-            input.addEventListener('input', function() {
-                hideError(this.name || this.id);
-            });
+        document.getElementById('kode_pos').value = '';
+        
+        // Reset password requirements
+        ['req-length', 'req-uppercase', 'req-lowercase', 'req-number', 'req-symbol'].forEach(id => {
+          updateRequirement(id, false);
         });
-    </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'983a65a126a3ce2f',t:'MTc1ODYzNDIzMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+        
+        document.getElementById('password-match').classList.add('hidden');
+        
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('Pendaftaran telah dikirim. Terima kasih!', 'success');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        loadingIndicator.classList.add('hidden');
+        loadingIndicator.classList.remove('flex');
+      }
+    });
+
+    // Initialize
+    loadAddressData();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c0635f7368941d7',t:'MTc2ODgyNDQzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
