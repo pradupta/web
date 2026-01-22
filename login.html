@@ -73,7 +73,7 @@
        </svg>
       </div>
       <h1 id="pageTitle" class="text-3xl font-bold text-gray-800 mb-2">Unduh Biodata Anda</h1>
-      <p id="pageSubtitle" class="text-gray-600">Masukkan email/nomor telepon dan Password Anda untuk mengakses file</p>
+      <p id="pageSubtitle" class="text-gray-600">Masukkan email/nomor telepon dan password Anda untuk mengakses file</p>
      </div><!-- Form -->
      <form id="verificationForm" class="space-y-6">
       <div><label for="identifier" class="block text-sm font-semibold text-gray-700 mb-2"> Email atau Nomor Telepon </label> <input type="text" id="identifier" name="identifier" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-purple-500 transition-all input-focus" placeholder="contoh@email.com atau 08123456789" required>
@@ -252,7 +252,7 @@
       showLoading(true);
       
       const identifier = document.getElementById('identifier').value;
-      const password = document.getElementById('password').value;
+      const password= document.getElementById('password').value;
       
       // Simulate processing time
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -272,6 +272,11 @@
 
     // Load data when page loads
     loadSheetData();
+
+    // Auto-refresh data every 30 seconds to detect changes
+    setInterval(() => {
+      loadSheetData();
+    }, 30000);
 
     // Initialize Element SDK
     if (window.elementSdk) {
@@ -294,5 +299,5 @@
       });
     }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c1e4d506640fede',t:'MTc2OTA3NzA1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c20ddc820ec98ed',t:'MTc2OTEwMzk0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
