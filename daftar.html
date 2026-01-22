@@ -109,6 +109,46 @@
         opacity: 1;
       }
     }
+    
+    .modal-overlay {
+      backdrop-filter: blur(8px);
+      animation: fadeIn 0.3s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .modal-content {
+      animation: scaleIn 0.3s ease-out;
+    }
+    @keyframes scaleIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    
+    .success-checkmark {
+      animation: checkmarkPop 0.5s ease-out 0.2s both;
+    }
+    @keyframes checkmarkPop {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+      50% {
+        transform: scale(1.2);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
   </style>
   <style>@view-transition { navigation: auto; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -116,7 +156,19 @@
  <body class="h-full bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
   <div class="h-full w-full overflow-auto">
    <div class="min-h-full w-full py-8 px-4"><!-- Toast Container -->
-    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div><!-- Header -->
+    <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div><!-- Success Modal -->
+    <div id="success-modal" class="modal-overlay hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+     <div class="modal-content bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center"><!-- Success Icon -->
+      <div class="success-checkmark mb-6">
+       <svg class="w-24 h-24 mx-auto text-green-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="2" fill="#10b981" opacity="0.2" /> <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+       </svg>
+      </div><!-- Success Message -->
+      <h2 class="text-2xl font-bold text-amber-900 mb-3">Selamat! 🎉</h2>
+      <p class="text-gray-600 mb-6">Pendaftaran Anda berhasil! Terima kasih telah mendaftar sebagai anggota Pramuka SMAN 20.</p><!-- Buttons -->
+      <div class="space-y-3"><a href="https://pradupta.github.io/web/login" target="_blank" rel="noopener noreferrer" class="block w-full btn-submit px-6 py-4 text-white font-semibold rounded-xl text-lg shadow-lg"> Download Biodata </a> <button id="close-modal" class="w-full px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all"> Tutup </button>
+      </div>
+     </div>
+    </div><!-- Header -->
     <header class="text-center mb-8">
      <div class="inline-block mb-4">
       <svg class="scout-badge w-24 h-24 mx-auto" viewbox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="48" fill="#8B4513" stroke="#D2691E" stroke-width="4" /> <path d="M50 15 L58 35 L80 35 L62 48 L70 70 L50 55 L30 70 L38 48 L20 35 L42 35 Z" fill="#FFD700" stroke="#FFA500" stroke-width="2" /> <circle cx="50" cy="50" r="12" fill="#FFFFFF" stroke="#8B4513" stroke-width="2" /> <text x="50" y="55" text-anchor="middle" fill="#8B4513" font-size="10" font-weight="bold">
@@ -264,7 +316,7 @@
      </div>
     </form><!-- Footer -->
     <footer class="text-center mt-8 pb-8">
-     <p class="text-sm text-amber-600">© 2026 Pramuka SMAN 20 Kabupaten Tangerang</p>
+     <p class="text-sm text-amber-600">© 2024 Pramuka SMAN 20 Kabupaten Tangerang</p>
      <p class="text-xs text-amber-500 mt-1">Siap Siaga, Siap Membangun Negeri</p>
     </footer>
    </div>
@@ -332,7 +384,7 @@
     let addressData = [];
     
     // Google Apps Script URL
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwvdphtVetMMNuUfYvqiHhb4xYS35CiyNkO0dyd8LRpG8al78XkRQVqAvluTqByhRpRjQ/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGEn6Bhmc9yAzmITjCCdslxGLWq0rdZQDm3Mko-SWGFxdrffbUuiGiUgLk6crA9HB5/exec';
     
     // Alternative API for Indonesian regions
     const REGIONS_API = 'https://www.emsifa.com/api-wilayah-indonesia/api';
@@ -361,6 +413,22 @@
         setTimeout(() => toast.remove(), 300);
       }, 4000);
     }
+
+    // Success Modal Functions
+    function showSuccessModal() {
+      const modal = document.getElementById('success-modal');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function hideSuccessModal() {
+      const modal = document.getElementById('success-modal');
+      modal.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+
+    // Close modal button
+    document.getElementById('close-modal').addEventListener('click', hideSuccessModal);
 
     // Storage for region data
     let provinces = [];
@@ -756,7 +824,8 @@
           body: JSON.stringify(formData)
         });
         
-        showToast('Pendaftaran berhasil! Data Anda telah terkirim.', 'success');
+        // Show success modal instead of toast
+        showSuccessModal();
         
         // Reset form
         this.reset();
@@ -795,5 +864,5 @@
     // Initialize
     loadAddressData();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c0635f7368941d7',t:'MTc2ODgyNDQzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c1dff22b128ce8d',t:'MTc2OTA3Mzg0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
