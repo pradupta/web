@@ -164,8 +164,30 @@
        </svg>
       </div><!-- Success Message -->
       <h2 class="text-2xl font-bold text-amber-900 mb-3">Selamat! 🎉</h2>
-      <p class="text-gray-600 mb-6">Pendaftaran Anda berhasil! Terima kasih telah mendaftar sebagai anggota Pramuka SMAN 20.</p><!-- Buttons -->
-      <div class="space-y-3"><a href="https://pradupta.github.io/web/login" target="_blank" rel="noopener noreferrer" class="block w-full btn-submit px-6 py-4 text-white font-semibold rounded-xl text-lg shadow-lg"> Download Biodata </a> <button id="close-modal" class="w-full px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all"> Tutup </button>
+      <p class="text-gray-600 mb-6">Pendaftaran Anda berhasil! Terima kasih telah mendaftar sebagai anggota Pramuka SMAN 20.</p><!-- Timer Section -->
+      <div id="timer-section" class="mb-6">
+       <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border-2 border-amber-200">
+        <p class="text-sm text-amber-700 mb-3 font-medium">Biodata Anda sedang diproses...</p>
+        <div class="flex items-center justify-center gap-3">
+         <svg class="w-8 h-8 text-amber-600 animate-spin" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+         </svg>
+         <div>
+          <div class="text-4xl font-bold text-amber-900" id="countdown-timer">
+           01:00
+          </div>
+          <p class="text-xs text-amber-600 mt-1">Mohon tunggu sebentar</p>
+         </div>
+        </div>
+       </div>
+      </div><!-- Download Button (Hidden initially) -->
+      <div id="download-section" class="hidden space-y-3">
+       <div class="bg-green-50 rounded-xl p-4 mb-4 border-2 border-green-200">
+        <p class="text-sm text-green-700 font-medium flex items-center justify-center gap-2">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+         </svg> Biodata Anda sudah siap!</p>
+       </div><button id="download-biodata-btn" class="w-full btn-submit px-6 py-4 text-white font-semibold rounded-xl text-lg shadow-lg flex items-center justify-center gap-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg> Download Biodata </button> <button id="close-modal" class="w-full px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-all"> Tutup </button>
       </div>
      </div>
     </div><!-- Header -->
@@ -414,18 +436,70 @@
       }, 4000);
     }
 
+    // Timer variables
+    let countdownInterval = null;
+    let userEmail = '';
+    let userPhone = '';
+
     // Success Modal Functions
     function showSuccessModal() {
       const modal = document.getElementById('success-modal');
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
+      
+      // Start countdown timer
+      startCountdown();
     }
 
     function hideSuccessModal() {
       const modal = document.getElementById('success-modal');
       modal.classList.add('hidden');
       document.body.style.overflow = 'auto';
+      
+      // Clear countdown
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
+      
+      // Reset timer display
+      document.getElementById('timer-section').classList.remove('hidden');
+      document.getElementById('download-section').classList.add('hidden');
+      document.getElementById('countdown-timer').textContent = '01:00';
     }
+
+    // Countdown Timer Function
+    function startCountdown() {
+      let timeLeft = 60; // 60 seconds = 1 minute
+      const timerDisplay = document.getElementById('countdown-timer');
+      const timerSection = document.getElementById('timer-section');
+      const downloadSection = document.getElementById('download-section');
+      
+      countdownInterval = setInterval(() => {
+        timeLeft--;
+        
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+          clearInterval(countdownInterval);
+          
+          // Hide timer, show download button
+          timerSection.classList.add('hidden');
+          downloadSection.classList.remove('hidden');
+          
+          showToast('Biodata Anda sudah siap untuk diunduh!', 'success');
+        }
+      }, 1000);
+    }
+
+    // Download Biodata Button
+    document.getElementById('download-biodata-btn').addEventListener('click', function() {
+      // Create URL with email and phone parameters
+      const loginUrl = `https://pradupta.github.io/web/login.html`;
+      window.open(loginUrl, '_blank', 'noopener,noreferrer');
+      showToast('Halaman download biodata dibuka!', 'success');
+    });
 
     // Close modal button
     document.getElementById('close-modal').addEventListener('click', hideSuccessModal);
@@ -779,6 +853,10 @@
       loadingIndicator.classList.add('flex');
       
       try {
+        // Store email and phone for later use
+        userEmail = document.getElementById('email').value;
+        userPhone = document.getElementById('no_wa').value;
+        
         // Convert photo to base64
         const photoBase64 = await new Promise((resolve) => {
           const reader = new FileReader();
@@ -802,8 +880,8 @@
           kode_pos: document.getElementById('kode_pos').value,
           alamat_lengkap: document.getElementById('alamat_lengkap').value,
           kelas: document.getElementById('kelas').value,
-          email: document.getElementById('email').value,
-          no_wa: document.getElementById('no_wa').value,
+          email: userEmail,
+          no_wa: userPhone,
           hobi: document.getElementById('hobi').value,
           cita_cita: document.getElementById('cita_cita').value,
           motto: document.getElementById('motto').value,
@@ -864,5 +942,5 @@
     // Initialize
     loadAddressData();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c1dff22b128ce8d',t:'MTc2OTA3Mzg0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9c1e235935735542',t:'MTc2OTA3NTMzMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
