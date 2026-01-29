@@ -24,84 +24,100 @@
 
   <nav class="sticky-nav text-white px-4 py-3 flex justify-between items-center shadow-md">
     <div class="logo-text text-crimson">ScoutDupta</div>
-    <ul class="flex gap-4 text-sm">
+    <ul class="flex gap-4 text-sm items-center">
       <li><a href="index.html" class="hover:text-crimson">Beranda</a></li>
-      <li><a href="artikel1.html" class="bg-crimson px-3 py-1 rounded text-white">+ Tulis Berita</a></li>
+      <li><a href="artikel1.html" class="bg-crimson px-3 py-1 rounded text-white text-xs">+ Tulis Berita</a></li>
     </ul>
   </nav>
 
   <header class="bg-gray-900 text-white py-12 px-4 text-center">
-    <h1 class="text-3xl font-bold mb-2">Berita Pradupta</h1>
-    <p class="text-gray-400">Update kegiatan terbaru dari Google Sheets secara otomatis</p>
+    <h1 class="text-3xl md:text-4xl font-bold mb-2">Berita Pradupta</h1>
+    <p class="text-gray-400">Kumpulan informasi dan kegiatan terbaru kami</p>
   </header>
 
   <section class="py-12 px-4">
     <div class="max-w-6xl mx-auto">
+      
       <div id="loading" class="text-center py-20">
         <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-crimson mx-auto mb-4"></div>
-        <p>Memuat berita terbaru...</p>
+        <p class="text-gray-500">Menyinkronkan dengan Google Sheets...</p>
       </div>
 
-      <div id="news-container" class="grid grid-cols-1 md:grid-cols-3 gap-8 hidden">
+      <div id="news-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
         </div>
+
     </div>
   </section>
 
+  <footer class="bg-gray-900 text-white py-8 px-4 mt-20">
+    <div class="max-w-6xl mx-auto text-center">
+      <div class="logo-text text-crimson mb-2">ScoutDupta</div>
+      <p class="text-gray-500 text-sm">© 2026 ScoutDupta - Ambalan Pramuka Digital</p>
+    </div>
+  </footer>
+
   <script>
-    // GANTI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
+    // 1. PASTIIN URL INI BENAR (URL WEB APP GOOGLE SCRIPT LU)
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyueNjbiYgaR3ePZfPvTc3t9InJGyWW709buzYXwr7ZDI61_H3ozfhAMo-whXrukmeG4g/exec';
 
     async function fetchNews() {
       try {
         const response = await fetch(scriptURL);
         const data = await response.json();
-        
         const container = document.getElementById('news-container');
         const loading = document.getElementById('loading');
         
-        container.innerHTML = ''; // Kosongkan container
+        container.innerHTML = ''; 
 
-        data.forEach(row => {
-          // row[0]=Tanggal, row[1]=Judul, row[2]=Penulis, row[3]=Isi, row[4]=Gambar
+        // Data dibalik (reverse) di Apps Script biar yang terbaru di atas
+        data.forEach((row, index) => {
+          // Bikin Slug: Spasi jadi strip, huruf kecil semua, ilangin simbol aneh
+          const slug = row[1].toLowerCase()
+                            .replace(/ /g, '-')
+                            .replace(/[^\w-]+/g, '');
+          
+          // Template Card Berita
           const card = `
-            <div class="news-card bg-white rounded-lg overflow-hidden shadow-md">
-              <img src="${row[4] || 'https://via.placeholder.com/600x400?text=No+Image'}" 
-                   class="w-full h-48 object-cover" alt="Gambar Berita">
-              <div class="p-5 flex-grow">
-                <div class="flex items-center text-xs text-gray-500 mb-2">
-                  <span><i class="far fa-calendar-alt mr-1"></i> ${row[0]}</span>
-                  <span class="mx-2">|</span>
-                  <span><i class="far fa-user mr-1"></i> ${row[2]}</span>
+            <div class="news-card bg-white rounded-lg overflow-hidden shadow-md border border-gray-100">
+              <div class="relative h-48 overflow-hidden">
+                <img src="${row[4] || 'https://via.placeholder.com/600x400?text=ScoutDupta'}" 
+                     class="w-full h-full object-cover" alt="Cover Berita">
+              </div>
+              <div class="p-5 flex flex-col flex-grow">
+                <div class="flex items-center text-xs text-gray-400 mb-2">
+                  <span><i class="far fa-calendar mr-1"></i> ${row[0]}</span>
                 </div>
-                <h3 class="font-bold text-xl mb-3 leading-tight">${row[1]}</h3>
-                <p class="text-gray-600 text-sm mb-4 line-clamp-3">${row[3]}</p>
-                <button onclick="openModal('${row[1]}', '${row[2]}', '${row[0]}', \`${row[3].replace(/`/g, '\\`')}\`, '${row[4]}')" 
-                   class="text-crimson font-semibold text-sm hover:underline">
-                   Baca Selengkapnya →
-                </button>
+                <h3 class="font-bold text-lg mb-2 text-gray-800 line-clamp-2">${row[1]}</h3>
+                <p class="text-gray-500 text-sm mb-4 line-clamp-3">${row[3]}</p>
+                <div class="mt-auto">
+                  <a href="detail.html?post=${slug}&id=${index}" 
+                     class="text-crimson font-semibold text-sm hover:underline flex items-center">
+                     Baca Selengkapnya <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                  </a>
+                </div>
               </div>
             </div>
           `;
           container.innerHTML += card;
         });
 
+        // Ilangin loading, munculin konten
         loading.classList.add('hidden');
         container.classList.remove('hidden');
+
       } catch (error) {
         console.error('Error fetching news:', error);
-        document.getElementById('loading').innerHTML = '<p class="text-red-500">Gagal memuat berita. Pastikan URL script benar.</p>';
+        document.getElementById('loading').innerHTML = `
+          <div class="text-red-500">
+            <i class="fas fa-exclamation-triangle text-3xl mb-2"></i>
+            <p>Gagal memuat berita. Cek koneksi atau URL Script.</p>
+          </div>
+        `;
       }
     }
 
-    // Panggil fungsi saat halaman dibuka
-    fetchNews();
-
-    // Fungsi sederhana untuk melihat detail berita (opsional)
-    function openModal(judul, penulis, tanggal, isi, gambar) {
-      // Anda bisa membuat modal atau halaman detail di sini
-      alert("Detail berita sedang dikembangkan. Judul: " + judul);
-    }
+    // Jalankan fungsi saat halaman dibuka
+    window.onload = fetchNews;
   </script>
 </body>
 </html>
-
