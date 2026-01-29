@@ -1,11 +1,20 @@
 ---
 layout: default
 ---
-<h2>Daftar Artikel Terbaru</h2>
-<ul>
-  {% for post in site.posts %}
-    <li>
-      <a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-    </li>
-  {% endfor %}
-</ul>
+<link rel="stylesheet" href="{{ site.baseurl }}/assets/css/style.css">
+
+<div class="konten-artikel">
+    <h1>Daftar Artikel</h1>
+    <hr>
+    <ul style="list-style: none; padding: 0;">
+      {% for post in site.posts %}
+        <li style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+          <a href="{{ post.url | prepend: site.baseurl }}" style="font-size: 1.2em; font-weight: bold;">
+            {{ post.title }}
+          </a>
+          <br>
+          <small style="color: #999;">{{ post.date | date: "%d %b %Y" }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+</div>
