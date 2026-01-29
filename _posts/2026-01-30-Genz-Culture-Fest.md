@@ -1,5 +1,5 @@
 layout: post
-title: "Judul Artikel Saya"
+title: "Gen-Z Culture Fest Vol. 1"
 ---
 
 Auditorium Universitas Global Institut, Kota Tangerang, Selasa (23/12/2025), dipenuhi warna-warni busana adat, irama musik daerah, serta semangat muda yang menyatu dalam Gen-Z Culture Fest 2025. Mengusung tema “Satukan Karya Rayakan Budaya”, kegiatan ini menjadi ruang ekspresi mahasiswa untuk merawat literasi budaya sekaligus meneguhkan nilai Bhinneka Tunggal Ika di tengah arus budaya global yang kian deras.
