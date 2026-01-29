@@ -5,429 +5,102 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Semua Berita | ScoutDupta</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Ubuntu&family=Poppins&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Ubuntu&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            crimson: '#DC143C',
-            scout: {
-              brown: '#8B4513',
-              green: '#228B22'
-            }
-          }
-        }
-      }
+      theme: { extend: { colors: { crimson: '#DC143C' } } }
     }
   </script>
   <style>
-    body { 
-      font-family: 'Poppins', sans-serif; 
-      scroll-behavior: smooth; 
-    }
-    h2 { 
-      font-family: 'Ubuntu', sans-serif; 
-      font-size: 1.8rem; 
-      color: #333;
-    }
-    .logo-text { 
-      font-family: 'Pacifico', cursive; 
-      font-size: 1.8rem; 
-    }
-    .sticky-nav { 
-      position: sticky; 
-      top: 0; 
-      z-index: 50; 
-      background-color: #111; 
-    }
-    .fade-in { 
-      opacity: 0; 
-      transform: translateY(20px); 
-      transition: all 0.6s ease-out; 
-    }
-    .fade-in.visible { 
-      opacity: 1; 
-      transform: translateY(0); 
-    }
-    .news-card {
-      transition: all 0.3s ease;
-    }
-    .news-card:hover {
-      transform: translateY(-5px);
-    }
-    .category-pill {
-      transition: all 0.2s ease;
-    }
-    .category-pill:hover, .category-pill.active {
-      background-color: #DC143C;
-      color: white;
-    }
+    body { font-family: 'Poppins', sans-serif; }
+    .logo-text { font-family: 'Pacifico', cursive; font-size: 1.8rem; }
+    .sticky-nav { position: sticky; top: 0; z-index: 50; background-color: #111; }
+    .news-card { transition: all 0.3s ease; height: 100%; display: flex; flex-direction: column; }
+    .news-card:hover { transform: translateY(-5px); }
   </style>
 </head>
 <body class="bg-gray-50 text-black">
 
-  <!-- Navbar -->
-  <nav class="sticky-nav text-white px-4 py-3 flex flex-col md:flex-row justify-between items-center shadow-md">
-    <div class="logo-text text-crimson mb-2 md:mb-0">ScoutDupta</div>
-    <ul class="flex flex-wrap justify-center gap-4 text-sm md:text-base">
-      <li><a href="index.html#beranda" class="hover:text-crimson transition-colors">Beranda</a></li>
-      <li><a href="index.html#about" class="hover:text-crimson transition-colors">About</a></li>
-      <li><a href="index.html#berita" class="hover:text-crimson transition-colors">Berita</a></li>
-      <li><a href="index.html#program" class="hover:text-crimson transition-colors">Program</a></li>
-      <li><a href="index.html#galeri" class="hover:text-crimson transition-colors">Galeri</a></li>
-      <li><a href="index.html#kontak" class="hover:text-crimson transition-colors">Kontak</a></li>
+  <nav class="sticky-nav text-white px-4 py-3 flex justify-between items-center shadow-md">
+    <div class="logo-text text-crimson">ScoutDupta</div>
+    <ul class="flex gap-4 text-sm">
+      <li><a href="index.html" class="hover:text-crimson">Beranda</a></li>
+      <li><a href="artikel1.html" class="bg-crimson px-3 py-1 rounded text-white">+ Tulis Berita</a></li>
     </ul>
   </nav>
 
-  <!-- Breadcrumb -->
-  <div class="bg-gray-100 py-3 px-4">
-    <div class="max-w-6xl mx-auto">
-      <div class="flex items-center text-sm text-gray-600">
-        <a href="index.html" class="hover:text-crimson">Beranda</a>
-        <span class="mx-2"><i class="fas fa-chevron-right text-xs"></i></span>
-        <span class="text-gray-800">Semua Berita</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Page Header -->
-  <header class="relative">
-    <div class="w-full h-48 md:h-64 overflow-hidden">
-      <img src="https://source.unsplash.com/random/1200x400/?scout,news" alt="Berita Pradupta" class="w-full h-full object-cover">
-      <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
-    </div>
-    <div class="absolute bottom-0 left-0 right-0 p-4 md:p-8">
-      <div class="max-w-6xl mx-auto">
-        <h1 class="text-2xl md:text-4xl font-bold text-white mb-2">Berita Pradupta</h1>
-        <p class="text-white/80">Informasi terbaru seputar kegiatan dan prestasi Pradupta</p>
-      </div>
-    </div>
+  <header class="bg-gray-900 text-white py-12 px-4 text-center">
+    <h1 class="text-3xl font-bold mb-2">Berita Pradupta</h1>
+    <p class="text-gray-400">Update kegiatan terbaru dari Google Sheets secara otomatis</p>
   </header>
 
-  <!-- Search and Filter -->
-  <section class="py-6 px-4 bg-white border-b">
+  <section class="py-12 px-4">
     <div class="max-w-6xl mx-auto">
-      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="w-full md:w-1/3">
-          <div class="relative">
-            <input type="text" placeholder="Cari berita..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-crimson focus:border-transparent">
-            <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <i class="fas fa-search"></i>
-            </div>
-          </div>
-        </div>
-      
+      <div id="loading" class="text-center py-20">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-crimson mx-auto mb-4"></div>
+        <p>Memuat berita terbaru...</p>
       </div>
+
+      <div id="news-container" class="grid grid-cols-1 md:grid-cols-3 gap-8 hidden">
+        </div>
     </div>
   </section>
 
-  <!-- Featured News -->
-  <section class="py-8 px-4">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-2xl font-bold mb-6">Berita Terbaru</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="news-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <div class="relative">
-            <img src="https://source.unsplash.com/random/800x500/?scout,camping" class="w-full h-64 object-cover" alt="Berita Utama">
-            <div class="absolute top-4 left-4">
-              <span class="bg-crimson text-white text-xs px-3 py-1 rounded-full">Kegiatan</span>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex items-center text-gray-500 text-sm mb-2">
-              <span><i class="far fa-calendar-alt mr-1"></i> 29 Juli 2025</span>
-              <span class="mx-3">|</span>
-              <span><i class="far fa-user mr-1"></i> Admin Pradupta</span>
-            </div>
-            <h3 class="font-bold text-xl mb-2">Perkemahan Tahunan 2023</h3>
-            <p class="text-gray-600 mb-4">Kegiatan perkemahan tahunan Pradupta yang diselenggarakan di Gunung Gede Pangrango berlangsung dengan sukses. Acara yang berlangsung selama tiga hari ini diikuti oleh seluruh anggota Pradupta dan beberapa alumni.</p>
-            <a href="https://pradupta.github.io/web/banlak.html" class="inline-block text-crimson hover:underline">Baca selengkapnya <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
-          </div>
-        </div>
-        <div class="news-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <div class="relative">
-            <img src="https://source.unsplash.com/random/800x500/?scout,achievement" class="w-full h-64 object-cover" alt="Berita Utama">
-            <div class="absolute top-4 left-4">
-              <span class="bg-crimson text-white text-xs px-3 py-1 rounded-full">Prestasi</span>
-            </div>
-          </div>
-          <div class="p-6">
-            <div class="flex items-center text-gray-500 text-sm mb-2">
-              <span><i class="far fa-calendar-alt mr-1"></i> 20 April 2023</span>
-              <span class="mx-3">|</span>
-              <span><i class="far fa-user mr-1"></i> Admin Pradupta</span>
-            </div>
-            <h3 class="font-bold text-xl mb-2">Juara Lomba Pionering Tingkat Provinsi</h3>
-            <p class="text-gray-600 mb-4">Tim Pradupta berhasil meraih juara 1 dalam lomba pionering yang diselenggarakan di tingkat provinsi. Prestasi ini merupakan hasil dari latihan keras dan kerja sama tim yang solid.</p>
-            <a href="#" class="inline-block text-crimson hover:underline">Baca selengkapnya <i class="fas fa-arrow-right ml-1 text-xs"></i></a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- All News -->
-  <section class="py-8 px-4 bg-gray-100">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-2xl font-bold mb-6">Semua Berita</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- News 1 -->
-        <div class="news-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <img src="https://source.unsplash.com/random/600x400/?scout,community" class="w-full h-48 object-cover" alt="Berita 1">
-          <div class="p-4">
-            <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mb-2">Kegiatan</span>
-            <span class="text-xs text-gray-500 block mb-1">5 Mei 2023</span>
-            <h3 class="font-bold text-lg mb-2">Bakti Sosial di Desa Sukamaju</h3>
-            <p class="text-gray-600 text-sm mb-3">Anggota Pradupta melakukan kegiatan bakti sosial dengan membersihkan lingkungan dan memberikan bantuan kepada warga.</p>
-            <a href="#" class="inline-block text-crimson hover:underline text-sm">Baca selengkapnya</a>
-          </div>
-        </div>
-        
-        <!-- News 2 -->
-        <div class="news-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <img src="https://source.unsplash.com/random/600x400/?scout,training" class="w-full h-48 object-cover" alt="Berita 2">
-          <div class="p-4">
-            <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded mb-2">Pelatihan</span>
-            <span class="text-xs text-gray-500 block mb-1">15 Maret 2023</span>
-            <h3 class="font-bold text-lg mb-2">Pelatihan Kepemimpinan Anggota Baru</h3>
-            <p class="text-gray-600 text-sm mb-3">Pradupta mengadakan pelatihan kepemimpinan untuk anggota baru guna mempersiapkan generasi penerus yang tangguh.</p>
-            <a href="#" class="inline-block text-crimson hover:underline text-sm">Baca selengkapnya</a>
-          </div>
-        </div>
-        
-        <!-- News 3 -->
-        <div class="news-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <img src="https://source.unsplash.com/random/600x400/?scout,meeting" class="w-full h-48 object-cover" alt="Berita 3">
-          <div class="p-4">
-            <span class="inline-block bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded mb-2">Pengumuman</span>
-            <span class="text-xs text-gray-500 block mb-1">28 Februari 2023</span>
-            <h3 class="font-bold text-lg mb-2">Rapat Kerja Tahunan 2023</h3>
-            <p class="text-gray-600 text-sm mb-3">Pradupta mengadakan rapat kerja tahunan untuk merencanakan program kerja dan kegiatan sepanjang tahun 2023.</p>
-            <a href="#" class="inline-block text-crimson hover:underline text-sm">Baca selengkapnya</a>
-          </div>
-        </div>
-        
-        <!-- News 4 -->
-        <div class="news-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <img src="https://source.unsplash.com/random/600x400/?scout,celebration" class="w-full h-48 object-cover" alt="Berita 4">
-          <div class="p-4">
-            <span class="inline-block bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded mb-2">Acara</span>
-            <span class="text-xs text-gray-500 block mb-1">10 Februari 2023</span>
-            <h3 class="font-bold text-lg mb-2">Perayaan Hari Pramuka ke-62</h3>
-            <p class="text-gray-600 text-sm mb-3">Pradupta mengadakan upacara dan berbagai kegiatan untuk memperingati Hari Pramuka yang ke-62.</p>
-            <a href="#" class="inline-block text-crimson hover:underline text-sm">Baca selengkapnya</a>
-          </div>
-        </div>
-        
-        <!-- News 5 -->
-        <div class="news-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <img src="https://source.unsplash.com/random/600x400/?scout,competition" class="w-full h-48 object-cover" alt="Berita 5">
-          <div class="p-4">
-            <span class="inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded mb-2">Prestasi</span>
-            <span class="text-xs text-gray-500 block mb-1">25 Januari 2023</span>
-            <h3 class="font-bold text-lg mb-2">Juara 2 Lomba Cerdas Cermat Kepramukaan</h3>
-            <p class="text-gray-600 text-sm mb-3">Tim Pradupta berhasil meraih juara 2 dalam lomba cerdas cermat kepramukaan tingkat kabupaten.</p>
-            <a href="#" class="inline-block text-crimson hover:underline text-sm">Baca selengkapnya</a>
-          </div>
-        </div>
-        
-        <!-- News 6 -->
-        <div class="news-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <img src="https://source.unsplash.com/random/600x400/?scout,workshop" class="w-full h-48 object-cover" alt="Berita 6">
-          <div class="p-4">
-            <span class="inline-block bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded mb-2">Workshop</span>
-            <span class="text-xs text-gray-500 block mb-1">15 Januari 2023</span>
-            <h3 class="font-bold text-lg mb-2">Workshop Pertolongan Pertama</h3>
-            <p class="text-gray-600 text-sm mb-3">Pradupta mengadakan workshop pertolongan pertama untuk meningkatkan keterampilan anggota dalam situasi darurat.</p>
-            <a href="#" class="inline-block text-crimson hover:underline text-sm">Baca selengkapnya</a>
-          </div>
-        </div>
-        
-        <!-- News 7 -->
-        <div class="news-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <img src="https://source.unsplash.com/random/600x400/?scout,environment" class="w-full h-48 object-cover" alt="Berita 7">
-          <div class="p-4">
-            <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded mb-2">Kegiatan</span>
-            <span class="text-xs text-gray-500 block mb-1">5 Desember 2022</span>
-            <h3 class="font-bold text-lg mb-2">Aksi Peduli Lingkungan di Pantai Anyer</h3>
-            <p class="text-gray-600 text-sm mb-3">Anggota Pradupta melakukan kegiatan bersih-bersih pantai dan penanaman pohon bakau di Pantai Anyer.</p>
-            <a href="#" class="inline-block text-crimson hover:underline text-sm">Baca selengkapnya</a>
-          </div>
-        </div>
-        
-        <!-- News 8 -->
-        <div class="news-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <img src="https://source.unsplash.com/random/600x400/?scout,charity" class="w-full h-48 object-cover" alt="Berita 8">
-          <div class="p-4">
-            <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mb-2">Kegiatan</span>
-            <span class="text-xs text-gray-500 block mb-1">20 November 2022</span>
-            <h3 class="font-bold text-lg mb-2">Penggalangan Dana untuk Korban Bencana</h3>
-            <p class="text-gray-600 text-sm mb-3">Pradupta mengadakan kegiatan penggalangan dana untuk membantu korban bencana alam di Cianjur.</p>
-            <a href="#" class="inline-block text-crimson hover:underline text-sm">Baca selengkapnya</a>
-          </div>
-        </div>
-        
-        <!-- News 9 -->
-        <div class="news-card bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
-          <img src="https://source.unsplash.com/random/600x400/?scout,education" class="w-full h-48 object-cover" alt="Berita 9">
-          <div class="p-4">
-            <span class="inline-block bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded mb-2">Artikel</span>
-            <span class="text-xs text-gray-500 block mb-1">10 November 2022</span>
-            <h3 class="font-bold text-lg mb-2">Pentingnya Pendidikan Karakter dalam Kepramukaan</h3>
-            <p class="text-gray-600 text-sm mb-3">Artikel tentang bagaimana kegiatan kepramukaan dapat membentuk karakter positif pada generasi muda.</p>
-            <a href="#" class="inline-block text-crimson hover:underline text-sm">Baca selengkapnya</a>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Pagination -->
-      <div class="mt-10 flex justify-center">
-        <nav class="inline-flex rounded-md shadow">
-          <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-l-md hover:bg-gray-100 text-gray-700">
-            <i class="fas fa-chevron-left"></i>
-          </a>
-          <a href="#" class="py-2 px-4 bg-crimson text-white border border-crimson">1</a>
-          <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700">2</a>
-          <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700">3</a>
-          <span class="py-2 px-4 bg-white border border-gray-300 text-gray-700">...</span>
-          <a href="#" class="py-2 px-4 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700">8</a>
-          <a href="#" class="py-2 px-4 bg-white border border-gray-300 rounded-r-md hover:bg-gray-100 text-gray-700">
-            <i class="fas fa-chevron-right"></i>
-          </a>
-        </nav>
-      </div>
-    </div>
-  </section>
-
-  <!-- Newsletter -->
-  <section class="py-12 px-4 bg-crimson text-white">
-    <div class="max-w-6xl mx-auto">
-      <div class="flex flex-col md:flex-row items-center justify-between">
-        <div class="md:w-1/2 mb-6 md:mb-0">
-          <h2 class="text-2xl font-bold mb-2">Dapatkan Berita Terbaru</h2>
-          <p class="text-white/80">Daftarkan email Anda untuk mendapatkan informasi terbaru seputar kegiatan Pradupta</p>
-        </div>
-        <div class="md:w-1/2">
-          <form class="flex flex-col sm:flex-row gap-2">
-            <input type="email" placeholder="Email Anda" class="flex-grow px-4 py-2 rounded-full focus:outline-none text-gray-800">
-            <button type="submit" class="bg-white text-crimson px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition-colors">Langganan</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-8 px-4">
-    <div class="max-w-6xl mx-auto">
-      <div class="flex flex-col md:flex-row justify-between">
-        <div class="mb-6 md:mb-0">
-          <div class="logo-text text-crimson mb-2">ScoutDupta</div>
-          <p class="text-gray-400 text-sm max-w-xs">Ambalan Pramuka yang menjunjung tinggi nilai kedisiplinan, kepemimpinan, dan kerja sama.</p>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
-          <div>
-            <h4 class="font-bold mb-3">Tautan</h4>
-            <ul class="space-y-2 text-sm text-gray-400">
-              <li><a href="index.html#beranda" class="hover:text-crimson transition-colors">Beranda</a></li>
-              <li><a href="index.html#about" class="hover:text-crimson transition-colors">About</a></li>
-              <li><a href="index.html#berita" class="hover:text-crimson transition-colors">Berita</a></li>
-              <li><a href="index.html#program" class="hover:text-crimson transition-colors">Program</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="font-bold mb-3">Program</h4>
-            <ul class="space-y-2 text-sm text-gray-400">
-              <li><a href="#" class="hover:text-crimson transition-colors">Perkemahan</a></li>
-              <li><a href="#" class="hover:text-crimson transition-colors">Bakti Sosial</a></li>
-              <li><a href="#" class="hover:text-crimson transition-colors">Lomba</a></li>
-              <li><a href="#" class="hover:text-crimson transition-colors">Pelatihan</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 class="font-bold mb-3">Kontak</h4>
-            <ul class="space-y-2 text-sm text-gray-400">
-              <li><a href="#" class="hover:text-crimson transition-colors">info@pradupta.org</a></li>
-              <li><a href="#" class="hover:text-crimson transition-colors">+62 812-3456-7890</a></li>
-              <li><a href="#" class="hover:text-crimson transition-colors">Bandung, Indonesia</a></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div class="border-t border-gray-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
-        <p class="text-sm text-gray-500">&copy; 2023 ScoutDupta. All rights reserved.</p>
-        <div class="flex gap-4 mt-4 md:mt-0">
-          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-facebook"></i></a>
-          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-twitter"></i></a>
-          <a href="#" class="text-gray-500 hover:text-crimson transition-colors"><i class="fab fa-youtube"></i></a>
-        </div>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Back to Top Button -->
-  <button id="backToTop" class="fixed bottom-6 right-6 bg-crimson text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg opacity-0 invisible transition-all duration-300">
-    <i class="fas fa-arrow-up"></i>
-  </button>
-
-  <!-- Scripts -->
   <script>
-    // Fade-in animation
-    document.addEventListener('DOMContentLoaded', function() {
-      const fadeElements = document.querySelectorAll('.fade-in');
-      
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
+    // GANTI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
+    const scriptURL = 'MASUKKAN_URL_WEB_APP_ANDA_DI_SINI';
+
+    async function fetchNews() {
+      try {
+        const response = await fetch(scriptURL);
+        const data = await response.json();
+        
+        const container = document.getElementById('news-container');
+        const loading = document.getElementById('loading');
+        
+        container.innerHTML = ''; // Kosongkan container
+
+        data.forEach(row => {
+          // row[0]=Tanggal, row[1]=Judul, row[2]=Penulis, row[3]=Isi, row[4]=Gambar
+          const card = `
+            <div class="news-card bg-white rounded-lg overflow-hidden shadow-md">
+              <img src="${row[4] || 'https://via.placeholder.com/600x400?text=No+Image'}" 
+                   class="w-full h-48 object-cover" alt="Gambar Berita">
+              <div class="p-5 flex-grow">
+                <div class="flex items-center text-xs text-gray-500 mb-2">
+                  <span><i class="far fa-calendar-alt mr-1"></i> ${row[0]}</span>
+                  <span class="mx-2">|</span>
+                  <span><i class="far fa-user mr-1"></i> ${row[2]}</span>
+                </div>
+                <h3 class="font-bold text-xl mb-3 leading-tight">${row[1]}</h3>
+                <p class="text-gray-600 text-sm mb-4 line-clamp-3">${row[3]}</p>
+                <button onclick="openModal('${row[1]}', '${row[2]}', '${row[0]}', \`${row[3].replace(/`/g, '\\`')}\`, '${row[4]}')" 
+                   class="text-crimson font-semibold text-sm hover:underline">
+                   Baca Selengkapnya →
+                </button>
+              </div>
+            </div>
+          `;
+          container.innerHTML += card;
         });
-      }, { threshold: 0.1 });
-      
-      fadeElements.forEach(element => {
-        observer.observe(element);
-      });
-      
-      // Back to top button
-      const backToTopButton = document.getElementById('backToTop');
-      
-      window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) {
-          backToTopButton.classList.remove('opacity-0', 'invisible');
-          backToTopButton.classList.add('opacity-100', 'visible');
-        } else {
-          backToTopButton.classList.add('opacity-0', 'invisible');
-          backToTopButton.classList.remove('opacity-100', 'visible');
-        }
-      });
-      
-      backToTopButton.addEventListener('click', () => {
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth'
-        });
-      });
-      
-      // Category filter functionality
-      const categoryPills = document.querySelectorAll('.category-pill');
-      
-      categoryPills.forEach(pill => {
-        pill.addEventListener('click', function() {
-          // Remove active class from all pills
-          categoryPills.forEach(p => p.classList.remove('active'));
-          
-          // Add active class to clicked pill
-          this.classList.add('active');
-          
-          // Here you would typically filter the news items
-          // For demo purposes, we'll just show a console message
-          console.log('Filtering by: ' + this.textContent);
-        });
-      });
-    });
+
+        loading.classList.add('hidden');
+        container.classList.remove('hidden');
+      } catch (error) {
+        console.error('Error fetching news:', error);
+        document.getElementById('loading').innerHTML = '<p class="text-red-500">Gagal memuat berita. Pastikan URL script benar.</p>';
+      }
+    }
+
+    // Panggil fungsi saat halaman dibuka
+    fetchNews();
+
+    // Fungsi sederhana untuk melihat detail berita (opsional)
+    function openModal(judul, penulis, tanggal, isi, gambar) {
+      // Anda bisa membuat modal atau halaman detail di sini
+      alert("Detail berita sedang dikembangkan. Judul: " + judul);
+    }
   </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9664f12a66d7e793',t:'MTc1MzcxMTYzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
