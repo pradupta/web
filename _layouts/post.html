@@ -1,20 +1,75 @@
+---
+layout: default
+---
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page.title }}</title>
-    <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ page.title }} | ScoutDupta</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Ubuntu&family=Poppins&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        crimson: '#DC143C',
+                        scout: { brown: '#8B4513', green: '#228B22' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .logo-text { font-family: 'Pacifico', cursive; }
+        .article-content h2, .article-content h3 { font-family: 'Ubuntu', sans-serif; font-weight: bold; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .article-content p { margin-bottom: 1rem; color: #4a5568; line-height: 1.8; }
+    </style>
 </head>
-<body>
-    <div class="konten-artikel">
-        <h1>{{ page.title }}</h1>
-        <p style="color: #888;">Diposting pada: {{ page.date | date: "%d %B %Y" }}</p>
-        <hr>
-        
-        {{ content }}
-        
-        <a href="{{ site.baseurl }}/artikel" class="back-link">← Kembali ke Daftar Artikel</a>
-    </div>
+<body class="bg-gray-50">
+
+    <nav class="bg-[#111] text-white px-4 py-3 flex justify-between items-center shadow-md sticky top-0 z-50">
+        <div class="logo-text text-crimson text-2xl">ScoutDupta</div>
+        <a href="{{ site.baseurl }}/artikel" class="text-sm hover:text-crimson transition-colors">
+            <i class="fas fa-arrow-left"></i> Kembali ke Berita
+        </a>
+    </nav>
+
+    <header class="bg-white border-b py-12 px-4">
+        <div class="max-w-3xl mx-auto text-center">
+            <span class="text-crimson font-bold text-sm uppercase tracking-widest">Berita Dupta</span>
+            <h1 class="text-3xl md:text-4xl font-bold mt-2 text-gray-900">{{ page.title }}</h1>
+            <p class="text-gray-500 mt-4 text-sm">
+                <i class="far fa-calendar-alt"></i> {{ page.date | date: "%d %B %Y" }} | 
+                <i class="far fa-user"></i> Admin Pradupta
+            </p>
+        </div>
+    </header>
+
+    <main class="py-12 px-4">
+        <article class="max-w-3xl mx-auto bg-white p-6 md:p-12 rounded-xl shadow-sm">
+            <div class="article-content">
+                {{ content }}
+            </div>
+            
+            <div class="mt-12 pt-6 border-t border-gray-100">
+                <p class="font-bold text-gray-800 mb-4">Bagikan Artikel:</p>
+                <div class="flex gap-4">
+                    <a href="#" class="text-gray-400 hover:text-blue-600 text-xl transition-colors"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-pink-600 text-xl transition-colors"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-green-500 text-xl transition-colors"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <footer class="bg-gray-900 text-white py-8 text-center">
+        <p class="text-sm text-gray-500">&copy; 2026 ScoutDupta. All rights reserved.</p>
+    </footer>
+
 </body>
 </html>
