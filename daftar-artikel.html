@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun | ScoutDupta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+     <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
+   <link rel="shortcut icon" href="https://pradupta.github.io/web/img/logo.png">
+    <style>
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background-color: #f3f4f6; 
+        }
+        .btn-crimson { 
+            background-color: crimson; 
+            transition: 0.3s; 
+        }
+        .btn-crimson:hover { 
+            background-color: #b31030; 
+            transform: translateY(-2px); 
+        }
+        .logo-font { 
+            font-family: 'Ubuntu', sans-serif; 
+            font-weight: 700; 
+        }
+        input:focus {
+            border-color: crimson !important;
+            box-shadow: 0 0 0 2px rgba(220, 20, 60, 0.2);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border-t-4 border-red-600">
+        <div class="text-center mb-8">
+            <img src="https://pradupta.github.io/web/img/logo.png" class="w-16 mx-auto mb-4" alt="Logo">
+            <h1 class="text-2xl logo-font">Daftar Akun <span class="text-red-600">Pradupta</span></h1>
+            <p class="text-gray-500 text-sm">Buat akun untuk akses tulis artikel</p>
+        </div>
+
+        <form id="registerForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-semibold mb-1 text-gray-700">Nama Lengkap</label>
+                <input type="text" name="nama" class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all" placeholder="Contoh: Hafidz Sazili" required>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1 text-gray-700">Email</label>
+                <input type="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all" placeholder="email@contoh.com" required>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1 text-gray-700">No. Telepon</label>
+                <input type="tel" name="telepon" class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all" placeholder="0812..." required>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold mb-1 text-gray-700">Password</label>
+                <input type="password" name="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none transition-all" placeholder="******" required>
+            </div>
+            
+            <button type="submit" id="submitBtn" class="w-full py-3 text-white font-bold rounded-lg btn-crimson shadow-lg mt-4 uppercase tracking-wider">
+                DAFTAR SEKARANG
+            </button>
+        </form>
+
+        <p class="text-center text-sm text-gray-500 mt-6">
+            Sudah punya akun? <a href="loginartikel.html" class="text-red-600 font-bold hover:underline">Login di sini</a>
+        </p>
+    </div>
+
+    <script>
+        // Ganti dengan URL Deployment Web App Google Script Anda
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzbpW0ISEpCN8GUiJ03WgkPdxvoM_lOCRWB48tzrC75Sag-XWtlBZgqUHmv-uwlavG-yw/exec';
+        const form = document.getElementById('registerForm');
+        const btn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', e => {
+            e.preventDefault();
+            
+            // Animasi Loading
+            btn.innerHTML = '<i class="fas fa-spinner animate-spin"></i> Memproses...';
+            btn.disabled = true;
+
+            // Menggunakan URLSearchParams untuk menghindari error CORS pada browser tertentu
+            const formData = new URLSearchParams(new FormData(form));
+            formData.append('action', 'register');
+            
+            fetch(scriptURL, { 
+                method: 'POST', 
+                body: formData,
+                mode: 'no-cors' // Mode ini mengizinkan pengiriman data meskipun dari file lokal
+            })
+            .then(() => {
+                // Karena mode 'no-cors', kita tidak bisa membaca pesan sukses dari Sheets,
+                // jadi kita asumsikan berhasil jika tidak ada error jaringan.
+                alert('Pendaftaran Terkirim! Silakan coba Login.');
+                window.location.href = 'loginartikel.html';
+            })
+            .catch(error => {
+                console.error('Error!', error.message);
+                alert('Gagal daftar. Pastikan koneksi internet stabil.');
+                btn.innerHTML = 'DAFTAR SEKARANG';
+                btn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
