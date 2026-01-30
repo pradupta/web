@@ -6,8 +6,8 @@
   <title>Memuat Berita... | ScoutDupta</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
-    <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
-   <link rel="shortcut icon" href="https://pradupta.github.io/web/img/logo.png">
+  <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
+  <link rel="shortcut icon" href="https://pradupta.github.io/web/img/logo.png">
 </head>
 <body class="bg-gray-50">
   <nav class="bg-[#111] text-white p-4 shadow-lg">
@@ -47,9 +47,25 @@
         const post = data[id];
 
         if (post) {
+          // --- BAGIAN PERBAIKAN TANGGAL ---
+          const rawDate = post[0]; 
+          const formattedDate = new Date(rawDate).toLocaleDateString('id-ID', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          });
+          // --------------------------------
+
           document.title = post[1] + " | ScoutDupta";
           document.getElementById('det-judul').innerText = post[1];
-          document.getElementById('det-meta').innerHTML = `By <span class="font-bold text-gray-700 ml-1">${post[2]}</span> <span class="mx-2">•</span> ${post[0]}`;
+          
+          // Menampilkan Penulis dan Tanggal yang sudah diformat
+          document.getElementById('det-meta').innerHTML = `
+            By <span class="font-bold text-gray-700 ml-1">${post[2]}</span> 
+            <span class="mx-2">•</span> 
+            <i class="far fa-calendar-alt mr-1"></i> ${formattedDate}
+          `;
+
           document.getElementById('det-isi').innerHTML = post[3];
           
           if(post[4]) {
@@ -62,6 +78,7 @@
           document.getElementById('article-content').classList.remove('hidden');
         }
       } catch (e) {
+        console.error(e);
         alert("Gagal memuat konten.");
       }
     }
