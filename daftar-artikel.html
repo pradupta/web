@@ -95,6 +95,9 @@
                 // Karena mode 'no-cors', kita tidak bisa membaca pesan sukses dari Sheets,
                 // jadi kita asumsikan berhasil jika tidak ada error jaringan.
                 alert('Pendaftaran Terkirim! Silakan coba Login.');
+                // Simpan nama asli saat daftar agar bisa dipanggil nanti
+const namaAsli = document.querySelector('input[name="nama"]').value;
+localStorage.setItem("namaLengkap", namaAsli);
                 window.location.href = 'loginartikel.html';
             })
             .catch(error => {
@@ -106,4 +109,5 @@
         });
     </script>
 </body>
+
 </html>
