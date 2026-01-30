@@ -6,9 +6,11 @@
   <title>Input Artikel Berita | ScoutDupta</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Ubuntu&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
-   <link rel="shortcut icon" href="https://pradupta.github.io/web/img/logo.png">
+  <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
+  <link rel="shortcut icon" href="https://pradupta.github.io/web/img/logo.png">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
   <script>
     tailwind.config = {
       theme: {
@@ -20,10 +22,32 @@
         }
       }
     }
-   
-    // Cek apakah status login ada di browser
+    
+    // Proteksi Halaman & Ambil Nama User
+    const userName = localStorage.getItem("namaUser") || "Admin";
     if (localStorage.getItem("isLoggedIn") !== "true") {
-        alert("Akses ditolak! Silakan login terlebih dahulu.");
+        window.location.href = "loginartikel.html";
+    }
+
+    // Jalankan Selamat Datang & Tampilkan Nama di Navbar
+    window.onload = function() {
+        // Update Nama di Navbar
+        document.getElementById('userDisplay').innerText = userName;
+        // Set otomatis input penulis dengan nama user
+        document.getElementById('penulis').value = userName;
+
+        // Popup Selamat Datang
+        Swal.fire({
+            title: 'Halo, ' + userName + '!',
+            text: 'Selamat datang di Dashboard Artikel ScoutDupta.',
+            icon: 'success',
+            confirmButtonColor: '#DC143C',
+            timer: 3000
+        });
+    };
+
+    function logout() {
+        localStorage.clear();
         window.location.href = "loginartikel.html";
     }
   </script>
@@ -50,10 +74,18 @@
 
   <nav class="sticky-nav text-white px-4 py-3 flex justify-between items-center shadow-md">
     <div class="logo-text text-crimson">ScoutDupta</div>
-    <ul class="flex gap-4 text-sm">
-      <li><a href="index.html" class="hover:text-crimson">Beranda</a></li>
-      <li><a href="berita.html" class="hover:text-crimson">Berita</a></li>
-    </ul>
+    <div class="flex items-center gap-6">
+      <ul class="hidden md:flex gap-4 text-sm">
+        <li><a href="index.html" class="hover:text-crimson">Beranda</a></li>
+        <li><a href="berita.html" class="hover:text-crimson">Berita</a></li>
+      </ul>
+      <div class="flex items-center border-l pl-4 border-gray-700">
+        <span class="text-xs mr-3 hidden sm:inline">Hi, <b id="userDisplay" class="text-crimson uppercase">User</b></span>
+        <button onclick="logout()" class="bg-crimson px-3 py-1 rounded text-xs font-bold hover:bg-white hover:text-crimson transition">
+          <i class="fas fa-sign-out-alt"></i> Keluar
+        </button>
+      </div>
+    </div>
   </nav>
 
   <main class="py-8 px-4 max-w-5xl mx-auto">
@@ -83,7 +115,7 @@
 
           <div class="mb-4">
             <label class="block text-gray-700 font-semibold mb-2">Nama Penulis</label>
-            <input type="text" id="penulis" class="form-input" placeholder="Nama lengkap penulis" required>
+            <input type="text" id="penulis" class="form-input bg-gray-50 cursor-not-allowed" placeholder="Nama lengkap penulis" readonly required>
           </div>
 
           <div class="mb-4">
@@ -140,7 +172,6 @@
   </div>
 
   <script>
-    // GANTI URL INI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyueNjbiYgaR3ePZfPvTc3t9InJGyWW709buzYXwr7ZDI61_H3ozfhAMo-whXrukmeG4g/exec';
     let base64Image = "";
 
@@ -197,7 +228,7 @@
       area.focus();
     }
 
-    // FORM SUBMISSION (FINAL FIX)
+    // FORM SUBMISSION
     document.getElementById('articleForm').onsubmit = async (e) => {
       e.preventDefault();
       document.getElementById('loader').classList.remove('hidden');
@@ -216,12 +247,16 @@
           mode: 'no-cors' 
         });
         
-        // no-cors akan selalu masuk ke sini jika tidak ada crash koneksi
-        alert('Artikel berhasil dipublikasikan!');
-        window.location.href = 'berita.html'; // Otomatis pindah ke halaman berita
+        Swal.fire({
+            title: 'Berhasil!',
+            text: 'Artikel Anda telah dipublikasikan.',
+            icon: 'success'
+        }).then(() => {
+            window.location.href = 'berita.html';
+        });
       } catch (error) {
         console.error('Error:', error);
-        alert('Gagal mengirim: Silakan periksa koneksi atau izin Google Script.');
+        alert('Gagal mengirim!');
       } finally {
         document.getElementById('loader').classList.add('hidden');
       }
@@ -229,7 +264,3 @@
   </script>
 </body>
 </html>
-
-
-
-
