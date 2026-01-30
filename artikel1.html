@@ -23,32 +23,47 @@
       }
     }
     
-    // Proteksi Halaman & Ambil Nama User
-    const userName = localStorage.getItem("namaUser") || "Admin";
+    // 1. KUNCI KEAMANAN & PENGAMBILAN NAMA ASLI
+    // Kita cek namaLengkap dulu, jika tidak ada baru namaUser (email)
+    const userName = localStorage.getItem("namaLengkap") || localStorage.getItem("namaUser") || "Admin";
+    
     if (localStorage.getItem("isLoggedIn") !== "true") {
-        window.location.href = "loginartikel.html";
+        window.location.replace("loginartikel.html");
     }
 
-    // Jalankan Selamat Datang & Tampilkan Nama di Navbar
+    // 2. LOGIKA TAMPILAN SAAT HALAMAN DIMUAT
     window.onload = function() {
-        // Update Nama di Navbar
+        // Tampilkan Nama di Navbar
         document.getElementById('userDisplay').innerText = userName;
-        // Set otomatis input penulis dengan nama user
+        // Isi otomatis input penulis (User tidak perlu mengetik nama lagi)
         document.getElementById('penulis').value = userName;
 
-        // Popup Selamat Datang
+        // Popup Selamat Datang yang rapi
         Swal.fire({
             title: 'Halo, ' + userName + '!',
             text: 'Selamat datang di Dashboard Artikel ScoutDupta.',
             icon: 'success',
             confirmButtonColor: '#DC143C',
-            timer: 3000
+            timer: 3000,
+            timerProgressBar: true
         });
     };
 
     function logout() {
-        localStorage.clear();
-        window.location.href = "loginartikel.html";
+        Swal.fire({
+            title: 'Keluar?',
+            text: "Anda harus login kembali untuk menulis artikel.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#DC143C',
+            cancelButtonColor: '#aaa',
+            confirmButtonText: 'Ya, Keluar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                localStorage.clear();
+                window.location.replace("loginartikel.html");
+            }
+        })
     }
   </script>
   <style>
@@ -80,8 +95,8 @@
         <li><a href="berita.html" class="hover:text-crimson">Berita</a></li>
       </ul>
       <div class="flex items-center border-l pl-4 border-gray-700">
-        <span class="text-xs mr-3 hidden sm:inline">Hi, <b id="userDisplay" class="text-crimson uppercase">User</b></span>
-        <button onclick="logout()" class="bg-crimson px-3 py-1 rounded text-xs font-bold hover:bg-white hover:text-crimson transition">
+        <span class="text-xs mr-3 hidden sm:inline font-medium">Hi, <b id="userDisplay" class="text-crimson uppercase">User</b></span>
+        <button onclick="logout()" class="bg-crimson px-3 py-1 rounded text-xs font-bold hover:bg-white hover:text-crimson transition flex items-center gap-2">
           <i class="fas fa-sign-out-alt"></i> Keluar
         </button>
       </div>
@@ -115,7 +130,7 @@
 
           <div class="mb-4">
             <label class="block text-gray-700 font-semibold mb-2">Nama Penulis</label>
-            <input type="text" id="penulis" class="form-input bg-gray-50 cursor-not-allowed" placeholder="Nama lengkap penulis" readonly required>
+            <input type="text" id="penulis" class="form-input bg-gray-100 cursor-not-allowed" readonly required>
           </div>
 
           <div class="mb-4">
@@ -167,7 +182,7 @@
     <div class="bg-white p-8 rounded-lg text-center max-w-xs w-full">
       <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-crimson mx-auto mb-4"></div>
       <p class="font-bold text-gray-800">Mempublikasikan...</p>
-      <p class="text-sm text-gray-500 mt-2">Jangan tutup halaman ini</p>
+      <p class="text-sm text-gray-500 mt-2">Mohon tunggu sebentar</p>
     </div>
   </div>
 
@@ -191,7 +206,7 @@
       previewSection.classList.remove('hidden'); writeSection.classList.add('hidden');
       
       document.getElementById('prev-judul').innerText = document.getElementById('judul').value || "Judul Belum Diisi";
-      document.getElementById('prev-meta').innerText = `Oleh: ${document.getElementById('penulis').value || 'Anonim'} | ${new Date().toLocaleDateString('id-ID')}`;
+      document.getElementById('prev-meta').innerText = `Oleh: ${userName} | ${new Date().toLocaleDateString('id-ID')}`;
       document.getElementById('prev-isi').innerHTML = document.getElementById('isi').value;
       
       const pImg = document.getElementById('prev-img');
@@ -236,7 +251,7 @@
       const formData = new URLSearchParams();
       formData.append('tanggal', new Date().toLocaleDateString('id-ID'));
       formData.append('judul', document.getElementById('judul').value);
-      formData.append('penulis', document.getElementById('penulis').value);
+      formData.append('penulis', userName);
       formData.append('isi', document.getElementById('isi').value);
       formData.append('gambar', base64Image);
 
@@ -250,13 +265,14 @@
         Swal.fire({
             title: 'Berhasil!',
             text: 'Artikel Anda telah dipublikasikan.',
-            icon: 'success'
+            icon: 'success',
+            confirmButtonColor: '#DC143C'
         }).then(() => {
             window.location.href = 'berita.html';
         });
       } catch (error) {
         console.error('Error:', error);
-        alert('Gagal mengirim!');
+        Swal.fire('Gagal!', 'Terjadi kesalahan saat mengirim artikel.', 'error');
       } finally {
         document.getElementById('loader').classList.add('hidden');
       }
