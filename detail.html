@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ScoutDupta | Berita</title>
+  <title>ScoutDupta | Detail Berita</title>
   
   <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
   
@@ -11,11 +11,13 @@
     body { font-family: 'Poppins', sans-serif; background-color: #f9fafb; margin: 0; }
     .sticky-nav { position: sticky; top: 0; z-index: 1000; background-color: #111; color: white; padding: 1rem; }
     .logo-text { font-family: 'Pacifico', cursive; font-size: 1.8rem; color: #DC143C; }
-    .main-card { max-width: 56rem; margin: 1.5rem auto; background: white; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .main-card { max-width: 56rem; margin: 1.5rem auto; background: white; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); min-height: 60vh; }
     .skeleton { background: #e5e7eb; border-radius: 0.5rem; animation: pulse 1.5s infinite; margin-bottom: 1rem; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
     .hidden { display: none; }
     footer { background: #111; color: white; text-align: center; padding: 2rem; margin-top: auto; }
+    /* Memastikan teks isi berita rapi */
+    #det-isi { white-space: pre-wrap; word-wrap: break-word; }
   </style>
 
   <script src="https://cdn.tailwindcss.com"></script>
@@ -25,15 +27,13 @@
 
   <nav class="sticky-nav flex justify-between items-center px-6">
     <div class="logo-text">ScoutDupta</div>
-    <a href="loginartikel.html" class="bg-red-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-white hover:text-red-600 transition">Tulis Artikel +</a>
-    
+    <a href="index.html" class="text-white text-sm hover:text-red-500 transition">Beranda</a>
   </nav>
 
   <main class="main-card">
     <div id="loader-box">
       <div class="skeleton h-6 w-32"></div>
       <div class="skeleton h-12 w-full mt-6"></div>
-      <div class="skeleton h-12 w-3/4"></div>
       <div class="skeleton h-64 w-full mt-8"></div>
     </div>
 
@@ -50,8 +50,16 @@
         <img id="det-img" class="w-full h-auto" src="">
       </div>
       
-      <div id="det-isi" class="prose prose-lg max-w-none text-gray-800 leading-relaxed text-lg whitespace-pre-line"></div>
+      <div id="det-isi" class="prose prose-lg max-w-none text-gray-800 leading-relaxed text-lg"></div>
+
+      <div id="pdf-container"></div>
     </article>
+
+    <div id="error-box" class="hidden text-center py-20">
+        <h2 class="text-2xl font-bold text-gray-800">Artikel Tidak Ditemukan</h2>
+        <p class="text-gray-500 mt-2">Berita mungkin telah dihapus atau link salah.</p>
+        <a href="berita.html" class="inline-block mt-6 bg-red-600 text-white px-6 py-2 rounded-lg">Cari Berita Lain</a>
+    </div>
   </main>
 
   <footer>
@@ -62,55 +70,104 @@
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyueNjbiYgaR3ePZfPvTc3t9InJGyWW709buzYXwr7ZDI61_H3ozfhAMo-whXrukmeG4g/exec';
 
     async function loadContent() {
-      const id = new URLSearchParams(window.location.search).get('id');
-      if (!id) return;
+      const urlParams = new URLSearchParams(window.location.search);
+      const slugParam = urlParams.get('post');
+      const idParam = urlParams.get('id');
 
-      // 1. Ambil dari Memori (0 Detik)
-      const cache = localStorage.getItem('post_' + id);
-      if (cache) {
-        render(JSON.parse(cache));
-        showUI();
+      // 1. Cek Cache Global Data
+      const cacheAll = localStorage.getItem('all_news');
+      if (cacheAll) {
+        processAndRender(JSON.parse(cacheAll), slugParam, idParam);
       }
 
-      // 2. Ambil dari Google (Update jika ada yang baru)
+      // 2. Ambil Data Fresh dari Server
       try {
         const res = await fetch(scriptURL);
         const data = await res.json();
-        const post = data[id];
-        if (post) {
-          localStorage.setItem('post_' + id, JSON.stringify(post));
-          render(post);
-          showUI();
+        if (data && data.length > 0) {
+          localStorage.setItem('all_news', JSON.stringify(data));
+          processAndRender(data, slugParam, idParam);
         }
-      } catch (e) { console.error("Update failed"); }
+      } catch (e) { 
+        console.error("Fetch failed");
+        if (!cacheAll) showMessage('error');
+      }
+    }
+
+    function processAndRender(data, slug, id) {
+      let post;
+
+      // STRATEGI 1: Cari berdasarkan Slug (PALING AMAN UNTUK LINK PERMANEN)
+      if (slug) {
+        post = data.find(row => {
+          const rowSlug = row[1].toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+          return rowSlug === slug;
+        });
+      }
+
+      // STRATEGI 2: Jika slug tidak ada/tidak ketemu, gunakan ID
+      if (!post && id !== null) {
+        // Ingat App Script kamu sudah di-reverse, jadi kita cari di array data hasil fetch
+        // ID yang dikirim dari Beranda biasanya adalah (total - 1 - index)
+        // Namun di detail, kita coba akses langsung id nya
+        post = data[id];
+      }
+
+      if (post) {
+        render(post);
+        showUI('article');
+      } else {
+        showUI('error');
+      }
     }
 
     function render(post) {
       document.title = post[1] + " | ScoutDupta";
       document.getElementById('det-judul').innerText = post[1];
-      document.getElementById('det-meta').innerHTML = `Oleh <b>${post[2]}</b> | ${new Date(post[0]).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'})}`;
+      
+      const tgl = new Date(post[0]).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
+      document.getElementById('det-meta').innerHTML = `Oleh <b>${post[2]}</b> | <i class="far fa-calendar-alt ml-1"></i> ${tgl}`;
+      
+      // Gunakan innerHTML untuk isi berita agar support format HTML sederhana
       document.getElementById('det-isi').innerHTML = post[3];
       
-      if(post[4]) document.getElementById('det-img').src = post[4];
-      else document.getElementById('img-box').classList.add('hidden');
+      if(post[4] && post[4].length > 10) {
+        document.getElementById('det-img').src = post[4];
+        document.getElementById('img-box').classList.remove('hidden');
+      } else {
+        document.getElementById('img-box').classList.add('hidden');
+      }
 
-      // PDF Khusus Arah Kebijakan
+      // LOGIKA PDF OTOMATIS BERDASARKAN JUDUL
+      const pdfContainer = document.getElementById('pdf-container');
       if (post[1].toLowerCase().includes("arah kebijakan")) {
-        if (!document.getElementById('pdf-frame')) {
-          const pdf = `<div id="pdf-frame" class="mt-12 border-t-2 border-red-600 pt-8">
-            <h3 class="text-xl font-bold mb-4">Dokumen Lampiran:</h3>
-            <div style="position:relative; padding-top:141.4%; height:0; overflow:hidden; border-radius:12px; border:1px solid #ddd;">
-              <iframe src="https://drive.google.com/file/d/1iGIOK7EmnnUkQYiOwfqep_diOcb_hH5y/preview" style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"></iframe>
+        pdfContainer.innerHTML = `
+          <div class="mt-12 border-t-4 border-red-600 pt-8">
+            <h3 class="text-xl font-bold mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path></svg>
+                Dokumen Lampiran:
+            </h3>
+            <div style="position:relative; padding-top:141.4%; height:0; overflow:hidden; border-radius:12px; border:2px solid #eee;">
+              <iframe src="https://drive.google.com/file/d/1iGIOK7EmnnUkQYiOwfqep_diOcb_hH5y/preview" 
+                      style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" 
+                      allow="autoplay"></iframe>
             </div>
+            <p class="mt-4 text-sm text-gray-500 italic">* Jika dokumen tidak muncul, pastikan Anda masuk ke akun Google.</p>
           </div>`;
-          document.getElementById('det-isi').insertAdjacentHTML('beforeend', pdf);
-        }
+      } else {
+        pdfContainer.innerHTML = '';
       }
     }
 
-    function showUI() {
+    function showUI(type) {
       document.getElementById('loader-box').classList.add('hidden');
-      document.getElementById('art-box').classList.remove('hidden');
+      if (type === 'article') {
+        document.getElementById('art-box').classList.remove('hidden');
+        document.getElementById('error-box').classList.add('hidden');
+      } else {
+        document.getElementById('error-box').classList.remove('hidden');
+        document.getElementById('art-box').classList.add('hidden');
+      }
     }
 
     loadContent();
