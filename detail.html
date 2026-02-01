@@ -39,13 +39,13 @@
         /* Area Isi Berita */
         .content-area {
             font-size: 1.15rem;
-            line-height: 1.8; /* Membuat jarak antar baris lega */
+            line-height: 1.8;
             color: #333;
-            text-align: justify; /* Rata kiri-kanan agar rapi */
+            text-align: justify;
         }
 
         .content-area p {
-            margin-bottom: 1.5rem; /* Jarak antar paragraf */
+            margin-bottom: 1.5rem;
         }
 
         .content-area img {
@@ -109,13 +109,13 @@
 
             <img id="post-image" src="" alt="Gambar Berita" class="w-full shadow-md mb-8">
 
-            <div id="post-body" class="content-area">
-                </div>
+            <div id="post-body" class="content-area"></div>
         </article>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyFSre1eTFS9dAF8kW-l6SKXhhSNzAaTgpc44iTC5tsTgR_TRimiE5p0a72ISJB3gnCMQ/exec';
+        // GANTI DENGAN URL DEPLOY TERBARU ANDA
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbycJzXx1UFjx-bUjyR2pVOXi2fSvRjHiHbkdCk1yh7EQcnMfldmsUxEpREMSfoggDjtrw/exec';
 
         async function loadDetail() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -124,15 +124,12 @@
             if (id === null) { window.location.href = 'berita.html'; return; }
 
             try {
-                const cached = localStorage.getItem('all_news');
-                let allNews = cached ? JSON.parse(cached) : null;
-
-                // Jika cache tidak ada, ambil dari server
-                if (!allNews) {
-                    const response = await fetch(scriptURL);
-                    allNews = await response.json();
-                    localStorage.setItem('all_news', JSON.stringify(allNews));
-                }
+                // Masalah 3: Paksa ambil data terbaru (Cache Busting) menggunakan Timestamp
+                const response = await fetch(`${scriptURL}?t=${new Date().getTime()}`);
+                const allNews = await response.json();
+                
+                // Simpan ke localStorage agar sinkron dengan halaman berita
+                localStorage.setItem('all_news', JSON.stringify(allNews));
 
                 const article = allNews[parseInt(id)];
                 if (article) {
@@ -142,7 +139,11 @@
                     window.location.href = 'berita.html';
                 }
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Fetch error, mencoba memuat dari cache:", error);
+                const cached = localStorage.getItem('all_news');
+                if (cached) {
+                    renderArticle(JSON.parse(cached)[parseInt(id)]);
+                }
             }
         }
 
@@ -151,21 +152,34 @@
                 day: 'numeric', month: 'long', year: 'numeric' 
             });
 
+            // Tampilkan data ke UI
             document.title = row[1];
             document.getElementById('post-title').innerText = row[1];
             document.getElementById('post-date').innerText = date;
             document.getElementById('post-author').innerText = row[2] || 'Admin';
-            document.getElementById('post-views').innerText = row[5] || 0;
+            
+            // Masalah 2: Tampilkan View sementara (+1 agar user merasa realtime)
+            const currentViews = row[5] || 0;
+            document.getElementById('post-views').innerText = parseInt(currentViews) + 1;
+            
             document.getElementById('post-image').src = row[4] || 'https://via.placeholder.com/800x400';
             
-            // PERBAIKAN TEKS: Mengubah \n menjadi paragraf jika data dari Sheets berupa teks polos
+            // Perbaikan tampilan teks
             let rawContent = row[3];
             let formattedContent = rawContent.includes('<p>') ? rawContent : 
                                   rawContent.split('\n').map(p => `<p>${p}</p>`).join('');
 
             document.getElementById('post-body').innerHTML = formattedContent;
 
-            // Tampilkan konten, sembunyikan loading
+            // Masalah 2: Kirim perintah update view ke Apps Script menggunakan Original ID (row[6])
+            const originalID = row[6];
+            if (originalID !== undefined) {
+                fetch(`${scriptURL}?action=updateView&readID=${originalID}`)
+                .then(() => console.log("View count updated on server"))
+                .catch(err => console.error("View update failed", err));
+            }
+
+            // Sembunyikan loader
             document.getElementById('loading-detail').classList.add('hidden');
             document.getElementById('article-content').classList.remove('hidden');
         }
