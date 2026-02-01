@@ -6,6 +6,7 @@
   <title>ScoutDupta | Detail Berita</title>
   
   <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
   
   <style>
     body { font-family: 'Poppins', sans-serif; background-color: #f9fafb; margin: 0; }
@@ -16,7 +17,6 @@
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
     .hidden { display: none; }
     footer { background: #111; color: white; text-align: center; padding: 2rem; margin-top: auto; }
-    /* Memastikan teks isi berita rapi */
     #det-isi { white-space: pre-wrap; word-wrap: break-word; }
   </style>
 
@@ -27,7 +27,10 @@
 
   <nav class="sticky-nav flex justify-between items-center px-6">
     <div class="logo-text">ScoutDupta</div>
-    <a href="index.html" class="text-white text-sm hover:text-red-500 transition">Beranda</a>
+    <div class="flex gap-4">
+        <a href="index.html" class="text-white text-sm hover:text-red-500 transition">Beranda</a>
+        <a href="berita.html" class="text-white text-sm hover:text-red-500 transition">Berita</a>
+    </div>
   </nav>
 
   <main class="main-card">
@@ -38,16 +41,17 @@
     </div>
 
     <article id="art-box" class="hidden">
-      <a href="berita.html" class="text-red-600 font-bold no-underline flex items-center mb-6">
+      <a href="berita.html" class="text-red-600 font-bold no-underline flex items-center mb-6 hover:translate-x-[-5px] transition-transform">
         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
         Kembali ke Daftar Berita
       </a>
       
       <h1 id="det-judul" class="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight"></h1>
-      <div id="det-meta" class="text-gray-500 text-sm mb-8 border-b pb-6"></div>
+      
+      <div id="det-meta" class="text-gray-500 text-sm mb-8 border-b pb-6 flex flex-wrap gap-4 items-center"></div>
       
       <div id="img-box" class="rounded-2xl overflow-hidden shadow-lg mb-10">
-        <img id="det-img" class="w-full h-auto" src="">
+        <img id="det-img" class="w-full h-auto" src="" alt="Cover Berita">
       </div>
       
       <div id="det-isi" class="prose prose-lg max-w-none text-gray-800 leading-relaxed text-lg"></div>
@@ -67,20 +71,21 @@
   </footer>
 
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyueNjbiYgaR3ePZfPvTc3t9InJGyWW709buzYXwr7ZDI61_H3ozfhAMo-whXrukmeG4g/exec';
+    // URL Script Baru Kamu
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbx14_8D4lNFAufqvTssRm1KFiNFB3Qa_dxI2idNc_Hu0YbFRxt7tIu5VhQ3m3W1hJJH/exec';
 
     async function loadContent() {
       const urlParams = new URLSearchParams(window.location.search);
       const slugParam = urlParams.get('post');
       const idParam = urlParams.get('id');
 
-      // 1. Cek Cache Global Data
+      // 1. Coba ambil dari Cache dulu agar loading instan
       const cacheAll = localStorage.getItem('all_news');
       if (cacheAll) {
         processAndRender(JSON.parse(cacheAll), slugParam, idParam);
       }
 
-      // 2. Ambil Data Fresh dari Server
+      // 2. Ambil data terbaru dari Server
       try {
         const res = await fetch(scriptURL);
         const data = await res.json();
@@ -89,70 +94,77 @@
           processAndRender(data, slugParam, idParam);
         }
       } catch (e) { 
-        console.error("Fetch failed");
-        if (!cacheAll) showMessage('error');
+        console.error("Gagal sinkronisasi data");
+        if (!cacheAll) showUI('error');
       }
     }
 
     function processAndRender(data, slug, id) {
       let post;
 
-      // STRATEGI 1: Cari berdasarkan Slug (PALING AMAN UNTUK LINK PERMANEN)
+      // Pencarian berdasarkan Slug (Untuk link permanen menu Arah Kebijakan)
       if (slug) {
         post = data.find(row => {
-          const rowSlug = row[1].toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+          const rowSlug = row.judul.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
           return rowSlug === slug;
         });
       }
 
-      // STRATEGI 2: Jika slug tidak ada/tidak ketemu, gunakan ID
+      // Pencarian berdasarkan ID jika slug tidak ada
       if (!post && id !== null) {
-        // Ingat App Script kamu sudah di-reverse, jadi kita cari di array data hasil fetch
-        // ID yang dikirim dari Beranda biasanya adalah (total - 1 - index)
-        // Namun di detail, kita coba akses langsung id nya
         post = data[id];
       }
 
       if (post) {
         render(post);
         showUI('article');
+        
+        // Update Counter Viewers ke Google Sheets
+        if (post.originalIndex !== undefined) {
+           fetch(`${scriptURL}?updateViewIndex=${post.originalIndex}`).catch(err => console.log("Gagal update views"));
+        }
       } else {
         showUI('error');
       }
     }
 
     function render(post) {
-      document.title = post[1] + " | ScoutDupta";
-      document.getElementById('det-judul').innerText = post[1];
+      document.title = post.judul + " | ScoutDupta";
+      document.getElementById('det-judul').innerText = post.judul;
       
-      const tgl = new Date(post[0]).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
-      document.getElementById('det-meta').innerHTML = `Oleh <b>${post[2]}</b> | <i class="far fa-calendar-alt ml-1"></i> ${tgl}`;
+      const tgl = new Date(post.tanggal).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
       
-      // Gunakan innerHTML untuk isi berita agar support format HTML sederhana
-      document.getElementById('det-isi').innerHTML = post[3];
+      // Meta Tanggal + Ikon Viewers
+      document.getElementById('det-meta').innerHTML = `
+        <span>Oleh <b>${post.penulis}</b></span>
+        <span class="flex items-center"><i class="far fa-calendar-alt mr-2 text-red-600"></i> ${tgl}</span>
+        <span class="flex items-center bg-red-50 text-red-600 px-3 py-1 rounded-full font-bold">
+            <i class="far fa-eye mr-2"></i> ${post.viewers || 0} Pembaca
+        </span>
+      `;
       
-      if(post[4] && post[4].length > 10) {
-        document.getElementById('det-img').src = post[4];
+      document.getElementById('det-isi').innerHTML = post.isi;
+      
+      if(post.gambar && post.gambar.length > 10) {
+        document.getElementById('det-img').src = post.gambar;
         document.getElementById('img-box').classList.remove('hidden');
       } else {
         document.getElementById('img-box').classList.add('hidden');
       }
 
-      // LOGIKA PDF OTOMATIS BERDASARKAN JUDUL
+      // Lampiran PDF Otomatis
       const pdfContainer = document.getElementById('pdf-container');
-      if (post[1].toLowerCase().includes("arah kebijakan")) {
+      if (post.judul.toLowerCase().includes("arah kebijakan")) {
         pdfContainer.innerHTML = `
           <div class="mt-12 border-t-4 border-red-600 pt-8">
             <h3 class="text-xl font-bold mb-4 flex items-center">
-                <svg class="w-6 h-6 mr-2 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path></svg>
-                Dokumen Lampiran:
+                <i class="fas fa-file-pdf text-red-600 mr-2"></i> Dokumen Lampiran:
             </h3>
             <div style="position:relative; padding-top:141.4%; height:0; overflow:hidden; border-radius:12px; border:2px solid #eee;">
               <iframe src="https://drive.google.com/file/d/1iGIOK7EmnnUkQYiOwfqep_diOcb_hH5y/preview" 
                       style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" 
                       allow="autoplay"></iframe>
             </div>
-            <p class="mt-4 text-sm text-gray-500 italic">* Jika dokumen tidak muncul, pastikan Anda masuk ke akun Google.</p>
           </div>`;
       } else {
         pdfContainer.innerHTML = '';
