@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pradupta</title>
+    <title>Pradupta - Gerakan Pramuka</title>
     
     <link rel="stylesheet" href="https://pradupta.github.io/web/web/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
@@ -14,28 +14,36 @@
     <script src="https://cdn.tailwindcss.com"></script>
     
     <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
-    <link rel="shortcut icon" href="https://pradupta.github.io/web/img/logo.png">
 
     <style>
-        /* Sinkronisasi & Perbaikan Style */
+        /* Perbaikan Navbar Sticky */
         .navbar.sticky .logo a span { color: #fff !important; }
         .navbar.sticky .menu li a { color: #fff !important; }
         .navbar.sticky .menu li a:hover { color: #000 !important; }
         
+        /* News Card Style */
         .news-card { 
-            background: #fff; 
+            background: #ffffff; 
             border-radius: 12px; 
             border: 2px solid crimson; 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
-        .news-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .news-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
         
-        /* Skeleton Pulse untuk News */
-        .skeleton-home { background: #f3f4f6; animation: pulse 1.5s infinite; border-radius: 10px; height: 350px; }
+        /* Skeleton Pulse */
+        .skeleton-home { 
+            background: #222; 
+            animation: pulse 1.5s infinite; 
+            border-radius: 12px; 
+            height: 400px; 
+        }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -50,7 +58,7 @@
                 <li><a href="#skills" class="menu-btn">Berita</a></li>
                 <li><a href="#projects" class="menu-btn">Program Kerja</a></li>
                 <li><a href="loginartikel.html" class="menu-btn">Tulis Artikel</a></li>
-                <li><a href="https://pradupta.github.io/web/detail.html?post=arah-kebijakan-gerakan-pramuka-tahun-2014-2045" class="menu-btn">Arah Kebijakan</a></li>
+                <li><a href="detail.html?post=arah-kebijakan-gerakan-pramuka-tahun-2014-2045&id=0" class="menu-btn">Arah Kebijakan</a></li>
                 <li><a href="#contact" class="menu-btn">Kontak</a></li>
             </ul>
             <div class="menu-btn"><i class="fas fa-bars"></i></div>
@@ -90,9 +98,9 @@
         </div>
     </section>
 
-    <section class="skills" id="skills">
+    <section class="skills" id="skills" style="background: #111;">
         <div class="max-width">
-            <h2 class="title fadein">News Dupta</h2>
+            <h2 class="title fadein" style="color: #fff;">News Dupta</h2>
             
             <div id="news-skeleton" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
                 <div class="skeleton-home"></div>
@@ -103,7 +111,7 @@
             <div id="latest-news-home" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 hidden"></div>
             
             <div style="text-align: center; margin-top: 40px;">
-                <a href="berita.html" style="background: crimson; color: #fff; padding: 12px 30px; border-radius: 8px; font-weight: 600; transition: 0.3s; display: inline-block;">
+                <a href="berita.html" style="background: crimson; color: #fff; padding: 12px 30px; border-radius: 8px; font-weight: 600; display: inline-block;">
                     Lihat Semua Berita <i class="fas fa-chevron-right ml-2 text-xs"></i>
                 </a>
             </div>
@@ -143,11 +151,11 @@
                     <div class="icons inline-block text-left">
                         <div class="row flex items-center mb-4">
                             <i class="fas fa-user text-crimson mr-4 text-2xl"></i>
-                            <div class="info"><div class="head font-bold">Nama</div><div class="sub-title text-gray-600">Ambalan ScoutDupta</div></div>
+                            <div class="info"><div class="head font-bold">Nama</div><div class="sub-title">Ambalan ScoutDupta</div></div>
                         </div>
                         <div class="row flex items-center">
                             <i class="fas fa-map-marker-alt text-crimson mr-4 text-2xl"></i>
-                            <div class="info"><div class="head font-bold">Alamat</div><div class="sub-title text-gray-600">Jalan Raya Pakuhaji KM. 2</div></div>
+                            <div class="info"><div class="head font-bold">Alamat</div><div class="sub-title">Jalan Raya Pakuhaji KM. 2</div></div>
                         </div>
                     </div>
                 </div>
@@ -160,22 +168,15 @@
     </footer>
 
     <script>
-        // Gunakan scriptURL yang sudah sinkron dengan Berita.html
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbyFSre1eTFS9dAF8kW-l6SKXhhSNzAaTgpc44iTC5tsTgR_TRimiE5p0a72ISJB3gnCMQ/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbycJzXx1UFjx-bUjyR2pVOXi2fSvRjHiHbkdCk1yh7EQcnMfldmsUxEpREMSfoggDjtrw/exec';
 
         $(document).ready(function () {
-            // NAVBAR & SCROLL LOGIC
+            // Navbar & Scroll Logic
             $(window).scroll(function () {
                 if (this.scrollY > 20) { $(".navbar").addClass("sticky"); } 
                 else { $(".navbar").removeClass("sticky"); }
-                
                 if (this.scrollY > 500) { $(".scroll-up-btn").addClass("show"); } 
                 else { $(".scroll-up-btn").removeClass("show"); }
-                
-                $(".fadein").each(function () {
-                    var bottom_of_window = $(window).scrollTop() + $(window).height();
-                    if (bottom_of_window > $(this).offset().top + 50) { $(this).addClass("showme"); }
-                });
             });
 
             $(".scroll-up-btn").click(function () { $("html").animate({ scrollTop: 0 }); });
@@ -184,82 +185,52 @@
                 $(".menu-btn i").toggleClass("active");
             });
 
-            // CAROUSEL
             $(".carousel").owlCarousel({
                 margin: 20, loop: true, autoplay: true, autoplayTimeOut: 3000,
                 responsive: { 0: { items: 1 }, 600: { items: 2 }, 1000: { items: 3 } }
             });
 
-            // LOGIKA NEWS DUPTA (SINKRON DENGAN APPS SCRIPT ARRAY)
+            // News Dupta Logic
             async function fetchHomeNews() {
                 const container = document.getElementById('latest-news-home');
                 const skeleton = document.getElementById('news-skeleton');
-
-                // 1. Tampilkan Cache jika tersedia
-                const cached = localStorage.getItem('all_news');
-                if (cached) { 
-                    const data = JSON.parse(cached);
-                    if(data.length > 0 && Array.isArray(data[0])) {
-                        renderNews(data); 
-                    }
-                }
-
-                // 2. Ambil Data Baru
                 try {
-                    const response = await fetch(scriptURL);
+                    const response = await fetch(`${scriptURL}?t=${new Date().getTime()}`);
                     const data = await response.json();
                     if (data && data.length > 0) {
                         localStorage.setItem('all_news', JSON.stringify(data));
                         renderNews(data);
                     }
-                } catch (e) { 
-                    console.error("Gagal sinkronisasi berita:", e); 
+                } catch (e) {
+                    const cached = localStorage.getItem('all_news');
+                    if (cached) renderNews(JSON.parse(cached));
                 }
             }
 
             function renderNews(data) {
                 const container = document.getElementById('latest-news-home');
                 const skeleton = document.getElementById('news-skeleton');
-                
                 container.innerHTML = '';
-                // Ambil 3 berita teratas (sudah di-reverse di Apps Script)
-                const topThree = data.slice(0, 3); 
-
-                topThree.forEach((row, index) => {
-                    // Struktur Array: [0]Tgl, [1]Judul, [2]Penulis, [3]Isi, [4]Gbr, [5]Views
-                    const date = new Date(row[0]).toLocaleDateString('id-ID', { 
-                        day:'numeric', month:'long', year:'numeric' 
-                    });
+                
+                data.slice(0, 3).forEach((row, index) => {
+                    const date = new Date(row[0]).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
                     const slug = row[1].toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-                    
-                    // Bersihkan tag HTML dari isi untuk ringkasan deskripsi
-                    const cleanText = row[3].replace(/<[^>]*>?/gm, '');
+                    const desc = row[3].replace(/<[^>]*>?/gm, ''); // Teks Deskripsi muncul
 
                     const card = `
                         <div class="news-card p-4">
-                            <div class="overflow-hidden rounded-md mb-4" style="border: 2px solid crimson;">
-                                <img src="${row[4] || 'https://via.placeholder.com/600x400'}" 
-                                     class="w-full h-48 object-cover hover:scale-110 transition duration-500" 
-                                     loading="lazy">
+                            <img src="${row[4]}" class="w-full h-48 object-cover rounded-md mb-4" style="border: 1px solid #eee;">
+                            <div class="flex justify-between text-[10px] font-bold text-gray-400 uppercase">
+                                <span>${date}</span>
+                                <span class="text-crimson"><i class="far fa-eye"></i> ${row[5] || 0}</span>
                             </div>
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="text-[10px] text-gray-400 font-bold uppercase">
-                                    <i class="far fa-calendar-alt mr-1"></i> ${date}
-                                </span>
-                                <span class="text-[10px] text-crimson font-bold">
-                                    <i class="far fa-eye mr-1"></i> ${row[5] || 0}
-                                </span>
-                            </div>
-                            <h3 class="font-bold text-lg mt-2 text-black line-clamp-2 leading-tight h-12">${row[1]}</h3>
-                            <p class="text-gray-600 text-sm mt-2 line-clamp-2 flex-grow">${cleanText}</p>
-                            <a href="detail.html?post=${slug}&id=${index}" class="text-red-600 font-bold text-sm mt-4 hover:underline flex items-center">
-                                Baca Selengkapnya <i class="fas fa-arrow-right ml-2 text-[10px]"></i>
-                            </a>
+                            <h3 class="font-bold text-lg mt-2 text-black line-clamp-2 h-12">${row[1]}</h3>
+                            <p class="text-gray-600 text-sm mt-2 line-clamp-2">${desc}</p>
+                            <a href="detail.html?post=${slug}&id=${index}" class="text-red-600 font-bold text-sm mt-4 inline-block">Baca Selengkapnya →</a>
                         </div>`;
                     container.insertAdjacentHTML('beforeend', card);
                 });
-
-                if (skeleton) skeleton.classList.add('hidden');
+                skeleton.classList.add('hidden');
                 container.classList.remove('hidden');
             }
 
