@@ -1,27 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pradupta</title>
+    
     <link rel="stylesheet" href="https://pradupta.github.io/web/web/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"/>
+    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"/>
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
-   <link rel="shortcut icon" href="https://pradupta.github.io/web/img/logo.png">
+    <link rel="shortcut icon" href="https://pradupta.github.io/web/img/logo.png">
+
     <style>
-        /* Perbaikan kecil untuk sinkronisasi CSS Anda */
+        /* Sinkronisasi & Perbaikan Style */
         .navbar.sticky .logo a span { color: #fff !important; }
         .navbar.sticky .menu li a { color: #fff !important; }
         .navbar.sticky .menu li a:hover { color: #000 !important; }
         
-        /* News Grid Styling agar selaras dengan CSS Skills Anda */
-        .news-card { background: #fff; border-radius: 10px; border: 2px solid crimson; transition: all 0.3s ease; }
-        .news-card:hover { transform: scale(1.02); }
+        .news-card { 
+            background: #fff; 
+            border-radius: 12px; 
+            border: 2px solid crimson; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+        .news-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
         .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        /* Skeleton Pulse untuk News */
+        .skeleton-home { background: #f3f4f6; animation: pulse 1.5s infinite; border-radius: 10px; height: 350px; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
 <body>
@@ -35,8 +49,8 @@
                 <li><a href="#about" class="menu-btn">About</a></li>
                 <li><a href="#skills" class="menu-btn">Berita</a></li>
                 <li><a href="#projects" class="menu-btn">Program Kerja</a></li>
-                <li><a href="artikel1.html" class="menu-btn">Tulis Artikel</a></li>
-                <li><a href="https://pradupta.github.io/web/detail.html?post=arah-kebijakan-gerakan-pramuka-tahun-2014-2045&id=7" class="menu-btn">Arah Kebijakan</a></li>
+                <li><a href="loginartikel.html" class="menu-btn">Tulis Artikel</a></li>
+                <li><a href="https://pradupta.github.io/web/detail.html?post=arah-kebijakan-gerakan-pramuka-tahun-2014-2045" class="menu-btn">Arah Kebijakan</a></li>
                 <li><a href="#contact" class="menu-btn">Kontak</a></li>
             </ul>
             <div class="menu-btn"><i class="fas fa-bars"></i></div>
@@ -79,11 +93,19 @@
     <section class="skills" id="skills">
         <div class="max-width">
             <h2 class="title fadein">News Dupta</h2>
-            <div id="latest-news-home" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-                <div class="col-span-full text-center">Memuat berita terbaru...</div>
+            
+            <div id="news-skeleton" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+                <div class="skeleton-home"></div>
+                <div class="skeleton-home hidden md:block"></div>
+                <div class="skeleton-home hidden lg:block"></div>
             </div>
+
+            <div id="latest-news-home" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 hidden"></div>
+            
             <div style="text-align: center; margin-top: 40px;">
-                <a href="berita.html" style="background: crimson; color: #fff; padding: 10px 25px; border-radius: 6px; font-weight: 500;">Lihat Semua Berita</a>
+                <a href="berita.html" style="background: crimson; color: #fff; padding: 12px 30px; border-radius: 8px; font-weight: 600; transition: 0.3s; display: inline-block;">
+                    Lihat Semua Berita <i class="fas fa-chevron-right ml-2 text-xs"></i>
+                </a>
             </div>
         </div>
     </section>
@@ -94,37 +116,21 @@
             <div class="carousel owl-carousel">
                 <div class="card">
                     <div class="box">
-                        <a href="https://drive.google.com/drive/folders/1-BDK3pEgRep9EhiKj7l-Yv_Jd-As5xwo?usp=sharing" target="_blank" style="text-decoration: none; color: inherit;">
-                        <img src="https://drive.google.com/thumbnail?id=1pzotUCew6WxJnOIF73kvWWfOmfyG3SWv&sz=w1000" alt="">
-                        <p>Hari Laut Sedunia</p>
+                        <a href="https://drive.google.com/drive/folders/1-BDK3pEgRep9EhiKj7l-Yv_Jd-As5xwo?usp=sharing" target="_blank">
+                            <img src="https://drive.google.com/thumbnail?id=1pzotUCew6WxJnOIF73kvWWfOmfyG3SWv&sz=w1000" alt="Hari Laut">
+                            <p>Hari Laut Sedunia</p>
                         </a>
                     </div>
                 </div>
                 <div class="card">
                     <div class="box">
-                         <a href="https://drive.google.com/drive/folders/1-7WBC0ghPZeXWUMxn9vAegfq2qOBdZfH?usp=drive_link" target="_blank" style="text-decoration: none; color: inherit;">
-                        <img src="https://drive.google.com/thumbnail?id=1QWZc_nrh-Qx5LrmSkwaL9MG9ovanz27q&sz=w1000" alt="">
-                        <p>Berbagi Bersama</p>
+                        <a href="https://drive.google.com/drive/folders/1-7WBC0ghPZeXWUMxn9vAegfq2qOBdZfH?usp=drive_link" target="_blank">
+                            <img src="https://drive.google.com/thumbnail?id=1QWZc_nrh-Qx5LrmSkwaL9MG9ovanz27q&sz=w1000" alt="Berbagi">
+                            <p>Berbagi Bersama</p>
                         </a>
                     </div>
                 </div>
-                <div class="card">
-                    <div class="box">
-                         <a href="https://drive.google.com/drive/folders/1PbrtalVXQzMZil6wuAA4AysHjutkRIVA?usp=sharing" target="_blank" style="text-decoration: none; color: inherit;">
-                        <img src="https://drive.google.com/thumbnail?id=1QjjduUIx3SSwhyYHXDW7_EeilR_1iYEY&sz=w1000" alt="">
-                        <p>Buka Puasa Bersama</p>
-                        </a>
-                    </div>
                 </div>
-                 <div class="card">
-                    <div class="box">
-                         <a href="https://drive.google.com/drive/folders/1-7ro7lpw1doh3Y0R5K6eDvTEsCFwpRm3?usp=sharing" target="_blank" style="text-decoration: none; color: inherit;">
-                        <img src="https://drive.google.com/thumbnail?id=1YkRLxwHJmFOzIeIoNz9mnBTWaLaDLvYV&sz=w1000" alt="">
-                        <p>Halal Bihalal</p>
-                        </a>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -132,16 +138,16 @@
         <div class="max-width">
             <h2 class="title fadein">Info Kontak</h2>
             <div class="contact-content">
-                <div class="column left">
+                <div class="column left text-center">
                     <div class="text">Hubungi Kami</div>
-                    <div class="icons">
-                        <div class="row">
-                            <i class="fas fa-user"></i>
-                            <div class="info"><div class="head">Nama</div><div class="sub-title">Pradupta</div></div>
+                    <div class="icons inline-block text-left">
+                        <div class="row flex items-center mb-4">
+                            <i class="fas fa-user text-crimson mr-4 text-2xl"></i>
+                            <div class="info"><div class="head font-bold">Nama</div><div class="sub-title text-gray-600">Ambalan ScoutDupta</div></div>
                         </div>
-                        <div class="row">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <div class="info"><div class="head">Alamat</div><div class="sub-title">Jalan Raya Pakuhaji KM. 2</div></div>
+                        <div class="row flex items-center">
+                            <i class="fas fa-map-marker-alt text-crimson mr-4 text-2xl"></i>
+                            <div class="info"><div class="head font-bold">Alamat</div><div class="sub-title text-gray-600">Jalan Raya Pakuhaji KM. 2</div></div>
                         </div>
                     </div>
                 </div>
@@ -150,95 +156,94 @@
     </section>
 
     <footer>
-        <span>Created By <a href="#">Team Media Pradupta</a> | <span class="far fa-copyright"></span> 2026 All rights reserved.</span>
+        <span>Created By <a href="#" class="font-bold text-red-500">Team Media Pradupta</a> | <span class="far fa-copyright"></span> 2026 All rights reserved.</span>
     </footer>
 
     <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyueNjbiYgaR3ePZfPvTc3t9InJGyWW709buzYXwr7ZDI61_H3ozfhAMo-whXrukmeG4g/exec';
+
         $(document).ready(function () {
-            // NAVBAR STICKY & SCROLL UP
+            // NAVBAR & SCROLL LOGIC
             $(window).scroll(function () {
-                if (this.scrollY > 20) {
-                    $(".navbar").addClass("sticky");
-                } else {
-                    $(".navbar").removeClass("sticky");
-                }
-                if (this.scrollY > 500) {
-                    $(".scroll-up-btn").addClass("show");
-                } else {
-                    $(".scroll-up-btn").removeClass("show");
-                }
+                if (this.scrollY > 20) { $(".navbar").addClass("sticky"); } 
+                else { $(".navbar").removeClass("sticky"); }
                 
-                // Animasi FadeIn sesuai CSS Anda (.showme)
+                if (this.scrollY > 500) { $(".scroll-up-btn").addClass("show"); } 
+                else { $(".scroll-up-btn").removeClass("show"); }
+                
                 $(".fadein").each(function () {
-                    var bottom_of_element = $(this).offset().top + $(this).outerHeight();
                     var bottom_of_window = $(window).scrollTop() + $(window).height();
-                    if (bottom_of_window > bottom_of_element) {
-                        $(this).addClass("showme");
-                    }
+                    if (bottom_of_window > $(this).offset().top + 50) { $(this).addClass("showme"); }
                 });
             });
 
-            $(".scroll-up-btn").click(function () {
-                $("html").animate({ scrollTop: 0 });
-            });
-
+            $(".scroll-up-btn").click(function () { $("html").animate({ scrollTop: 0 }); });
             $(".menu-btn").click(function () {
                 $(".navbar .menu").toggleClass("active");
                 $(".menu-btn i").toggleClass("active");
             });
 
-            // OWL CAROUSEL PROGRAM KERJA
+            // CAROUSEL
             $(".carousel").owlCarousel({
-                margin: 20,
-                loop: true,
-                autoplayTimeOut: 2000,
-                autoplayHoverPause: true,
-                responsive: {
-                    0: { items: 1, nav: false },
-                    600: { items: 2, nav: false },
-                    1000: { items: 3, nav: false }
-                }
+                margin: 20, loop: true, autoplay: true, autoplayTimeOut: 3000,
+                responsive: { 0: { items: 1 }, 600: { items: 2 }, 1000: { items: 3 } }
             });
 
-            // FETCH BERITA (3 TERBARU)
-            const scriptURL = 'https://script.google.com/macros/s/AKfycbyueNjbiYgaR3ePZfPvTc3t9InJGyWW709buzYXwr7ZDI61_H3ozfhAMo-whXrukmeG4g/exec';
+            // BERITA BERANDA (CACHE-FIRST)
             async function fetchHomeNews() {
+                const container = document.getElementById('latest-news-home');
+                const skeleton = document.getElementById('news-skeleton');
+
+                // 1. Load dari Cache
+                const cached = localStorage.getItem('all_news');
+                if (cached) { renderNews(JSON.parse(cached)); }
+
+                // 2. Fetch Live
                 try {
                     const response = await fetch(scriptURL);
                     const data = await response.json();
-                    const container = document.getElementById('latest-news-home');
-                    container.innerHTML = ''; 
-                    data.slice(0, 3).forEach((row, index) => {
-                        
-                        // LOGIKA PERBAIKAN TANGGAL
-                        const rawDate = row[0];
-                        const formattedDate = new Date(rawDate).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                        });
-
-                        const slug = row[1].toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-                        
-                        container.innerHTML += `
-                            <div class="news-card p-4 flex flex-col text-left bg-white">
-                                <img src="${row[4] || 'soon.jpg'}" class="w-full h-48 object-cover rounded-md mb-4" style="border: 2px solid crimson;">
-                                <span class="text-xs text-gray-400 font-semibold uppercase">
-                                    <i class="far fa-calendar-alt mr-1"></i> ${formattedDate}
-                                </span>
-                                <h3 class="font-bold text-lg mt-2 text-black line-clamp-2">${row[1]}</h3>
-                                <p class="text-gray-600 text-sm mt-2 line-clamp-2">${row[3]}</p>
-                                <a href="detail.html?post=${slug}&id=${index}" class="text-red-600 font-bold text-sm mt-4 hover:underline">Baca Selengkapnya →</a>
-                            </div>`;
-                    });
-                } catch (e) { console.error(e); }
+                    if (data && data.length > 0) {
+                        localStorage.setItem('all_news', JSON.stringify(data));
+                        renderNews(data);
+                    }
+                } catch (e) { console.error("Update berita gagal:", e); }
             }
+
+            function renderNews(data) {
+                const container = document.getElementById('latest-news-home');
+                const skeleton = document.getElementById('news-skeleton');
+                
+                container.innerHTML = '';
+                const topThree = data.slice(0, 3); // Ambil 3 teratas (karena sudah reverse di App Script)
+
+                topThree.forEach((row, index) => {
+                    const date = new Date(row[0]).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+                    const slug = row[1].toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+                    const originalId = (data.length - 1) - index;
+
+                    const card = `
+                        <div class="news-card p-4">
+                            <div class="overflow-hidden rounded-md mb-4" style="border: 2px solid crimson;">
+                                <img src="${row[4] || 'img/soon.jpg'}" class="w-full h-48 object-cover hover:scale-110 transition duration-500" loading="lazy">
+                            </div>
+                            <span class="text-[10px] text-gray-400 font-bold uppercase">
+                                <i class="far fa-calendar-alt mr-1"></i> ${date}
+                            </span>
+                            <h3 class="font-bold text-lg mt-2 text-black line-clamp-2 leading-tight">${row[1]}</h3>
+                            <p class="text-gray-600 text-sm mt-2 line-clamp-2 flex-grow">${row[3]}</p>
+                            <a href="detail.html?post=${slug}&id=${originalId}" class="text-red-600 font-bold text-sm mt-4 hover:underline flex items-center">
+                                Baca Selengkapnya <i class="fas fa-arrow-right ml-2 text-[10px]"></i>
+                            </a>
+                        </div>`;
+                    container.insertAdjacentHTML('beforeend', card);
+                });
+
+                skeleton.classList.add('hidden');
+                container.classList.remove('hidden');
+            }
+
             fetchHomeNews();
         });
     </script>
 </body>
 </html>
-
-
-
-
