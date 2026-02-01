@@ -117,7 +117,7 @@ html {
 /* Home Section Styling */
 .home {
   display: flex;
-  background: url(https://drive.google.com/thumbnail?id=12SZogjoHCR7eimswvBplp6zETOug1QAE&sz=w1000) no-repeat center;
+  background: url(https://drive.google.com/thumbnail?id=1w5nLOyXD03sO6OuDzi17aYwjS3OahVoa&sz=w1000) no-repeat center;
   height: 100vh;
   background-size: cover;
   background-attachment: fixed;
@@ -722,3 +722,4 @@ footer span a:hover {
     width: 250px;
   }
 }
+
