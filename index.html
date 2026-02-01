@@ -130,7 +130,7 @@
                         </a>
                     </div>
                 </div>
-                </div>
+            </div>
         </div>
     </section>
 
@@ -160,7 +160,8 @@
     </footer>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbx14_8D4lNFAufqvTssRm1KFiNFB3Qa_dxI2idNc_Hu0YbFRxt7tIu5VhQ3m3W1hJJH/exec';
+        // Gunakan scriptURL yang sudah sinkron dengan Berita.html
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyFSre1eTFS9dAF8kW-l6SKXhhSNzAaTgpc44iTC5tsTgR_TRimiE5p0a72ISJB3gnCMQ/exec';
 
         $(document).ready(function () {
             // NAVBAR & SCROLL LOGIC
@@ -189,16 +190,21 @@
                 responsive: { 0: { items: 1 }, 600: { items: 2 }, 1000: { items: 3 } }
             });
 
-            // BERITA BERANDA (CACHE-FIRST)
+            // LOGIKA NEWS DUPTA (SINKRON DENGAN APPS SCRIPT ARRAY)
             async function fetchHomeNews() {
                 const container = document.getElementById('latest-news-home');
                 const skeleton = document.getElementById('news-skeleton');
 
-                // 1. Load dari Cache
+                // 1. Tampilkan Cache jika tersedia
                 const cached = localStorage.getItem('all_news');
-                if (cached) { renderNews(JSON.parse(cached)); }
+                if (cached) { 
+                    const data = JSON.parse(cached);
+                    if(data.length > 0 && Array.isArray(data[0])) {
+                        renderNews(data); 
+                    }
+                }
 
-                // 2. Fetch Live
+                // 2. Ambil Data Baru
                 try {
                     const response = await fetch(scriptURL);
                     const data = await response.json();
@@ -206,7 +212,9 @@
                         localStorage.setItem('all_news', JSON.stringify(data));
                         renderNews(data);
                     }
-                } catch (e) { console.error("Update berita gagal:", e); }
+                } catch (e) { 
+                    console.error("Gagal sinkronisasi berita:", e); 
+                }
             }
 
             function renderNews(data) {
@@ -214,31 +222,44 @@
                 const skeleton = document.getElementById('news-skeleton');
                 
                 container.innerHTML = '';
-                const topThree = data.slice(0, 3); // Ambil 3 teratas (karena sudah reverse di App Script)
+                // Ambil 3 berita teratas (sudah di-reverse di Apps Script)
+                const topThree = data.slice(0, 3); 
 
                 topThree.forEach((row, index) => {
-                    const date = new Date(row[0]).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+                    // Struktur Array: [0]Tgl, [1]Judul, [2]Penulis, [3]Isi, [4]Gbr, [5]Views
+                    const date = new Date(row[0]).toLocaleDateString('id-ID', { 
+                        day:'numeric', month:'long', year:'numeric' 
+                    });
                     const slug = row[1].toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-                    const originalId = (data.length - 1) - index;
+                    
+                    // Bersihkan tag HTML dari isi untuk ringkasan deskripsi
+                    const cleanText = row[3].replace(/<[^>]*>?/gm, '');
 
                     const card = `
                         <div class="news-card p-4">
                             <div class="overflow-hidden rounded-md mb-4" style="border: 2px solid crimson;">
-                                <img src="${row[4] || 'img/soon.jpg'}" class="w-full h-48 object-cover hover:scale-110 transition duration-500" loading="lazy">
+                                <img src="${row[4] || 'https://via.placeholder.com/600x400'}" 
+                                     class="w-full h-48 object-cover hover:scale-110 transition duration-500" 
+                                     loading="lazy">
                             </div>
-                            <span class="text-[10px] text-gray-400 font-bold uppercase">
-                                <i class="far fa-calendar-alt mr-1"></i> ${date}
-                            </span>
-                            <h3 class="font-bold text-lg mt-2 text-black line-clamp-2 leading-tight">${row[1]}</h3>
-                            <p class="text-gray-600 text-sm mt-2 line-clamp-2 flex-grow">${row[3]}</p>
-                            <a href="detail.html?post=${slug}&id=${originalId}" class="text-red-600 font-bold text-sm mt-4 hover:underline flex items-center">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[10px] text-gray-400 font-bold uppercase">
+                                    <i class="far fa-calendar-alt mr-1"></i> ${date}
+                                </span>
+                                <span class="text-[10px] text-crimson font-bold">
+                                    <i class="far fa-eye mr-1"></i> ${row[5] || 0}
+                                </span>
+                            </div>
+                            <h3 class="font-bold text-lg mt-2 text-black line-clamp-2 leading-tight h-12">${row[1]}</h3>
+                            <p class="text-gray-600 text-sm mt-2 line-clamp-2 flex-grow">${cleanText}</p>
+                            <a href="detail.html?post=${slug}&id=${index}" class="text-red-600 font-bold text-sm mt-4 hover:underline flex items-center">
                                 Baca Selengkapnya <i class="fas fa-arrow-right ml-2 text-[10px]"></i>
                             </a>
                         </div>`;
                     container.insertAdjacentHTML('beforeend', card);
                 });
 
-                skeleton.classList.add('hidden');
+                if (skeleton) skeleton.classList.add('hidden');
                 container.classList.remove('hidden');
             }
 
@@ -247,4 +268,3 @@
     </script>
 </body>
 </html>
-
