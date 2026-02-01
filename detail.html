@@ -16,7 +16,6 @@
     .logo-text { font-family: 'Pacifico', cursive; font-size: 1.8rem; color: #DC143C; }
     .sticky-nav { position: sticky; top: 0; z-index: 1000; background-color: #111; }
     footer { background: #111; color: #fff; }
-    .footer-content h3 { font-family: 'Ubuntu', sans-serif; }
   </style>
 </head>
 <body class="bg-gray-50 flex flex-col min-h-screen">
@@ -26,7 +25,7 @@
       <div class="logo-text">ScoutDupta</div>
       <ul class="flex gap-6 items-center text-sm font-medium">
         <li><a href="index.html" class="hover:text-red-500 transition">Beranda</a></li>
-        <li><a href="loginartikel.html" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-white hover:text-red-600 transition">+ Tulis Artikel</a></li>
+        <li><a href="loginartikel.html" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-white hover:text-red-600 transition">+ Artikel</a></li>
       </ul>
     </div>
   </nav>
@@ -34,7 +33,7 @@
   <main class="flex-grow max-w-4xl mx-auto py-12 px-6 bg-white shadow-sm mt-6 mb-12 rounded-xl">
     <div id="loader" class="text-center py-20">
       <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-red-600 mx-auto"></div>
-      <p class="mt-4 text-gray-500">Membaca berita...</p>
+      <p class="mt-4 text-gray-500">Memuat berita...</p>
     </div>
 
     <article id="article-content" class="hidden">
@@ -81,8 +80,9 @@
             year: 'numeric'
           });
 
-          document.title = post[1] + " | ScoutDupta";
-          document.getElementById('det-judul').innerText = post[1];
+          const judulBerita = post[1];
+          document.title = judulBerita + " | ScoutDupta";
+          document.getElementById('det-judul').innerText = judulBerita;
           
           document.getElementById('det-meta').innerHTML = `
             <div class="flex items-center">
@@ -93,11 +93,12 @@
             </div>
           `;
 
-          // Tampilkan Isi Artikel dari Spreadsheet
+          // Tampilkan Isi Artikel
           document.getElementById('det-isi').innerHTML = post[3];
           
-          // --- LOGIKA PDF KHUSUS ID 7 ---
-          if (id === "7") {
+          // --- LOGIKA PDF BERDASARKAN JUDUL (ANTI-GESER) ---
+          // Cukup pastikan judul artikel mengandung kata "Arah Kebijakan"
+          if (judulBerita.toLowerCase().includes("arah kebijakan")) {
             const pdfHtml = `
               <div class="mt-12 border-t-2 border-red-600 pt-8">
                 <h3 class="text-xl font-bold mb-4 text-gray-900">Dokumen Lampiran:</h3>
@@ -128,7 +129,6 @@
       }
     }
 
-    // WAJIB: Panggil fungsi ini agar jalan!
     getArticle();
   </script>
 </body>
