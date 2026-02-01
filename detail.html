@@ -1,188 +1,176 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ScoutDupta | Detail Berita</title>
-  
-  <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-  
-  <style>
-    body { font-family: 'Poppins', sans-serif; background-color: #f9fafb; margin: 0; }
-    .sticky-nav { position: sticky; top: 0; z-index: 1000; background-color: #111; color: white; padding: 1rem; }
-    .logo-text { font-family: 'Pacifico', cursive; font-size: 1.8rem; color: #DC143C; }
-    .main-card { max-width: 56rem; margin: 1.5rem auto; background: white; border-radius: 0.75rem; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); min-height: 60vh; }
-    .skeleton { background: #e5e7eb; border-radius: 0.5rem; animation: pulse 1.5s infinite; margin-bottom: 1rem; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
-    .hidden { display: none; }
-    footer { background: #111; color: white; text-align: center; padding: 2rem; margin-top: auto; }
-    #det-isi { white-space: pre-wrap; word-wrap: break-word; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Artikel - Pradupta</title>
+    
+    <link rel="stylesheet" href="https://pradupta.github.io/web/web/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Perbaikan Navbar Sticky */
+        .navbar.sticky { background: crimson !important; padding: 10px 0; }
+        .navbar.sticky .logo a span { color: #fff !important; }
+        .navbar.sticky .menu li a { color: #fff !important; }
+
+        /* Pengaturan Tipografi Artikel */
+        .article-container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .post-title {
+            font-size: 2.5rem;
+            line-height: 1.2;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+
+        /* Area Isi Berita */
+        .content-area {
+            font-size: 1.15rem;
+            line-height: 1.8; /* Membuat jarak antar baris lega */
+            color: #333;
+            text-align: justify; /* Rata kiri-kanan agar rapi */
+        }
+
+        .content-area p {
+            margin-bottom: 1.5rem; /* Jarak antar paragraf */
+        }
+
+        .content-area img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            margin: 30px 0;
+            display: block;
+        }
+
+        .meta-info {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: #777;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .skeleton { background: #f3f4f6; animation: pulse 1.5s infinite; border-radius: 8px; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+
+        @media (max-width: 768px) {
+            .article-container { padding: 20px; border-radius: 0; }
+            .post-title { font-size: 1.8rem; }
+        }
+    </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="bg-gray-100">
 
-  <nav class="sticky-nav flex justify-between items-center px-6">
-    <div class="logo-text">ScoutDupta</div>
-    <div class="flex gap-4">
-        <a href="index.html" class="text-white text-sm hover:text-red-500 transition">Beranda</a>
-        <a href="berita.html" class="text-white text-sm hover:text-red-500 transition">Berita</a>
-    </div>
-  </nav>
+    <nav class="navbar sticky">
+        <div class="max-width">
+            <div class="logo"><a href="index.html">Scout<span>Dupta</span></a></div>
+            <ul class="menu">
+                <li><a href="index.html">Beranda</a></li>
+                <li><a href="berita.html">Berita</a></li>
+            </ul>
+        </div>
+    </nav>
 
-  <main class="main-card">
-    <div id="loader-box">
-      <div class="skeleton h-6 w-32"></div>
-      <div class="skeleton h-12 w-full mt-6"></div>
-      <div class="skeleton h-64 w-full mt-8"></div>
-    </div>
+    <div class="max-width py-24 px-4 min-h-screen">
+        <div id="loading-detail" class="max-w-[800px] mx-auto space-y-4">
+            <div class="skeleton h-12 w-3/4"></div>
+            <div class="skeleton h-6 w-1/2"></div>
+            <div class="skeleton h-[400px] w-full"></div>
+        </div>
 
-    <article id="art-box" class="hidden">
-      <a href="berita.html" class="text-red-600 font-bold no-underline flex items-center mb-6 hover:translate-x-[-5px] transition-transform">
-        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-        Kembali ke Daftar Berita
-      </a>
-      
-      <h1 id="det-judul" class="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight"></h1>
-      
-      <div id="det-meta" class="text-gray-500 text-sm mb-8 border-b pb-6 flex flex-wrap gap-4 items-center"></div>
-      
-      <div id="img-box" class="rounded-2xl overflow-hidden shadow-lg mb-10">
-        <img id="det-img" class="w-full h-auto" src="" alt="Cover Berita">
-      </div>
-      
-      <div id="det-isi" class="prose prose-lg max-w-none text-gray-800 leading-relaxed text-lg"></div>
-
-      <div id="pdf-container"></div>
-    </article>
-
-    <div id="error-box" class="hidden text-center py-20">
-        <h2 class="text-2xl font-bold text-gray-800">Artikel Tidak Ditemukan</h2>
-        <p class="text-gray-500 mt-2">Berita mungkin telah dihapus atau link salah.</p>
-        <a href="berita.html" class="inline-block mt-6 bg-red-600 text-white px-6 py-2 rounded-lg">Cari Berita Lain</a>
-    </div>
-  </main>
-
-  <footer>
-    <p class="text-sm text-gray-400">&copy; 2026 ScoutDupta. All Rights Reserved.</p>
-  </footer>
-
-  <script>
-    // URL Script Baru Kamu
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbx14_8D4lNFAufqvTssRm1KFiNFB3Qa_dxI2idNc_Hu0YbFRxt7tIu5VhQ3m3W1hJJH/exec';
-
-    async function loadContent() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const slugParam = urlParams.get('post');
-      const idParam = urlParams.get('id');
-
-      // 1. Coba ambil dari Cache dulu agar loading instan
-      const cacheAll = localStorage.getItem('all_news');
-      if (cacheAll) {
-        processAndRender(JSON.parse(cacheAll), slugParam, idParam);
-      }
-
-      // 2. Ambil data terbaru dari Server
-      try {
-        const res = await fetch(scriptURL);
-        const data = await res.json();
-        if (data && data.length > 0) {
-          localStorage.setItem('all_news', JSON.stringify(data));
-          processAndRender(data, slugParam, idParam);
-        }
-      } catch (e) { 
-        console.error("Gagal sinkronisasi data");
-        if (!cacheAll) showUI('error');
-      }
-    }
-
-    function processAndRender(data, slug, id) {
-      let post;
-
-      // Pencarian berdasarkan Slug (Untuk link permanen menu Arah Kebijakan)
-      if (slug) {
-        post = data.find(row => {
-          const rowSlug = row.judul.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
-          return rowSlug === slug;
-        });
-      }
-
-      // Pencarian berdasarkan ID jika slug tidak ada
-      if (!post && id !== null) {
-        post = data[id];
-      }
-
-      if (post) {
-        render(post);
-        showUI('article');
-        
-        // Update Counter Viewers ke Google Sheets
-        if (post.originalIndex !== undefined) {
-           fetch(`${scriptURL}?updateViewIndex=${post.originalIndex}`).catch(err => console.log("Gagal update views"));
-        }
-      } else {
-        showUI('error');
-      }
-    }
-
-    function render(post) {
-      document.title = post.judul + " | ScoutDupta";
-      document.getElementById('det-judul').innerText = post.judul;
-      
-      const tgl = new Date(post.tanggal).toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'});
-      
-      // Meta Tanggal + Ikon Viewers
-      document.getElementById('det-meta').innerHTML = `
-        <span>Oleh <b>${post.penulis}</b></span>
-        <span class="flex items-center"><i class="far fa-calendar-alt mr-2 text-red-600"></i> ${tgl}</span>
-        <span class="flex items-center bg-red-50 text-red-600 px-3 py-1 rounded-full font-bold">
-            <i class="far fa-eye mr-2"></i> ${post.viewers || 0} Pembaca
-        </span>
-      `;
-      
-      document.getElementById('det-isi').innerHTML = post.isi;
-      
-      if(post.gambar && post.gambar.length > 10) {
-        document.getElementById('det-img').src = post.gambar;
-        document.getElementById('img-box').classList.remove('hidden');
-      } else {
-        document.getElementById('img-box').classList.add('hidden');
-      }
-
-      // Lampiran PDF Otomatis
-      const pdfContainer = document.getElementById('pdf-container');
-      if (post.judul.toLowerCase().includes("arah kebijakan")) {
-        pdfContainer.innerHTML = `
-          <div class="mt-12 border-t-4 border-red-600 pt-8">
-            <h3 class="text-xl font-bold mb-4 flex items-center">
-                <i class="fas fa-file-pdf text-red-600 mr-2"></i> Dokumen Lampiran:
-            </h3>
-            <div style="position:relative; padding-top:141.4%; height:0; overflow:hidden; border-radius:12px; border:2px solid #eee;">
-              <iframe src="https://drive.google.com/file/d/1iGIOK7EmnnUkQYiOwfqep_diOcb_hH5y/preview" 
-                      style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" 
-                      allow="autoplay"></iframe>
+        <article id="article-content" class="article-container hidden">
+            <a href="berita.html" class="text-crimson font-bold flex items-center mb-6 hover:underline transition">
+                <i class="fas fa-arrow-left mr-2"></i> Kembali ke Berita
+            </a>
+            
+            <h1 id="post-title" class="post-title"></h1>
+            
+            <div class="meta-info">
+                <span><i class="far fa-calendar-alt mr-1"></i> <span id="post-date"></span></span>
+                <span><i class="far fa-user mr-1"></i> <span id="post-author"></span></span>
+                <span><i class="far fa-eye mr-1"></i> <span id="post-views"></span> Views</span>
             </div>
-          </div>`;
-      } else {
-        pdfContainer.innerHTML = '';
-      }
-    }
 
-    function showUI(type) {
-      document.getElementById('loader-box').classList.add('hidden');
-      if (type === 'article') {
-        document.getElementById('art-box').classList.remove('hidden');
-        document.getElementById('error-box').classList.add('hidden');
-      } else {
-        document.getElementById('error-box').classList.remove('hidden');
-        document.getElementById('art-box').classList.add('hidden');
-      }
-    }
+            <img id="post-image" src="" alt="Gambar Berita" class="w-full shadow-md mb-8">
 
-    loadContent();
-  </script>
+            <div id="post-body" class="content-area">
+                </div>
+        </article>
+    </div>
+
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyFSre1eTFS9dAF8kW-l6SKXhhSNzAaTgpc44iTC5tsTgR_TRimiE5p0a72ISJB3gnCMQ/exec';
+
+        async function loadDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = urlParams.get('id');
+            
+            if (id === null) { window.location.href = 'berita.html'; return; }
+
+            try {
+                const cached = localStorage.getItem('all_news');
+                let allNews = cached ? JSON.parse(cached) : null;
+
+                // Jika cache tidak ada, ambil dari server
+                if (!allNews) {
+                    const response = await fetch(scriptURL);
+                    allNews = await response.json();
+                    localStorage.setItem('all_news', JSON.stringify(allNews));
+                }
+
+                const article = allNews[parseInt(id)];
+                if (article) {
+                    renderArticle(article);
+                } else {
+                    alert("Artikel tidak ditemukan!");
+                    window.location.href = 'berita.html';
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+
+        function renderArticle(row) {
+            const date = new Date(row[0]).toLocaleDateString('id-ID', { 
+                day: 'numeric', month: 'long', year: 'numeric' 
+            });
+
+            document.title = row[1];
+            document.getElementById('post-title').innerText = row[1];
+            document.getElementById('post-date').innerText = date;
+            document.getElementById('post-author').innerText = row[2] || 'Admin';
+            document.getElementById('post-views').innerText = row[5] || 0;
+            document.getElementById('post-image').src = row[4] || 'https://via.placeholder.com/800x400';
+            
+            // PERBAIKAN TEKS: Mengubah \n menjadi paragraf jika data dari Sheets berupa teks polos
+            let rawContent = row[3];
+            let formattedContent = rawContent.includes('<p>') ? rawContent : 
+                                  rawContent.split('\n').map(p => `<p>${p}</p>`).join('');
+
+            document.getElementById('post-body').innerHTML = formattedContent;
+
+            // Tampilkan konten, sembunyikan loading
+            document.getElementById('loading-detail').classList.add('hidden');
+            document.getElementById('article-content').classList.remove('hidden');
+        }
+
+        $(document).ready(loadDetail);
+    </script>
 </body>
 </html>
