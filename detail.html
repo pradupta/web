@@ -86,7 +86,7 @@
   <script>
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyueNjbiYgaR3ePZfPvTc3t9InJGyWW709buzYXwr7ZDI61_H3ozfhAMo-whXrukmeG4g/exec';
 
-    async function getArticle() {
+   async function getArticle() {
       const urlParams = new URLSearchParams(window.location.search);
       const id = urlParams.get('id');
 
@@ -117,7 +117,26 @@
             </div>
           `;
 
+          // Tampilkan Isi Artikel dari Spreadsheet
           document.getElementById('det-isi').innerHTML = post[3];
+          
+          // --- LOGIKA PDF KHUSUS ID 7 ---
+          if (id === "7") {
+            const pdfHtml = `
+              <div class="mt-12 border-t-2 border-red-600 pt-8">
+                <h3 class="text-xl font-bold mb-4 text-gray-900">Dokumen Lampiran:</h3>
+                <div style="position: relative; width: 100%; height: 0; padding-top: 141.4%; background: #f3f4f6; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; shadow: lg;">
+                  <iframe 
+                    src="https://drive.google.com/file/d/1iGIOK7EmnnUkQYiOwfqep_diOcb_hH5y/preview" 
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                    allow="autoplay">
+                  </iframe>
+                </div>
+              </div>
+            `;
+            document.getElementById('det-isi').insertAdjacentHTML('beforeend', pdfHtml);
+          }
+          // ------------------------------
           
           if(post[4]) {
             document.getElementById('det-img').src = post[4];
@@ -133,7 +152,6 @@
         alert("Gagal memuat konten.");
       }
     }
-    getArticle();
   </script>
 </body>
 </html>
