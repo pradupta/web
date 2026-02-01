@@ -22,12 +22,12 @@
     .news-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
     .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    
     .skeleton { background: #eee; border-radius: 12px; animation: pulse 1.5s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     
     .search-container { position: relative; max-width: 500px; margin: -30px auto 0; z-index: 10; }
     .search-input { width: 100%; padding: 15px 20px 15px 50px; border-radius: 15px; border: none; box-shadow: 0 10px 25px rgba(0,0,0,0.1); outline: none; transition: 0.3s; }
-    .search-input:focus { box-shadow: 0 10px 25px rgba(220, 20, 60, 0.2); }
   </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -44,12 +44,12 @@
 
   <header class="bg-[#1a1a1a] text-white pt-16 pb-20 px-6 text-center border-b-4 border-crimson">
     <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Kabar <span class="text-crimson">Pradupta</span></h1>
-    <p class="text-gray-400 max-w-2xl mx-auto italic">Temukan informasi terbaru seputar kegiatan Ambalan kami.</p>
+    <p class="text-gray-400 max-w-2xl mx-auto italic">Memuat informasi terbaru...</p>
   </header>
 
   <div class="search-container px-6">
     <i class="fas fa-search absolute left-10 top-1/2 -translate-y-1/2 text-gray-400"></i>
-    <input type="text" id="search-input" class="search-input" placeholder="Cari berita atau penulis (contoh: Tangerang)...">
+    <input type="text" id="search-input" class="search-input" placeholder="Cari berita atau penulis...">
   </div>
 
   <main class="py-12 px-6 flex-grow">
@@ -65,39 +65,36 @@
       
       <div id="not-found" class="hidden text-center py-20">
         <i class="fas fa-search-minus text-5xl text-gray-300 mb-4"></i>
-        <p class="text-gray-500 text-lg">Berita yang kamu cari tidak ditemukan...</p>
+        <p class="text-gray-500 text-lg">Berita tidak ditemukan...</p>
       </div>
       
     </div>
   </main>
 
-  <footer class="py-12 px-6 bg-[#111] text-white border-t border-gray-800 text-center">
+  <footer class="py-12 px-6 bg-[#111] text-white text-center">
     <p class="text-gray-500 text-[10px]">&copy; 2026 ScoutDupta. All Rights Reserved.</p>
   </footer>
 
   <script>
-    // Link Apps Script Array kamu
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyFSre1eTFS9dAF8kW-l6SKXhhSNzAaTgpc44iTC5tsTgR_TRimiE5p0a72ISJB3gnCMQ/exec';
     let allPosts = []; 
 
     async function init() {
-      // Hapus cache lama jika formatnya salah
-      const cached = localStorage.getItem('all_news');
-      if (cached) {
-        allPosts = JSON.parse(cached);
-        // Cek jika cache masih format objek, hapus saja
-        if (allPosts.length > 0 && !Array.isArray(allPosts[0])) {
-            localStorage.removeItem('all_news');
-            allPosts = [];
-        } else {
-            render(allPosts);
-        }
-      }
+      const container = document.getElementById('news-container');
+      const skeleton = document.getElementById('loading-skeleton');
+      
+      // 1. TAMPILKAN LOADING (Sembunyikan konten lama)
+      skeleton.classList.remove('hidden');
+      container.classList.add('hidden');
 
       try {
-        const response = await fetch(scriptURL);
+        // 2. AMBIL DATA TERBARU (Paksa bypass cache dengan timestamp)
+        const response = await fetch(`${scriptURL}?t=${new Date().getTime()}`);
         const data = await response.json();
         
+        // 3. TUNGGU 3 DETIK (Sesuai permintaan Anda agar sinkron)
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
         if (data && data.length > 0) {
           allPosts = data;
           localStorage.setItem('all_news', JSON.stringify(data));
@@ -105,6 +102,12 @@
         }
       } catch (e) {
         console.error("Gagal ambil data");
+        // Jika gagal, pakai cache
+        const cached = localStorage.getItem('all_news');
+        if (cached) {
+            allPosts = JSON.parse(cached);
+            render(allPosts);
+        }
       }
     }
 
@@ -126,18 +129,17 @@
       container.classList.remove('hidden');
       
       data.forEach((post, index) => {
-        // [0]=Tgl, [1]=Judul, [2]=Penulis, [3]=Isi, [4]=Gbr, [5]=Views
         const date = new Date(post[0]).toLocaleDateString('id-ID', {
           day: 'numeric', month: 'long', year: 'numeric'
         });
 
         const slug = post[1].toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
         
+        // KUNCI PERBAIKAN: Pakai index agar detail.html tidak bingung
         const card = `
           <div class="news-card">
             <div class="h-52 overflow-hidden bg-gray-200">
-              <img src="${post[4] || 'https://via.placeholder.com/600x400'}" 
-                   class="w-full h-full object-cover">
+              <img src="${post[4] || 'https://via.placeholder.com/600x400'}" class="w-full h-full object-cover">
             </div>
             <div class="p-6 flex flex-col flex-grow">
               <div class="flex justify-between items-center mb-2">
@@ -163,6 +165,6 @@
     });
 
     init();
-  </script>
+</script>
 </body>
 </html>
