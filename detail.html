@@ -13,12 +13,10 @@
     <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
 
     <style>
-        /* Perbaikan Navbar Sticky */
         .navbar.sticky { background: crimson !important; padding: 10px 0; }
         .navbar.sticky .logo a span { color: #fff !important; }
         .navbar.sticky .menu li a { color: #fff !important; }
 
-        /* Pengaturan Tipografi Artikel */
         .article-container {
             max-width: 800px;
             margin: auto;
@@ -36,7 +34,6 @@
             margin-bottom: 20px;
         }
 
-        /* Area Isi Berita */
         .content-area {
             font-size: 1.15rem;
             line-height: 1.8;
@@ -44,17 +41,7 @@
             text-align: justify;
         }
 
-        .content-area p {
-            margin-bottom: 1.5rem;
-        }
-
-        .content-area img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 12px;
-            margin: 30px 0;
-            display: block;
-        }
+        .content-area p { margin-bottom: 1.5rem; }
 
         .meta-info {
             display: flex;
@@ -107,14 +94,15 @@
                 <span><i class="far fa-eye mr-1"></i> <span id="post-views"></span> Views</span>
             </div>
 
-            <img id="post-image" src="" alt="Gambar Berita" class="w-full shadow-md mb-8">
+            <img id="post-image" src="" alt="Gambar Berita" class="w-full shadow-md mb-8 rounded-xl">
 
             <div id="post-body" class="content-area"></div>
+
+            <div id="pdf-container"></div>
         </article>
     </div>
 
     <script>
-        // GANTI DENGAN URL DEPLOY TERBARU ANDA
         const scriptURL = 'https://script.google.com/macros/s/AKfycbycJzXx1UFjx-bUjyR2pVOXi2fSvRjHiHbkdCk1yh7EQcnMfldmsUxEpREMSfoggDjtrw/exec';
 
         async function loadDetail() {
@@ -124,11 +112,8 @@
             if (id === null) { window.location.href = 'berita.html'; return; }
 
             try {
-                // Masalah 3: Paksa ambil data terbaru (Cache Busting) menggunakan Timestamp
                 const response = await fetch(`${scriptURL}?t=${new Date().getTime()}`);
                 const allNews = await response.json();
-                
-                // Simpan ke localStorage agar sinkron dengan halaman berita
                 localStorage.setItem('all_news', JSON.stringify(allNews));
 
                 const article = allNews[parseInt(id)];
@@ -139,7 +124,7 @@
                     window.location.href = 'berita.html';
                 }
             } catch (error) {
-                console.error("Fetch error, mencoba memuat dari cache:", error);
+                console.error("Fetch error:", error);
                 const cached = localStorage.getItem('all_news');
                 if (cached) {
                     renderArticle(JSON.parse(cached)[parseInt(id)]);
@@ -152,34 +137,46 @@
                 day: 'numeric', month: 'long', year: 'numeric' 
             });
 
-            // Tampilkan data ke UI
             document.title = row[1];
             document.getElementById('post-title').innerText = row[1];
             document.getElementById('post-date').innerText = date;
             document.getElementById('post-author').innerText = row[2] || 'Admin';
-            
-            // Masalah 2: Tampilkan View sementara (+1 agar user merasa realtime)
-            const currentViews = row[5] || 0;
-            document.getElementById('post-views').innerText = parseInt(currentViews) + 1;
-            
+            document.getElementById('post-views').innerText = parseInt(row[5] || 0) + 1;
             document.getElementById('post-image').src = row[4] || 'https://via.placeholder.com/800x400';
             
-            // Perbaikan tampilan teks
+            // Render Teks
             let rawContent = row[3];
-            let formattedContent = rawContent.includes('<p>') ? rawContent : 
-                                  rawContent.split('\n').map(p => `<p>${p}</p>`).join('');
+            document.getElementById('post-body').innerHTML = rawContent.split('\n').map(p => `<p>${p}</p>`).join('');
 
-            document.getElementById('post-body').innerHTML = formattedContent;
+            // --- LOGIKA PDF SESUAI KEINGINAN LO ---
+            const pdfContainer = document.getElementById('pdf-container');
+            if (row[1].toLowerCase().includes("arah kebijakan")) {
+                // Ambil link drive dari isi berita (row[3]) dan pastikan pakai /preview
+                let driveUrl = row[3].trim().replace('/view?usp=sharing', '/preview').replace('/view', '/preview');
 
-            // Masalah 2: Kirim perintah update view ke Apps Script menggunakan Original ID (row[6])
-            const originalID = row[6];
-            if (originalID !== undefined) {
-                fetch(`${scriptURL}?action=updateView&readID=${originalID}`)
-                .then(() => console.log("View count updated on server"))
-                .catch(err => console.error("View update failed", err));
+                pdfContainer.innerHTML = `
+                  <div class="mt-12 border-t-4 border-red-600 pt-8">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path></svg>
+                        Dokumen Lampiran:
+                    </h3>
+                    <div style="position:relative; padding-top:141.4%; height:0; overflow:hidden; border-radius:12px; border:2px solid #eee;">
+                      <iframe src="${driveUrl}" 
+                              style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" 
+                              allow="autoplay"></iframe>
+                    </div>
+                    <p class="mt-4 text-sm text-gray-500 italic">* Jika dokumen tidak muncul, pastikan Anda masuk ke akun Google.</p>
+                  </div>`;
+            } else {
+                pdfContainer.innerHTML = '';
             }
 
-            // Sembunyikan loader
+            // Update View Count
+            const originalID = row[6];
+            if (originalID !== undefined) {
+                fetch(`${scriptURL}?action=updateView&readID=${originalID}`);
+            }
+
             document.getElementById('loading-detail').classList.add('hidden');
             document.getElementById('article-content').classList.remove('hidden');
         }
