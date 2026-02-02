@@ -213,14 +213,36 @@
       if(base64Image) { pImg.src = base64Image; pImg.classList.remove('hidden'); } else { pImg.classList.add('hidden'); }
     };
 
-    // Image Logic
+    // Image Logic dengan Kompresi Otomatis
     document.getElementById('gambar').onchange = function(e) {
       const file = e.target.files[0];
       if(!file) return;
+
       const reader = new FileReader();
-      reader.onload = function() {
-        base64Image = reader.result;
-        document.getElementById('gambarPreview').innerHTML = `<img src="${base64Image}" class="max-h-64 object-contain">`;
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Set ukuran maksimal lebar 800px (tinggi menyesuaikan)
+          const maxWidth = 800;
+          const scale = maxWidth / img.width;
+          canvas.width = maxWidth;
+          canvas.height = img.height * scale;
+
+          // Gambar ulang foto ke canvas untuk kompresi
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // Ubah ke Base64 dengan kualitas 0.7 (JPEG lebih ringan)
+          base64Image = canvas.toDataURL('image/jpeg', 0.7);
+          
+          document.getElementById('gambarPreview').innerHTML = 
+            `<img src="${base64Image}" class="max-h-64 object-contain shadow-md rounded">`;
+          
+          console.log("Gambar berhasil dikompres!");
+        };
+        img.src = event.target.result;
       };
       reader.readAsDataURL(file);
     };
@@ -280,4 +302,3 @@
   </script>
 </body>
 </html>
-
