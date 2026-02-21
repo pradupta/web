@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - PRADUPTA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; }
+        #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 999; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div id="loader">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600 mb-4"></div>
+        <p class="font-bold text-blue-600">Memproses Data...</p>
+    </div>
+
+    <div class="max-w-2xl mx-auto space-y-6">
+        <div class="bg-blue-600 p-8 rounded-[2.5rem] text-white shadow-xl">
+            <h1 class="text-2xl font-black italic tracking-tighter uppercase">Panel Admin PRADUPTA</h1>
+            <p class="text-blue-100 text-xs font-bold uppercase tracking-widest mt-1">Konfigurasi & Laporan Sistem</p>
+        </div>
+
+        <div class="bg-white rounded-[2.5rem] p-6 shadow-md border space-y-6">
+            
+            <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Nama Ambalan / Sekolah</label>
+                <div class="flex gap-2">
+                    <input type="text" id="admin-school" class="flex-1 bg-slate-50 p-4 rounded-2xl border-none outline-none font-bold text-sm focus:ring-2 focus:ring-blue-500">
+                    <button onclick="upSekolah()" class="bg-blue-600 text-white px-6 rounded-2xl font-black text-[10px] uppercase shadow-lg shadow-blue-100 active:scale-95 transition-all">Simpan</button>
+                </div>
+            </div>
+
+            <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Tambah Divisi Baru</label>
+                <div class="flex gap-2">
+                    <input type="text" id="admin-class" placeholder="Contoh: Dewan Ambalan" class="flex-1 bg-slate-50 p-4 rounded-2xl border-none outline-none font-bold text-sm focus:ring-2 focus:ring-blue-500">
+                    <button onclick="addKelas()" class="bg-slate-800 text-white px-6 rounded-2xl font-black text-[10px] uppercase shadow-lg active:scale-95 transition-all">Tambah</button>
+                </div>
+            </div>
+
+            <hr class="border-slate-100">
+
+            <div>
+                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Input Siswa Massal</label>
+                <select id="admin-class-list" class="w-full bg-slate-50 p-4 rounded-2xl font-bold mb-3 outline-none text-sm border-none"></select>
+                <textarea id="admin-bulk-students" placeholder="Tempel daftar nama di sini (satu nama per baris)..." class="w-full bg-slate-50 p-4 rounded-2xl h-40 mb-3 outline-none text-sm border-none font-medium"></textarea>
+                <button onclick="addSiswaMassal()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-indigo-100 active:scale-95 transition-all">Mulai Import Data</button>
+            </div>
+
+            <div class="pt-4">
+                <button onclick="unduhLaporanPDF()" class="w-full bg-emerald-600 text-white py-5 rounded-[1.5rem] font-black text-xs uppercase shadow-lg shadow-emerald-100 active:scale-95 transition-all">
+                    <i class="fas fa-file-pdf mr-2 text-lg"></i> Download Laporan Absensi (.PDF)
+                </button>
+            </div>
+        </div>
+
+        <p class="text-center text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em]">PRADUPTA ADMIN ENGINE v2.8</p>
+    </div>
+
+    <script>
+        // PASTIKAN URL SAMA DENGAN WEB APP ANDA
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx_YYxl1DM_rpfznIy6Mu7UYlKSZO1edqxDR1K6lVAJqy3oEXDUabe74HQbtsF4g61XHA/exec";
+
+        let config = {};
+
+        async function callBackend(action, data = {}) {
+            const response = await fetch(WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify({ action, data })
+            });
+            const json = await response.json();
+            return json.result;
+        }
+
+        async function loadConfig() {
+            document.getElementById('loader').style.display = 'flex';
+            const res = await callBackend("getAppConfig");
+            config = res;
+            document.getElementById('admin-school').value = res.school;
+            const adminClassList = document.getElementById('admin-class-list');
+            adminClassList.innerHTML = '<option value="">-- Pilih Divisi Untuk Import --</option>';
+            res.classes.forEach(c => {
+                const o = document.createElement('option'); o.value = o.text = c;
+                adminClassList.add(o);
+            });
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        async function upSekolah() {
+            const n = document.getElementById('admin-school').value;
+            if(!n) return;
+            document.getElementById('loader').style.display = 'flex';
+            await callBackend("updateSchoolName", { newName: n });
+            Swal.fire('Berhasil', 'Nama Sekolah Diperbarui', 'success').then(loadConfig);
+        }
+
+        async function addKelas() {
+            const c = document.getElementById('admin-class').value;
+            if(!c) return;
+            document.getElementById('loader').style.display = 'flex';
+            await callBackend("addNewClass", { className: c });
+            document.getElementById('admin-class').value = "";
+            Swal.fire('Berhasil', 'Divisi Ditambahkan', 'success').then(loadConfig);
+        }
+
+        function addSiswaMassal() {
+            const kls = document.getElementById('admin-class-list').value;
+            const bulkText = document.getElementById('admin-bulk-students').value;
+            if(!kls || !bulkText) return Swal.fire('Error', 'Pilih Divisi dan isi daftar nama!', 'error');
+
+            const namesArray = bulkText.split('\n').map(n => n.trim()).filter(n => n !== "");
+            
+            Swal.fire({
+                title: 'Konfirmasi Import',
+                text: `Import ${namesArray.length} nama ke Divisi ${kls}?`,
+                icon: 'question',
+                showCancelButton: true
+            }).then(async (res) => {
+                if (res.isConfirmed) {
+                    document.getElementById('loader').style.display = 'flex';
+                    await callBackend("addBulkStudents", { namesArray, className: kls });
+                    document.getElementById('admin-bulk-students').value = "";
+                    Swal.fire('Selesai', 'Data berhasil diimport.', 'success').then(loadConfig);
+                }
+            });
+        }
+
+        async function unduhLaporanPDF() {
+            document.getElementById('loader').style.display = 'flex';
+            const data = await callBackend("ambilSemuaData");
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            
+            doc.setFontSize(16).setFont("helvetica","bold").text(config.school, 105, 15, {align:"center"});
+            doc.setLineWidth(0.5).line(15, 20, 195, 20);
+            doc.setFontSize(10).text("LAPORAN RIWAYAT HARIAN", 105, 27, {align:"center"});
+
+            doc.autoTable({ 
+                startY: 33, 
+                head: [['No','Waktu','Divisi','Nama','Status']], 
+                body: data.map((r,i)=>[i+1, r[1], r[2], r[3], r[4]]),
+                theme: 'grid', 
+                styles: {fontSize: 8}
+            });
+
+            doc.save(`Laporan_Absensi_Pradupta.pdf`);
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        window.onload = loadConfig;
+    </script>
+</body>
+</html>
