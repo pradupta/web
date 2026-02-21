@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sistem Absensi PRADUPTA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; }
+        .camera-box { border-radius: 2rem; overflow: hidden; background: #000; aspect-ratio: 4/3; position: relative; border: 4px solid white; }
+        #video { width: 100%; height: 100%; object-fit: cover; }
+        .mirror { transform: scaleX(-1); }
+        #loader { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 999; flex-direction: column; align-items: center; justify-content: center; }
+        .tab-btn.active { border-bottom: 3px solid #2563eb; color: #2563eb; font-weight: 800; }
+        .hidden-element { display: none !important; }
+        #map { height: 150px; border-radius: 1.5rem; width: 100%; z-index: 10; margin-top: 10px; }
+    </style>
+</head>
+<body class="antialiased text-slate-900">
+
+    <div id="loader"><div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-600"></div></div>
+
+    <nav class="bg-white border-b sticky top-0 z-50 p-4 shadow-sm">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div class="flex flex-col">
+                <h1 id="display-school" class="font-black text-blue-700 text-xs uppercase italic tracking-tighter">Memuat...</h1>
+                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em]">Sistem Absensi Pintar</p>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="showTab('absensi')" id="btn-absensi" class="tab-btn active text-[10px] font-bold uppercase py-1">Absensi</button>
+                <button onclick="showTab('admin')" id="btn-admin" class="tab-btn text-[10px] font-bold uppercase py-1 text-slate-400">Admin</button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="tab-absensi" class="max-w-md mx-auto p-4 space-y-4 pb-20">
+        <div class="bg-white rounded-[2.5rem] p-6 space-y-4 shadow-xl border">
+            <select id="class-select" onchange="filterSiswa()" class="w-full bg-slate-100 p-4 rounded-2xl font-bold outline-none border-none text-sm"></select>
+            <select id="student-select" class="w-full bg-slate-100 p-4 rounded-2xl font-bold outline-none border-none text-sm"></select>
+            
+            <label class="text-[9px] font-bold text-slate-400 uppercase px-2">Status Kehadiran</label>
+            <select id="status-select" onchange="toggleCam()" class="w-full bg-blue-50 p-4 rounded-2xl font-black text-blue-700 outline-none border-none">
+                <option value="Hadir">HADIR (Wajib Foto)</option>
+                <option value="Sakit">SAKIT</option>
+                <option value="Izin">IZIN</option>
+                <option value="Alpa">ALPA</option>
+                <option value="Bolos">BOLOS</option>
+                <option value="Terlambat">TERLAMBAT</option>
+            </select>
+            
+            <div id="camera-section" class="camera-box">
+                <video id="video" class="mirror" autoplay playsinline muted></video>
+                <button onclick="switchCamera()" class="absolute bottom-4 right-4 bg-white/30 backdrop-blur-lg text-white w-12 h-12 rounded-full flex items-center justify-center border border-white/40 active:scale-90 transition-all">
+                    <i class="fas fa-camera-rotate text-lg"></i>
+                </button>
+            </div>
+
+            <div id="ket-section" class="hidden-element">
+                <textarea id="keterangan" class="w-full bg-slate-100 p-4 rounded-2xl h-20 outline-none text-sm" placeholder="Berikan alasan singkat..."></textarea>
+            </div>
+
+            <div id="map"></div>
+            <button onclick="kirimAbsensi()" class="w-full bg-blue-600 text-white py-5 rounded-[1.5rem] font-black shadow-lg shadow-blue-100 active:scale-95 transition-all uppercase tracking-widest text-sm">Kirim Data Absensi</button>
+        </div>
+    </main>
+
+    <main id="tab-admin" class="max-w-md mx-auto p-4 space-y-4 hidden-element pb-20">
+        <div class="bg-white rounded-[2.5rem] p-6 shadow-xl border space-y-4">
+            <h2 class="font-black text-xs uppercase tracking-[0.2em] text-slate-800 border-b pb-3">Konfigurasi Sistem</h2>
+            <div class="bg-slate-50 p-4 rounded-2xl">
+                <label class="text-[9px] font-bold text-slate-400 uppercase block mb-1">Nama Ambalan</label>
+                <div class="flex gap-2">
+                    <input type="text" id="admin-school" class="flex-1 p-2 border rounded-xl text-xs font-bold outline-none">
+                    <button onclick="upSekolah()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-[10px] font-bold">SIMPAN</button>
+                </div>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl">
+                <label class="text-[9px] font-bold text-slate-400 uppercase block mb-1">Tambah Divisi</label>
+                <div class="flex gap-2">
+                    <input type="text" id="admin-class" placeholder="Contoh: 9D" class="flex-1 p-2 border rounded-xl text-xs font-bold outline-none">
+                    <button onclick="addKelas()" class="bg-blue-600 text-white px-4 py-2 rounded-xl text-[10px] font-bold">TAMBAH</button>
+                </div>
+            </div>
+            <div class="bg-slate-50 p-4 rounded-2xl">
+                <label class="text-[9px] font-bold text-slate-400 uppercase block mb-1">Input Siswa Banyak (Massal)</label>
+                <select id="admin-class-list" class="w-full p-2 border rounded-xl text-xs font-bold mb-2 outline-none bg-white"></select>
+                <textarea id="admin-bulk-students" placeholder="Tempel banyak nama di sini..." class="w-full p-3 border rounded-xl text-xs h-32 mb-2 outline-none font-medium"></textarea>
+                <button onclick="addSiswaMassal()" class="w-full bg-blue-700 text-white py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest">Mulai Proses Import</button>
+            </div>
+            <div class="pt-4">
+                <button onclick="unduhLaporanPDF()" class="w-full bg-green-600 text-white py-5 rounded-2xl font-black text-xs uppercase shadow-lg shadow-green-100"><i class="fas fa-file-pdf mr-2"></i>Download Laporan Lengkap</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-center py-10 opacity-30 uppercase font-bold text-[9px] tracking-[0.4em] leading-relaxed">
+        2026 PRAMUKA SMAN 20 KAB TANGERANG
+    </footer>
+
+    <canvas id="canvas" class="hidden-element"></canvas>
+
+    <script>
+        // MASUKKAN URL WEB APP ANDA DI SINI
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx_YYxl1DM_rpfznIy6Mu7UYlKSZO1edqxDR1K6lVAJqy3oEXDUabe74HQbtsF4g61XHA/exec";
+
+        let config = {};
+        let coords = { lat: 0, lng: 0 };
+        let currentFacingMode = "user";
+
+        // Fungsi Helper untuk memanggil Backend (doPost)
+        async function callBackend(action, data = {}) {
+            const response = await fetch(WEB_APP_URL, {
+                method: "POST",
+                body: JSON.stringify({ action, data })
+            });
+            const json = await response.json();
+            return json.result;
+        }
+
+        function showTab(type) {
+            document.getElementById('tab-absensi').classList.toggle('hidden-element', type !== 'absensi');
+            document.getElementById('tab-admin').classList.toggle('hidden-element', type !== 'admin');
+            document.getElementById('btn-absensi').classList.toggle('active', type === 'absensi');
+            document.getElementById('btn-admin').classList.toggle('active', type === 'admin');
+        }
+
+        async function loadConfig() {
+            const res = await callBackend("getAppConfig");
+            config = res;
+            document.getElementById('display-school').innerText = res.school;
+            document.getElementById('admin-school').value = res.school;
+            const classSel = document.getElementById('class-select');
+            const adminClassList = document.getElementById('admin-class-list');
+            
+            classSel.innerHTML = '<option value="">-- Pilih Divisi --</option>';
+            adminClassList.innerHTML = '<option value="">-- Pilih Divisi Untuk Import --</option>';
+            
+            res.classes.forEach(c => {
+                const o = document.createElement('option'); o.value = o.text = c;
+                classSel.add(o.cloneNode(true));
+                adminClassList.add(o.cloneNode(true));
+            });
+        }
+
+        function filterSiswa() {
+            const kls = document.getElementById('class-select').value;
+            const stuSel = document.getElementById('student-select');
+            stuSel.innerHTML = '<option value="">-- Pilih Nama Siswa --</option>';
+            config.students.filter(s => s.kelas == kls).forEach(s => {
+                const o = document.createElement('option'); o.value = o.text = s.nama; stuSel.add(o);
+            });
+        }
+
+        async function startCamera(mode) {
+            const video = document.getElementById('video');
+            if (video.srcObject) { video.srcObject.getTracks().forEach(track => track.stop()); }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: mode } });
+                video.srcObject = stream;
+                video.classList.toggle('mirror', mode === "user");
+            } catch (e) { console.error("Kamera tidak diizinkan", e); }
+        }
+
+        function switchCamera() {
+            currentFacingMode = (currentFacingMode === "user") ? "environment" : "user";
+            startCamera(currentFacingMode);
+        }
+
+        function toggleCam() {
+            const s = document.getElementById('status-select').value;
+            const isPresent = (s === 'Hadir' || s === 'Terlambat');
+            document.getElementById('camera-section').classList.toggle('hidden-element', !isPresent);
+            document.getElementById('ket-section').classList.toggle('hidden-element', isPresent);
+        }
+
+        async function upSekolah() {
+            const n = document.getElementById('admin-school').value;
+            if(!n) return;
+            document.getElementById('loader').style.display = 'flex';
+            await callBackend("updateSchoolName", { newName: n });
+            document.getElementById('loader').style.display = 'none';
+            Swal.fire('Berhasil', 'Nama Sekolah Telah Diubah', 'success').then(loadConfig);
+        }
+
+        async function addKelas() {
+            const c = document.getElementById('admin-class').value;
+            if(!c) return;
+            document.getElementById('loader').style.display = 'flex';
+            await callBackend("addNewClass", { className: c });
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('admin-class').value = "";
+            Swal.fire('Berhasil', 'Divisi Baru Ditambahkan', 'success').then(loadConfig);
+        }
+
+        function addSiswaMassal() {
+            const kls = document.getElementById('admin-class-list').value;
+            const bulkText = document.getElementById('admin-bulk-students').value;
+            if(!kls || !bulkText) return Swal.fire('Error', 'Pilih Divisi dan isi daftar nama!', 'error');
+
+            const namesArray = bulkText.split('\n').map(n => n.trim()).filter(n => n !== "");
+            
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: `Import ${namesArray.length} siswa ke Divisi ${kls}?`,
+                icon: 'question',
+                showCancelButton: true
+            }).then(async (res) => {
+                if (res.isConfirmed) {
+                    document.getElementById('loader').style.display = 'flex';
+                    await callBackend("addBulkStudents", { namesArray, className: kls });
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('admin-bulk-students').value = "";
+                    Swal.fire('Selesai', 'Data siswa berhasil diimport.', 'success').then(loadConfig);
+                }
+            });
+        }
+
+        async function kirimAbsensi() {
+            const name = document.getElementById('student-select').value;
+            const kls = document.getElementById('class-select').value;
+            if(!name || !kls) return Swal.fire('Peringatan', 'Lengkapi Divisi dan Nama!', 'warning');
+
+            document.getElementById('loader').style.display = 'flex';
+            const stat = document.getElementById('status-select').value;
+            let photo = "-";
+
+            if(stat === 'Hadir' || stat === 'Terlambat') {
+                const canv = document.getElementById('canvas');
+                const vid = document.getElementById('video');
+                canv.width = vid.videoWidth; canv.height = vid.videoHeight;
+                const ctx = canv.getContext('2d');
+                if (currentFacingMode === "user") { ctx.translate(canv.width, 0); ctx.scale(-1, 1); }
+                ctx.drawImage(vid, 0, 0);
+                photo = canv.toDataURL('image/jpeg', 0.5);
+            }
+
+            const payload = { 
+                divisi: kls, name: name, status: stat, lat: coords.lat, lng: coords.lng, 
+                timestamp: new Date().toLocaleString('id-ID'), 
+                keterangan: document.getElementById('keterangan').value,
+                photo: photo 
+            };
+
+            const res = await callBackend("simpanAbsensi", payload);
+            document.getElementById('loader').style.display = 'none';
+            if(res.success) {
+                Swal.fire('SUKSES!', `Absensi ${name} disimpan.`, 'success').then(() => {
+                    document.getElementById('student-select').value = "";
+                    document.getElementById('keterangan').value = "";
+                    toggleCam();
+                });
+            }
+        }
+
+        async function unduhLaporanPDF() {
+            document.getElementById('loader').style.display = 'flex';
+            const data = await callBackend("ambilSemuaData");
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const kop = (d) => {
+                d.setFontSize(14).setFont("helvetica","bold").text(config.school, 105, 15, {align:"center"});
+                d.setLineWidth(0.5).line(15, 20, 195, 20);
+            };
+
+            kop(doc);
+            doc.setFontSize(10).text("LAPORAN RIWAYAT HARIAN", 105, 27, {align:"center"});
+            doc.autoTable({ 
+                startY: 33, 
+                head: [['No','Waktu','Divisi','Nama','Status']], 
+                body: data.map((r,i)=>[i+1, r[1], r[2], r[3], r[4]]),
+                theme: 'grid', styles: {fontSize: 7}
+            });
+            doc.save(`Laporan_Absensi.pdf`);
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        window.onload = () => {
+            loadConfig(); 
+            startCamera("user");
+            navigator.geolocation.getCurrentPosition(p => {
+                coords.lat = p.coords.latitude; coords.lng = p.coords.longitude;
+                const m = L.map('map',{zoomControl:false, attributionControl:false}).setView([coords.lat, coords.lng], 16);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(m);
+                L.marker([coords.lat, coords.lng]).addTo(m);
+            });
+        };
+    </script>
+</body>
+</html>
