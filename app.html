@@ -28,7 +28,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap');
         
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; margin: 0; padding-bottom: 80px; }
         .header-app { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); border-radius: 0 0 30px 30px; }
@@ -79,6 +79,25 @@
         .spinner { width: 40px; height: 40px; border: 3px solid #fecaca; border-top: 3px solid #dc2626; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hidden-element { display: none !important; }
+
+        /* --- STYLE PENDAFTARAN ANGGOTA --- */
+        #page-daftar-baru { background-color: ; color: #fff; font-family: 'Poppins', sans-serif; margin-bottom: -80px; padding-bottom: 100px; }
+        .logo-text-daftar { font-family: 'Pacifico', cursive; color: #DC143C; }
+        .form-card { 
+            background: #ffffff; color: #1a1a1a; border-radius: 1.5rem; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); border-left: 6px solid #DC143C;
+            margin-bottom: 2rem; padding: 1.5rem;
+        }
+        .input-field-daftar {
+            width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem;
+            border: 1px solid #e2e8f0; background: #f8fafc; transition: all 0.3s; font-size: 14px;
+        }
+        .input-field-daftar:focus { outline: none; border-color: #DC143C; }
+        .label-daftar { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 0.4rem; display: block; }
+        .section-header-daftar { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; font-size: 1.1rem; margin-bottom: 1.5rem; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem; }
+        .val-text { font-size: 0.65rem; transition: color 0.3s; margin-top: 2px; }
+        .invalid { color: #94a3b8; }
+        .valid { color: #10b981; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -125,7 +144,7 @@
                     <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-2"><i class="fas fa-camera-retro text-lg"></i></div>
                     <span class="text-[10px] font-bold uppercase">Absen</span>
                 </button>
-                <button onclick="location.href='https://pradupta.github.io/web/daftar.html'" class="menu-card p-4 flex flex-col items-center">
+                <button onclick="showPage('page-daftar-baru')" class="menu-card p-4 flex flex-col items-center">
                     <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center mb-2"><i class="fas fa-user-plus text-lg"></i></div>
                     <span class="text-[10px] font-bold uppercase">Daftar</span>
                 </button>
@@ -168,6 +187,93 @@
                     <button onclick="kirimAbsensi()" class="w-full py-4 bg-red-600 text-white font-extrabold rounded-2xl shadow-lg uppercase text-xs tracking-widest">Kirim Presensi</button>
                 </div>
             </div>
+        </div>
+
+        <div id="page-daftar-baru" class="page-content -mx-6 px-6 pt-10">
+            <header class="text-center mb-10">
+                <div class="logo-text-daftar text-5xl mb-2">ScoutDupta</div>
+                <p class="text-gray-400 tracking-widest uppercase text-[10px] font-bold">SMAN 20 Kabupaten Tangerang</p>
+            </header>
+
+            <form id="registration-form-baru">
+                <div class="form-card">
+                    <div class="section-header-daftar"><i class="fas fa-user text-red-600"></i> I. Data Pribadi</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div><label class="label-daftar">Nama Panggilan</label><input type="text" name="nama_singkat" required class="input-field-daftar"></div>
+                        <div><label class="label-daftar">Nama Lengkap</label><input type="text" name="nama_lengkap" required class="input-field-daftar"></div>
+                        <div><label class="label-daftar">Jenis Kelamin</label>
+                            <select name="jenis_kelamin" required class="input-field-daftar">
+                                <option value="">Pilih</option><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option>
+                            </select>
+                        </div>
+                        <div><label class="label-daftar">Agama</label>
+                            <select name="agama" required class="input-field-daftar">
+                                <option value="">Pilih Agama</option>
+                                <option value="Islam">Islam</option><option value="Kristen Protestan">Kristen Protestan</option>
+                                <option value="Katolik">Katolik</option><option value="Hindu">Hindu</option>
+                                <option value="Buddha">Buddha</option><option value="Konghucu">Konghucu</option>
+                            </select>
+                        </div>
+                        <div><label class="label-daftar">Tempat Lahir</label><input type="text" name="tempat_lahir" required class="input-field-daftar"></div>
+                        <div><label class="label-daftar">Tanggal Lahir</label><input type="date" name="tanggal_lahir" required class="input-field-daftar"></div>
+                    </div>
+                </div>
+
+                <div class="form-card" style="border-left-color: #1a1a1a">
+                    <div class="section-header-daftar"><i class="fas fa-map-marker-alt text-red-600"></i> II. Domisili</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div><label class="label-daftar">Provinsi</label><select id="provinsi" name="provinsi" required class="input-field-daftar"><option value="">Pilih</option></select></div>
+                        <div><label class="label-daftar">Kota/Kab</label><select id="kabkota" name="kabkota" required class="input-field-daftar"><option value="">Pilih</option></select></div>
+                        <div><label class="label-daftar">Kecamatan</label><select id="kecamatan" name="kecamatan" required class="input-field-daftar"><option value="">Pilih</option></select></div>
+                        <div><label class="label-daftar">Kelurahan</label><select id="kelurahan" name="kelurahan" required class="input-field-daftar"><option value="">Pilih</option></select></div>
+                        <div><label class="label-daftar">Kode Pos</label><input type="number" name="kode_pos" required class="input-field-daftar"></div>
+                        <div><label class="label-daftar">Alamat Lengkap</label><input type="text" name="alamat_lengkap" required class="input-field-daftar"></div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="section-header-daftar"><i class="fas fa-id-card text-red-600"></i> III. Sekolah & Kontak</div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div><label class="label-daftar">Kelas</label><select name="kelas" required class="input-field-daftar"><option value="">Pilih</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select></div>
+                        <div><label class="label-daftar">Email</label><input type="email" name="email" required class="input-field-daftar"></div>
+                        <div><label class="label-daftar">WhatsApp</label><input type="tel" name="no_wa" required class="input-field-daftar"></div>
+                    </div>
+                </div>
+
+                <div class="form-card" style="border-left-color: #1a1a1a">
+                    <div class="section-header-daftar"><i class="fas fa-star text-red-600"></i> IV. Minat & Bakat</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div><label class="label-daftar">Hobi</label><input type="text" name="hobi" class="input-field-daftar"></div>
+                        <div><label class="label-daftar">Cita-cita</label><input type="text" name="cita_cita" class="input-field-daftar"></div>
+                        <div><label class="label-daftar">Motto</label><input type="text" name="motto" class="input-field-daftar"></div>
+                        <div><label class="label-daftar">Alasan Bergabung</label><input type="text" name="alasan" class="input-field-daftar"></div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div class="section-header-daftar"><i class="fas fa-shield-alt text-red-600"></i> V. Berkas & Sandi</div>
+                    <div class="grid grid-cols-1 gap-5">
+                        <div><label class="label-daftar">Pas Foto</label><input type="file" id="pas_foto_baru" accept="image/*" required class="input-field-daftar"></div>
+                        <div>
+                            <label class="label-daftar">Password Akun</label>
+                            <input type="password" name="password" id="password_baru" required class="input-field-daftar" placeholder="Ketik Password...">
+                            <div class="mt-2 grid grid-cols-2 gap-1 p-2 bg-gray-50 rounded-lg border border-gray-100">
+                                <div id="len_b" class="val-text invalid"><i class="fas fa-circle text-[6px]"></i> Min 8 Karakter</div>
+                                <div id="upp_b" class="val-text invalid"><i class="fas fa-circle text-[6px]"></i> Huruf Besar</div>
+                                <div id="low_b" class="val-text invalid"><i class="fas fa-circle text-[6px]"></i> Huruf Kecil</div>
+                                <div id="num_b" class="val-text invalid"><i class="fas fa-circle text-[6px]"></i> Angka</div>
+                                <div id="sym_b" class="val-text invalid"><i class="fas fa-circle text-[6px]"></i> Simbol</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center pb-10">
+                    <button type="submit" id="submit-btn-baru" class="bg-red-600 hover:bg-red-700 text-white font-bold px-12 py-4 rounded-2xl shadow-xl transition-all inline-flex items-center gap-3 w-full justify-center">
+                        <span>DAFTAR SEKARANG</span> <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
         </div>
 
         <div id="page-about" class="page-content">
@@ -234,21 +340,7 @@
                     <input type="password" name="password" id="passwordInput" class="form-input text-sm" placeholder="Password" required>
                     <button type="submit" id="btnLogin" class="w-full py-3 bg-red-600 text-white font-bold rounded-xl text-sm shadow-lg">MASUK</button>
                 </form>
-                <p class="text-center text-xs mt-6">Belum punya akun? <a href="javascript:void(0)" onclick="showPage('page-register')" class="text-red-600 font-bold">Daftar di sini</a></p>
-            </div>
-        </div>
-
-        <div id="page-register" class="page-content">
-            <div class="bg-white p-8 rounded-3xl shadow-sm max-w-sm mx-auto">
-                <h2 class="text-xl font-bold text-center mb-6 text-red-600">Daftar Akun</h2>
-                <form id="registerForm" class="space-y-3">
-                    <input type="text" name="nama" id="regNama" class="form-input text-sm" placeholder="Nama Lengkap" required>
-                    <input type="email" name="email" class="form-input text-sm" placeholder="Email" required>
-                    <input type="tel" name="telepon" class="form-input text-sm" placeholder="No. Telepon" required>
-                    <input type="password" name="password" class="form-input text-sm" placeholder="Password" required>
-                    <button type="submit" id="btnReg" class="w-full py-3 bg-red-600 text-white font-bold rounded-xl text-sm shadow-lg">DAFTAR SEKARANG</button>
-                </form>
-                <p class="text-center text-xs mt-6"><a href="javascript:void(0)" onclick="showPage('page-login')" class="text-red-600 font-bold">Sudah punya akun? Login</a></p>
+                <p class="text-center text-xs mt-6">Belum punya akun? <a href="javascript:void(0)" onclick="showPage('page-daftar-baru')" class="text-red-600 font-bold">Daftar di sini</a></p>
             </div>
         </div>
 
@@ -307,14 +399,34 @@
         </div>
     </nav>
 
+    <div id="success-modal" class="fixed inset-0 bg-white backdrop-blur-md hidden flex items-center justify-center z-[100] p-4">
+        <div class="bg-white rounded-[2.5rem] p-8 max-w-md w-full text-center text-gray-900 border-t-8 border-red-600">
+          <div class="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl"><i class="fas fa-check"></i></div>
+          <h3 class="text-2xl font-bold mb-2">Pendaftaran Berhasil!</h3>
+          <p class="text-xs text-gray-500 mb-8">Terima kasih telah bergabung bersama ScoutDupta.</p>
+          <div id="timer-box-daftar" class="bg-gray-50 border border-gray-100 rounded-2xl p-6">
+            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Menyiapkan Biodata Anda</p>
+            <div class="flex items-center justify-center gap-4">
+              <div class="spinner"></div>
+              <span id="countdown_b" class="text-4xl font-mono font-bold text-gray-800">01:00</span>
+            </div>
+          </div>
+         <div id="download-box-daftar" class="hidden">
+    <button onclick="window.location.href='login.html'" class="w-full bg-red-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg">
+        <i class="fas fa-file-download"></i> AKSES BIODATA
+    </button>
+</div>
+        </div>
+    </div>
+
     <canvas id="canvas-absen" class="hidden"></canvas>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbycJzXx1UFjx-bUjyR2pVOXi2fSvRjHiHbkdCk1yh7EQcnMfldmsUxEpREMSfoggDjtrw/exec';
         const scriptURL_Auth = 'https://script.google.com/macros/s/AKfycbzbpW0ISEpCN8GUiJ03WgkPdxvoM_lOCRWB48tzrC75Sag-XWtlBZgqUHmv-uwlavG-yw/exec';
-        // URL Backend Absen
         const ABSEN_URL = "https://script.google.com/macros/s/AKfycbx_YYxl1DM_rpfznIy6Mu7UYlKSZO1edqxDR1K6lVAJqy3oEXDUabe74HQbtsF4g61XHA/exec";
+        const APPS_SCRIPT_DAFTAR_URL = 'https://script.google.com/macros/s/AKfycbxGEn6Bhmc9yAzmITjCCdslxGLWq0rdZQDm3Mko-SWGFxdrffbUuiGiUgLk6crA9HB5/exec';
 
         let globalNewsData = [];
         let currentPage = 'page-home';
@@ -347,7 +459,6 @@
 
         function goBack() {
             if(currentPage === 'page-detail') showPage('page-berita');
-            else if(currentPage === 'page-login' || currentPage === 'page-register' || currentPage === 'page-absen') showPage('page-home');
             else showPage('page-home');
         }
 
@@ -360,20 +471,6 @@
         }
 
         function logout() { localStorage.clear(); showPage('page-home'); }
-
-        $('#registerForm').submit(function(e) {
-            e.preventDefault();
-            const btn = $('#btnReg');
-            const nama = $('#regNama').val();
-            btn.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
-            const formData = new URLSearchParams(new FormData(this));
-            formData.append('action', 'register');
-            fetch(scriptURL_Auth, { method: 'POST', body: formData, mode: 'no-cors' }).then(() => {
-                localStorage.setItem("namaUser", nama);
-                Swal.fire('Berhasil', 'Pendaftaran terkirim! Silakan login.', 'success');
-                showPage('page-login');
-            }).finally(() => { btn.html('DAFTAR SEKARANG').prop('disabled', false); });
-        });
 
         $('#loginForm').submit(function(e) {
             e.preventDefault();
@@ -565,7 +662,114 @@
             $('#loader-absen').hide();
         }
 
-        $(document).ready(function() { fetchNews(); $('.page-content').hide(); $('#page-home').show(); });
+        // --- DAFTAR BARU LOGIC ---
+        const passInputB = document.getElementById('password_baru');
+        const reqB = {
+            len_b: /.{8,}/, upp_b: /[A-Z]/, low_b: /[a-z]/, num_b: /[0-9]/, sym_b: /[!@#$%^&*(),.?":{}|<>]/
+        };
+        passInputB.addEventListener('input', () => {
+            const val = passInputB.value;
+            Object.keys(reqB).forEach(k => {
+                const el = document.getElementById(k);
+                if (reqB[k].test(val)) el.classList.replace('invalid', 'valid');
+                else el.classList.replace('valid', 'invalid');
+            });
+        });
+
+        const REGIONS_API = 'https://www.emsifa.com/api-wilayah-indonesia/api';
+        async function initRegions() {
+            const res = await fetch(`${REGIONS_API}/provinces.json`);
+            const data = await res.json();
+            data.forEach(p => document.getElementById('provinsi').innerHTML += `<option value="${p.id}" data-name="${p.name}">${p.name}</option>`);
+        }
+        document.getElementById('provinsi').onchange = async function() {
+            const res = await fetch(`${REGIONS_API}/regencies/${this.value}.json`);
+            const data = await res.json();
+            const el = document.getElementById('kabkota'); el.innerHTML = '<option value="">Pilih</option>';
+            data.forEach(r => el.innerHTML += `<option value="${r.id}" data-name="${r.name}">${r.name}</option>`);
+        };
+        document.getElementById('kabkota').onchange = async function() {
+            const res = await fetch(`${REGIONS_API}/districts/${this.value}.json`);
+            const data = await res.json();
+            const el = document.getElementById('kecamatan'); el.innerHTML = '<option value="">Pilih</option>';
+            data.forEach(d => el.innerHTML += `<option value="${d.id}" data-name="${d.name}">${d.name}</option>`);
+        };
+        document.getElementById('kecamatan').onchange = async function() {
+            const res = await fetch(`${REGIONS_API}/villages/${this.value}.json`);
+            const data = await res.json();
+            const el = document.getElementById('kelurahan'); el.innerHTML = '<option value="">Pilih</option>';
+            data.forEach(v => el.innerHTML += `<option value="${v.id}" data-name="${v.name}">${v.name}</option>`);
+        };
+
+        function startTimerDaftar() {
+            let seconds = 60;
+            const interval = setInterval(() => {
+                seconds--;
+                let m = Math.floor(seconds / 60); let s = seconds % 60;
+                document.getElementById('countdown_b').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    document.getElementById('timer-box-daftar').classList.add('hidden');
+                    document.getElementById('download-box-daftar').classList.remove('hidden');
+                }
+            }, 1000);
+                   if (seconds <= 0) {
+    clearInterval(interval);
+    // Otomatis pindah ke file login.html
+    window.location.href = 'login.html';
+}
+        }
+
+        document.getElementById('registration-form-baru').onsubmit = async function(e) {
+            e.preventDefault();
+            const pass = passInputB.value;
+            const isAllValid = Object.values(reqB).every(reg => reg.test(pass));
+            if(!isAllValid) return Swal.fire('Error', 'Password tidak aman!', 'error');
+
+            const btn = document.getElementById('submit-btn-baru');
+            btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> MEMPROSES...';
+
+            const fileInput = document.getElementById('pas_foto_baru');
+            let fotoBase64 = ""; let fotoName = ""; let fotoMime = "";
+            if(fileInput.files[0]) {
+                fotoName = fileInput.files[0].name;
+                fotoMime = fileInput.files[0].type;
+                fotoBase64 = await new Promise(r => {
+                    const reader = new FileReader();
+                    reader.onload = () => r(reader.result.split(',')[1]);
+                    reader.readAsDataURL(fileInput.files[0]);
+                });
+            }
+
+            const getName = (id) => {
+                const el = document.getElementById(id);
+                return el.options[el.selectedIndex]?.getAttribute('data-name') || "";
+            };
+
+            const payload = {
+                nama_singkat: e.target.nama_singkat.value, nama_lengkap: e.target.nama_lengkap.value,
+                jenis_kelamin: e.target.jenis_kelamin.value, agama: e.target.agama.value,
+                tempat_lahir: e.target.tempat_lahir.value, tanggal_lahir: e.target.tanggal_lahir.value,
+                provinsi: getName('provinsi'), kabkota: getName('kabkota'), kecamatan: getName('kecamatan'), kelurahan: getName('kelurahan'),
+                kode_pos: e.target.kode_pos.value, alamat_lengkap: e.target.alamat_lengkap.value,
+                kelas: e.target.kelas.value, email: e.target.email.value, no_wa: e.target.no_wa.value,
+                hobi: e.target.hobi.value, cita_cita: e.target.cita_cita.value, motto: e.target.motto.value, alasan: e.target.alasan.value,
+                foto_base64: fotoBase64, foto_nama: fotoName, foto_mime: fotoMime, password: e.target.password.value
+            };
+
+            try {
+                await fetch(APPS_SCRIPT_DAFTAR_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+                document.getElementById('success-modal').classList.remove('hidden');
+                startTimerDaftar();
+            } catch (err) { Swal.fire('Error', 'Gagal kirim data.', 'error'); btn.disabled = false; btn.innerHTML = 'DAFTAR SEKARANG'; }
+        };
+
+        $(document).ready(function() { 
+            fetchNews(); 
+            initRegions();
+            $('.page-content').hide(); 
+            $('#page-home').show(); 
+        });
     </script>
 </body>
 </html>
