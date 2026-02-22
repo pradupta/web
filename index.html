@@ -2,15 +2,17 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pradupta App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pradupta - Gerakan Pramuka</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#dc2626">
+    <meta name="theme-color" content="#dc143c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pradupta">
     <link rel="apple-touch-icon" href="https://pradupta.github.io/web/img/logo.png">
-     <script>
+    
+    <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
@@ -19,553 +21,264 @@
             });
         }
     </script>
+    <link rel="stylesheet" href="https://pradupta.github.io/web/web/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"/>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        /* Perbaikan Navbar Sticky */
+        .navbar.sticky .logo a span { color: #fff !important; }
+        .navbar.sticky .menu li a { color: #fff !important; }
+        .navbar.sticky .menu li a:hover { color: #000 !important; }
         
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; margin: 0; padding-bottom: 80px; }
-        .header-app { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); border-radius: 0 0 30px 30px; }
-
-        .btn-back {
-            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); color: white;
-            padding: 8px 16px; border-radius: 12px; font-size: 11px; font-weight: 800;
-            text-transform: uppercase; border: 1px solid rgba(255, 255, 255, 0.3);
-            display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;
+        /* News Card Style */
+        .news-card { 
+            background: #ffffff; 
+            border-radius: 12px; 
+            border: 2px solid crimson; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
-        .btn-back:active { background: rgba(255, 255, 255, 0.4); transform: scale(0.95); }
-
-        .page-content { display: none; animation: fadeIn 0.3s ease-out; }
-        .page-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .menu-card { background: white; border-radius: 20px; transition: all 0.2s; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .menu-card:active { transform: scale(0.92); background-color: #f1f5f9; }
-        .nav-item { color: #94a3b8; transition: 0.3s; }
-        .nav-item.active { color: #dc2626; }
-        .news-item { border-left: 4px solid #dc2626; background: white; cursor: pointer; }
-        .content-area { font-size: 1rem; line-height: 1.8; color: #334155; text-align: justify; }
-        .content-area p { margin-bottom: 1.2rem; }
+        .news-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px rgba(0,0,0,0.1); }
         
-        .proker-card { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); transition: all 0.3s ease; height: 100%; display: flex; flex-direction: column; }
-        .proker-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-
-        /* Form styling */
-        .form-input { width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 12px; outline: none; transition: all 0.2s; }
-        .form-input:focus { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
-
-        /* WYSIWYG Editor Styling */
-        .editor-toolbar { border: 1px solid #e2e8f0; border-bottom: none; border-radius: 12px 12px 0 0; background: #f8fafc; padding: 8px; display: flex; gap: 10px; }
-        .editor-btn { padding: 5px 10px; border-radius: 6px; background: white; border: 1px solid #e2e8f0; font-size: 12px; cursor: pointer; }
-        .editor-btn:hover { background: #fee2e2; }
-        #isi-editor { min-height: 200px; border: 1px solid #e2e8f0; border-radius: 0 0 12px 12px; padding: 12px; outline: none; background: white; }
+        /* Skeleton Pulse */
+        .skeleton-home { 
+            background: #222; 
+            animation: pulse 1.5s infinite; 
+            border-radius: 12px; 
+            height: 400px; 
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
         
-        /* Tab Styling */
-        .tab-btn { padding: 10px 20px; font-weight: bold; font-size: 12px; border-bottom: 2px solid transparent; }
-        .tab-btn.active { border-bottom: 2px solid #dc2626; color: #dc2626; }
-
-        /* --- STYLE TAMBAHAN ABSEN --- */
-        .camera-box { border-radius: 1.5rem; overflow: hidden; background: #000; aspect-ratio: 4/3; position: relative; border: 2px solid #e2e8f0; }
-        #video-absen { width: 100%; height: 100%; object-fit: cover; }
-        .mirror { transform: scaleX(-1); }
-        #map-absen { height: 160px; border-radius: 1.5rem; width: 100%; border: 1px solid #e2e8f0; margin-top: 10px; }
-        #loader-absen { display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
-        .spinner { width: 40px; height: 40px; border: 3px solid #fecaca; border-top: 3px solid #dc2626; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .hidden-element { display: none !important; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
 <body>
+    <div class="scroll-up-btn"><i class="fas fa-angle-up"></i></div>
 
-    <div id="loader-absen">
-        <div class="spinner"></div>
-        <p class="mt-4 text-[10px] font-bold text-red-600 uppercase tracking-widest">Mengirim Data...</p>
-    </div>
-
-    <header class="header-app p-8 pb-14 text-white">
-        <div class="flex justify-between items-center max-w-4xl mx-auto relative">
-            <div id="header-text">
-                <p class="text-xs opacity-70">Selamat Datang di</p>
-                <h1 class="text-xl font-extrabold tracking-tight">SCOUT DUPTA</h1>
-            </div>
-            <button id="global-back" onclick="goBack()" class="btn-back hidden">
-                <i class="fas fa-arrow-left"></i> KEMBALI
-            </button>
-            <img src="https://pradupta.github.io/web/img/logo.png" class="w-12 h-12 drop-shadow-lg">
-        </div>
-    </header>
-
-    <main class="px-6 -mt-8 max-w-4xl mx-auto">
-
-        <div id="page-home" class="page-content active">
-            <div class="grid grid-cols-3 md:grid-cols-6 gap-4">
-                <button onclick="showPage('page-about')" class="menu-card p-4 flex flex-col items-center">
-                    <div class="w-12 h-12 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mb-2"><i class="fas fa-info-circle text-lg"></i></div>
-                    <span class="text-[10px] font-bold uppercase">About</span>
-                </button>
-                <button onclick="showPage('page-berita')" class="menu-card p-4 flex flex-col items-center">
-                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-2"><i class="fas fa-newspaper text-lg"></i></div>
-                    <span class="text-[10px] font-bold uppercase">Berita</span>
-                </button>
-                <button onclick="showPage('page-proker')" class="menu-card p-4 flex flex-col items-center">
-                    <div class="w-12 h-12 bg-orange-100 text-orange-600 rounded-2xl flex items-center justify-center mb-2"><i class="fas fa-tasks text-lg"></i></div>
-                    <span class="text-[10px] font-bold uppercase">Proker</span>
-                </button>
-                <button onclick="checkAuthAndRedirect()" class="menu-card p-4 flex flex-col items-center">
-                    <div class="w-12 h-12 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center mb-2"><i class="fas fa-pen text-lg"></i></div>
-                    <span class="text-[10px] font-bold uppercase">Artikel</span>
-                </button>
-                <button onclick="showAbsenPage()" class="menu-card p-4 flex flex-col items-center">
-                    <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mb-2"><i class="fas fa-camera-retro text-lg"></i></div>
-                    <span class="text-[10px] font-bold uppercase">Absen</span>
-                </button>
-                <button onclick="location.href='https://pradupta.github.io/web/daftar.html'" class="menu-card p-4 flex flex-col items-center">
-                    <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center mb-2"><i class="fas fa-user-plus text-lg"></i></div>
-                    <span class="text-[10px] font-bold uppercase">Daftar</span>
-                </button>
-            </div>
-            <div class="mt-8">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-gray-800">Berita Terbaru</h3>
-                    <button onclick="showPage('page-berita')" class="text-xs text-red-600 font-bold">Lihat Semua</button>
-                </div>
-                <div id="latest-news-home" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
-            </div>
-        </div>
-
-        <div id="page-absen" class="page-content">
-            <div class="bg-white p-6 rounded-3xl shadow-sm space-y-4">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center"><i class="fas fa-fingerprint"></i></div>
-                    <div>
-                        <h2 class="text-lg font-bold">Presensi Digital</h2>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Lengkapi data kehadiran</p>
-                    </div>
-                </div>
-                <div class="space-y-3">
-                    <select id="class-select" onchange="filterSiswa()" class="form-input text-xs font-bold"></select>
-                    <select id="student-select" class="form-input text-xs font-bold"></select>
-                    <select id="status-select" onchange="toggleCam()" class="form-input text-xs font-black text-red-600">
-                        <option value="Hadir">HADIR (Wajib Foto)</option>
-                        <option value="Sakit">SAKIT</option>
-                        <option value="Izin">IZIN</option>
-                        <option value="Alpa">ALPA</option>
-                        <option value="Terlambat">TERLAMBAT</option>
-                    </select>
-                    <div id="camera-section" class="camera-box">
-                        <video id="video-absen" class="mirror" autoplay playsinline muted></video>
-                    </div>
-                    <div id="ket-section" class="hidden-element">
-                        <textarea id="keterangan-absen" class="form-input h-20 text-xs" placeholder="Tulis alasan..."></textarea>
-                    </div>
-                    <div id="map-absen"></div>
-                    <button onclick="kirimAbsensi()" class="w-full py-4 bg-red-600 text-white font-extrabold rounded-2xl shadow-lg uppercase text-xs tracking-widest">Kirim Presensi</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="page-about" class="page-content">
-            <div class="bg-white p-6 rounded-3xl shadow-sm text-center">
-                <img src="https://pradupta.github.io/web/img/logo.png" class="w-24 mx-auto mb-4">
-                <h2 class="text-xl font-bold mb-2">Visi & Misi</h2>
-                <div class="text-left text-sm text-gray-600 space-y-4">
-                    <p><b>Visi:</b> Menjadikan anggota Pramuka berilmu dan berpengetahuan luas...</p>
-                    <p><b>Misi:</b> Memberikan ilmu kepramukaan terhadap kaum muda...</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="page-berita" class="page-content">
-            <h2 class="text-xl font-bold mb-4 px-2">Kabar Dupta</h2>
-            <div id="all-news-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-        </div>
-
-        <div id="page-detail" class="page-content">
-            <div class="bg-white p-5 rounded-3xl shadow-sm">
-                <h1 id="det-title" class="text-xl font-extrabold leading-tight mb-3 text-slate-900"></h1>
-                <div class="flex flex-wrap gap-4 text-[10px] text-gray-400 mb-5 border-b pb-3 uppercase font-bold tracking-wider">
-                    <span><i class="far fa-calendar-alt text-red-600 mr-1"></i> <span id="det-date"></span></span>
-                    <span><i class="far fa-user text-red-600 mr-1"></i> <span id="det-author"></span></span>
-                    <span><i class="far fa-eye text-red-600 mr-1"></i> <span id="det-views">0</span> VIEWS</span>
-                </div>
-                <img id="det-image" src="" class="w-full rounded-2xl mb-6 shadow-sm border border-slate-100">
-                <div id="det-body" class="content-area"></div>
-                <div id="det-pdf" class="mt-6"></div>
-            </div>
-        </div>
-
-       <div id="page-proker" class="page-content">
-            <h2 class="text-xl font-bold mb-4 px-2 text-slate-800">Program Kerja</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10">
-                <a href="https://drive.google.com/drive/folders/17z5ysQzBKS-S8ibpFVMtaWTe3vYbilAw?usp=drive_link" target="_blank" class="proker-card">
-                    <div class="relative pb-[56.25%] overflow-hidden"><img src="https://drive.google.com/thumbnail?id=1QfhZhAqS3G4k_bV6Vk4FxM3QSrsn7q-4&sz=w1000" class="absolute inset-0 w-full h-full object-cover"></div>
-                    <div class="p-4 bg-white flex justify-between items-center mt-auto"><p class="font-bold text-slate-800 text-sm">Rapat Pleno</p><i class="fas fa-external-link-alt text-red-600 text-xs"></i></div>
-                </a>
-                <a href="https://drive.google.com/drive/folders/1AndfEMICCiLxEa5ZY1_Ea_HiOY7ZzINL?usp=drive_link" target="_blank" class="proker-card">
-                    <div class="relative pb-[56.25%] overflow-hidden"><img src="https://drive.google.com/thumbnail?id=1h0IE6q-T5HRjb68Kvpfa9prHZNUCR6-E&sz=w1000" class="absolute inset-0 w-full h-full object-cover"></div>
-                    <div class="p-4 bg-white flex justify-between items-center mt-auto"><p class="font-bold text-slate-800 text-sm">HUT Pramuka 64</p><i class="fas fa-external-link-alt text-red-600 text-xs"></i></div>
-                </a>
-                <a href="https://drive.google.com/drive/folders/1wXpG-xD6sg5DYYTvv4xfCeF70SISU0x1?usp=drive_link" target="_blank" class="proker-card">
-                    <div class="relative pb-[56.25%] overflow-hidden"><img src="https://drive.google.com/thumbnail?id=1jCKHUARJOE8A3SUS6e_qpuWBLwoMwZRs&sz=w1000" class="absolute inset-0 w-full h-full object-cover"></div>
-                    <div class="p-4 bg-white flex justify-between items-center mt-auto"><p class="font-bold text-slate-800 text-sm">Penerimaan Tamu Ambalan</p><i class="fas fa-external-link-alt text-red-600 text-xs"></i></div>
-                </a>
-                <a href="https://drive.google.com/drive/folders/1-BDK3pEgRep9EhiKj7l-Yv_Jd-As5xwo?usp=sharing" target="_blank" class="proker-card">
-                    <div class="relative pb-[56.25%] overflow-hidden"><img src="https://drive.google.com/thumbnail?id=1pzotUCew6WxJnOIF73kvWWfOmfyG3SWv&sz=w1000" class="absolute inset-0 w-full h-full object-cover"></div>
-                    <div class="p-4 bg-white flex justify-between items-center mt-auto"><p class="font-bold text-slate-800 text-sm">Hari Laut Sedunia</p><i class="fas fa-external-link-alt text-red-600 text-xs"></i></div>
-                </a>
-                <a href="https://drive.google.com/drive/folders/1-7WBC0ghPZeXWUMxn9vAegfq2qOBdZfH?usp=drive_link" target="_blank" class="proker-card">
-                    <div class="relative pb-[56.25%] overflow-hidden"><img src="https://drive.google.com/thumbnail?id=1QWZc_nrh-Qx5LrmSkwaL9MG9ovanz27q&sz=w1000" class="absolute inset-0 w-full h-full object-cover"></div>
-                    <div class="p-4 bg-white flex justify-between items-center mt-auto"><p class="font-bold text-slate-800 text-sm">Berbagi Bersama</p><i class="fas fa-external-link-alt text-red-600 text-xs"></i></div>
-                </a>
-            </div>
-        </div>
-
-        <div id="page-login" class="page-content">
-            <div class="bg-white p-8 rounded-3xl shadow-sm max-w-sm mx-auto">
-                <h2 class="text-xl font-bold text-center mb-6">Login Penulis</h2>
-                <form id="loginForm" class="space-y-4">
-                    <input type="email" name="email" id="emailInput" class="form-input text-sm" placeholder="Email" required>
-                    <input type="password" name="password" id="passwordInput" class="form-input text-sm" placeholder="Password" required>
-                    <button type="submit" id="btnLogin" class="w-full py-3 bg-red-600 text-white font-bold rounded-xl text-sm shadow-lg">MASUK</button>
-                </form>
-                <p class="text-center text-xs mt-6">Belum punya akun? <a href="javascript:void(0)" onclick="showPage('page-register')" class="text-red-600 font-bold">Daftar di sini</a></p>
-            </div>
-        </div>
-
-        <div id="page-register" class="page-content">
-            <div class="bg-white p-8 rounded-3xl shadow-sm max-w-sm mx-auto">
-                <h2 class="text-xl font-bold text-center mb-6 text-red-600">Daftar Akun</h2>
-                <form id="registerForm" class="space-y-3">
-                    <input type="text" name="nama" id="regNama" class="form-input text-sm" placeholder="Nama Lengkap" required>
-                    <input type="email" name="email" class="form-input text-sm" placeholder="Email" required>
-                    <input type="tel" name="telepon" class="form-input text-sm" placeholder="No. Telepon" required>
-                    <input type="password" name="password" class="form-input text-sm" placeholder="Password" required>
-                    <button type="submit" id="btnReg" class="w-full py-3 bg-red-600 text-white font-bold rounded-xl text-sm shadow-lg">DAFTAR SEKARANG</button>
-                </form>
-                <p class="text-center text-xs mt-6"><a href="javascript:void(0)" onclick="showPage('page-login')" class="text-red-600 font-bold">Sudah punya akun? Login</a></p>
-            </div>
-        </div>
-
-        <div id="page-artikel" class="page-content">
-            <div class="bg-white p-6 rounded-3xl shadow-sm">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold">Buat Artikel</h2>
-                    <button onclick="logout()" class="text-xs font-bold text-red-600"><i class="fas fa-sign-out-alt"></i> Keluar</button>
-                </div>
-                <div class="flex border-b mb-6">
-                    <button onclick="switchArtTab('edit')" id="tab-edit" class="tab-btn active">EDITOR</button>
-                    <button onclick="switchArtTab('preview')" id="tab-preview" class="tab-btn">PREVIEW</button>
-                </div>
-                <div id="art-editor-container">
-                    <form id="articleForm" class="space-y-4">
-                        <input type="text" id="judul" class="form-input" placeholder="Judul Artikel" required>
-                        <input type="text" id="penulis" class="form-input bg-gray-50 cursor-not-allowed font-bold" readonly>
-                        <div id="gambarPreview" class="border-2 border-dashed border-gray-200 rounded-2xl p-6 text-center cursor-pointer" onclick="document.getElementById('gambar').click()">
-                            <i class="fas fa-image text-2xl text-gray-300 mb-2"></i><br>
-                            <span class="text-[10px] text-gray-400 font-bold uppercase">Pilih Gambar Utama</span>
-                        </div>
-                        <input type="file" id="gambar" accept="image/*" class="hidden">
-                        <div class="editor-toolbar">
-                            <button type="button" class="editor-btn" onclick="execCmd('bold')"><b>B</b></button>
-                            <button type="button" class="editor-btn" onclick="execCmd('italic')"><i>I</i></button>
-                            <button type="button" class="editor-btn" onclick="execCmd('insertUnorderedList')">• List</button>
-                        </div>
-                        <div id="isi-editor" contenteditable="true"></div>
-                        <button type="submit" id="btnSubmitArt" class="w-full py-4 bg-red-600 text-white font-bold rounded-2xl shadow-xl uppercase tracking-widest">Publikasikan Sekarang</button>
-                    </form>
-                </div>
-                <div id="art-preview-container" class="hidden">
-                    <div class="bg-gray-50 p-4 rounded-2xl border">
-                        <h1 id="pre-title" class="text-xl font-extrabold mb-2"></h1>
-                        <p class="text-[10px] text-gray-400 mb-4 uppercase">Oleh: <span id="pre-author"></span></p>
-                        <img id="pre-image" src="" class="w-full rounded-xl mb-4 hidden">
-                        <div id="pre-body" class="content-area bg-white p-4 rounded-xl border"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-4 z-50">
-        <div class="max-w-4xl w-full flex justify-around mx-auto">
-            <button onclick="showPage('page-home')" id="nav-home" class="nav-item active flex flex-col items-center">
-                <i class="fas fa-home text-xl"></i><span class="text-[10px] mt-1 font-bold">Home</span>
-            </button>
-            <button onclick="showPage('page-berita')" id="nav-berita" class="nav-item flex flex-col items-center">
-                <i class="fas fa-newspaper text-xl"></i><span class="text-[10px] mt-1 font-bold">Berita</span>
-            </button>
-            <button onclick="showAbsenPage()" id="nav-absen" class="nav-item flex flex-col items-center">
-                <i class="fas fa-camera text-xl"></i><span class="text-[10px] mt-1 font-bold">Absen</span>
-            </button>
+    <nav class="navbar">
+        <div class="max-width">
+            <div class="logo"><a href="#">Scout<span>Dupta</span></a></div>
+            <ul class="menu">
+                <li><a href="#home" class="menu-btn">Beranda</a></li>
+                <li><a href="#about" class="menu-btn">About</a></li>
+                <li><a href="#skills" class="menu-btn">Berita</a></li>
+                <li><a href="#projects" class="menu-btn">Program Kerja</a></li>
+                <li><a href="loginartikel.html" class="menu-btn">Tulis Artikel</a></li>
+                <li><a href="absen.html" class="menu-btn">Absensi</a></li>
+                <li><a href="#contact" class="menu-btn">Kontak</a></li>
+            </ul>
+            <div class="menu-btn"><i class="fas fa-bars"></i></div>
         </div>
     </nav>
 
-    <canvas id="canvas-absen" class="hidden"></canvas>
+    <section class="home" id="home">
+        <div class="max-width">
+            <div class="home-content">
+                <div class="text-1">Selamat datang di</div>
+                <div class="text-2">website Pradupta</div>
+                <div class="text-3">Kami adalah <span>Pramuka</span></div>
+                <a class="web" href="https://pradupta.github.io/web/daftar.html">Daftar Anggota Baru</a>
+            </div>
+        </div>
+    </section>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <section class="about" id="about">
+        <div class="max-width">
+            <h2 class="title fadein">About</h2>
+            <div class="about-content">
+                <div class="column left">
+                    <img src="https://pradupta.github.io/web/img/logo.png" alt="Logo">
+                    <div class="wrapper" style="margin-top: 20px;">
+                        <div class="button1"><div class="icon"><a href="#"><i class="fab fa-instagram"></i></a></div><span>Instagram</span></div>
+                        <div class="button1"><div class="icon"><a href="#"><i class="fab fa-whatsapp"></i></a></div><span>WhatsApp</span></div>
+                        <div class="button1"><div class="icon"><a href="#"><i class="fab fa-tiktok"></i></a></div><span>Tiktok</span></div>
+                    </div>
+                </div>
+                <div class="column right">
+                    <div class="text">Visi & <span>Misi</span></div>
+                    <p><b>Visi:</b> Menjadikan anggota Pramuka berilmu dan berpengetahuan luas. Mendidik anggota Pramuka agar bisa menjaga kehormatan dan harga diri. Menjadikan anggota Pramuka berbudi pekerti luhur.</p>
+                    <br>
+                    <p><b>Misi:</b> Memberikan ilmu kepramukaan terhadap kaum muda. Membina anggota yang memiliki jiwa dan watak pramuka, berlandaskan iman dan taqwa.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="skills" id="skills" style="background: #111;">
+        <div class="max-width">
+            <h2 class="title fadein" style="color: #fff;">News Dupta</h2>
+            
+            <div id="news-skeleton" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+                <div class="skeleton-home"></div>
+                <div class="skeleton-home hidden md:block"></div>
+                <div class="skeleton-home hidden lg:block"></div>
+            </div>
+
+            <div id="latest-news-home" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 hidden"></div>
+            
+            <div style="text-align: center; margin-top: 40px;">
+                <a href="berita.html" style="background: crimson; color: #fff; padding: 12px 30px; border-radius: 8px; font-weight: 600; display: inline-block;">
+                    Lihat Semua Berita <i class="fas fa-chevron-right ml-2 text-xs"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="projects" id="projects">
+        <div class="max-width">
+            <h2 class="title fadein">Program Kerja</h2>
+            <div class="carousel owl-carousel">
+                <div class="card">
+    <div class="box">
+        <a href="https://drive.google.com/drive/folders/17z5ysQzBKS-S8ibpFVMtaWTe3vYbilAw?usp=drive_link" target="_blank">
+            <img src="https://drive.google.com/thumbnail?id=1QfhZhAqS3G4k_bV6Vk4FxM3QSrsn7q-4&sz=w1000" alt="Rapat Pleno">
+            <p>Rapat Pleno</p>
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="box">
+        <a href="https://drive.google.com/drive/folders/1AndfEMICCiLxEa5ZY1_Ea_HiOY7ZzINL?usp=drive_link" target="_blank">
+            <img src="https://drive.google.com/thumbnail?id=1h0IE6q-T5HRjb68Kvpfa9prHZNUCR6-E&sz=w1000" alt="HUT Pramuka 64">
+            <p>HUT Pramuka 64</p>
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="box">
+        <a href="https://drive.google.com/drive/folders/1wXpG-xD6sg5DYYTvv4xfCeF70SISU0x1?usp=drive_link" target="_blank">
+            <img src="https://drive.google.com/thumbnail?id=1jCKHUARJOE8A3SUS6e_qpuWBLwoMwZRs&sz=w1000" alt="Penerimaan Tamu Ambalan">
+            <p>Penerimaan Tamu Ambalan</p>
+        </a>
+    </div>
+</div>
+                <div class="card">
+                    <div class="box">
+                        <a href="https://drive.google.com/drive/folders/1-BDK3pEgRep9EhiKj7l-Yv_Jd-As5xwo?usp=sharing" target="_blank">
+                            <img src="https://drive.google.com/thumbnail?id=1pzotUCew6WxJnOIF73kvWWfOmfyG3SWv&sz=w1000" alt="Hari Laut">
+                            <p>Hari Laut Sedunia</p>
+                        </a>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="box">
+                        <a href="https://drive.google.com/drive/folders/1-7WBC0ghPZeXWUMxn9vAegfq2qOBdZfH?usp=drive_link" target="_blank">
+                            <img src="https://drive.google.com/thumbnail?id=1QWZc_nrh-Qx5LrmSkwaL9MG9ovanz27q&sz=w1000" alt="Berbagi">
+                            <p>Berbagi Bersama</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <div class="max-width">
+            <h2 class="title fadein">Info Kontak</h2>
+            <div class="contact-content">
+                <div class="column left text-center">
+                    <div class="text">Hubungi Kami</div>
+                    <div class="icons inline-block text-left">
+                        <div class="row flex items-center mb-4">
+                            <i class="fas fa-user text-crimson mr-4 text-2xl"></i>
+                            <div class="info"><div class="head font-bold">Nama</div><div class="sub-title">Ambalan ScoutDupta</div></div>
+                        </div>
+                        <div class="row flex items-center">
+                            <i class="fas fa-map-marker-alt text-crimson mr-4 text-2xl"></i>
+                            <div class="info"><div class="head font-bold">Alamat</div><div class="sub-title">Jalan Raya Pakuhaji KM. 2</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <span>Created By <a href="#" class="font-bold text-red-500">Team Media Pradupta</a> | <span class="far fa-copyright"></span> 2026 All rights reserved.</span>
+    </footer>
+
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbycJzXx1UFjx-bUjyR2pVOXi2fSvRjHiHbkdCk1yh7EQcnMfldmsUxEpREMSfoggDjtrw/exec';
-        const scriptURL_Auth = 'https://script.google.com/macros/s/AKfycbzbpW0ISEpCN8GUiJ03WgkPdxvoM_lOCRWB48tzrC75Sag-XWtlBZgqUHmv-uwlavG-yw/exec';
-        // URL Backend Absen
-        const ABSEN_URL = "https://script.google.com/macros/s/AKfycbx_YYxl1DM_rpfznIy6Mu7UYlKSZO1edqxDR1K6lVAJqy3oEXDUabe74HQbtsF4g61XHA/exec";
 
-        let globalNewsData = [];
-        let currentPage = 'page-home';
-        let base64Image = "";
-        let absenConfig = null;
-        let mapObj = null;
-        let absenCoords = { lat: 0, lng: 0 };
-
-        function showPage(pageId) {
-            currentPage = pageId;
-            $('.page-content').removeClass('active').hide();
-            $('#' + pageId).addClass('active').show();
-            
-            if(pageId === 'page-home') {
-                $('#header-text').removeClass('hidden');
-                $('#global-back').addClass('hidden');
-            } else {
-                $('#header-text').addClass('hidden');
-                $('#global-back').removeClass('hidden');
-            }
-
-            $('.nav-item').removeClass('active');
-            if(pageId === 'page-home') $('#nav-home').addClass('active');
-            if(pageId === 'page-berita' || pageId === 'page-detail') $('#nav-berita').addClass('active');
-            if(pageId === 'page-absen') $('#nav-absen').addClass('active');
-            
-            if(pageId !== 'page-absen') stopCamera();
-            window.scrollTo(0,0);
-        }
-
-        function goBack() {
-            if(currentPage === 'page-detail') showPage('page-berita');
-            else if(currentPage === 'page-login' || currentPage === 'page-register' || currentPage === 'page-absen') showPage('page-home');
-            else showPage('page-home');
-        }
-
-        // --- AUTH LOGIC ---
-        function checkAuthAndRedirect() {
-            if (localStorage.getItem("isLoggedIn") === "true") {
-                $('#penulis').val(localStorage.getItem("namaUser") || "Penulis Dupta");
-                showPage('page-artikel');
-            } else { showPage('page-login'); }
-        }
-
-        function logout() { localStorage.clear(); showPage('page-home'); }
-
-        $('#registerForm').submit(function(e) {
-            e.preventDefault();
-            const btn = $('#btnReg');
-            const nama = $('#regNama').val();
-            btn.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
-            const formData = new URLSearchParams(new FormData(this));
-            formData.append('action', 'register');
-            fetch(scriptURL_Auth, { method: 'POST', body: formData, mode: 'no-cors' }).then(() => {
-                localStorage.setItem("namaUser", nama);
-                Swal.fire('Berhasil', 'Pendaftaran terkirim! Silakan login.', 'success');
-                showPage('page-login');
-            }).finally(() => { btn.html('DAFTAR SEKARANG').prop('disabled', false); });
-        });
-
-        $('#loginForm').submit(function(e) {
-            e.preventDefault();
-            const btn = $('#btnLogin');
-            btn.html('MEMPROSES...').prop('disabled', true);
-            const formData = new URLSearchParams(new FormData(this));
-            formData.append('action', 'login');
-            fetch(scriptURL_Auth, { method: 'POST', body: formData, mode: 'no-cors' }).then(() => {
-                localStorage.setItem("isLoggedIn", "true");
-                if(!localStorage.getItem("namaUser")) {
-                    localStorage.setItem("namaUser", $('#emailInput').val().split('@')[0]);
-                }
-                checkAuthAndRedirect();
-            }).finally(() => { btn.html('MASUK').prop('disabled', false); });
-        });
-
-        // --- EDITOR & PREVIEW LOGIC ---
-        function execCmd(command) { document.execCommand(command, false, null); }
-
-        function switchArtTab(tab) {
-            $('.tab-btn').removeClass('active');
-            if(tab === 'edit') {
-                $('#tab-edit').addClass('active');
-                $('#art-editor-container').removeClass('hidden');
-                $('#art-preview-container').addClass('hidden');
-            } else {
-                $('#tab-preview').addClass('active');
-                $('#art-editor-container').addClass('hidden');
-                $('#art-preview-container').removeClass('hidden');
-                $('#pre-title').text($('#judul').val() || "Tanpa Judul");
-                $('#pre-author').text($('#penulis').val());
-                $('#pre-body').html($('#isi-editor').html() || "Belum ada isi...");
-                if(base64Image) $('#pre-image').attr('src', base64Image).removeClass('hidden');
-            }
-        }
-
-        $('#gambar').change(function(e) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const scale = 800 / img.width;
-                    canvas.width = 800;
-                    canvas.height = img.height * scale;
-                    const ctxObj = canvas.getContext('2d');
-                    ctxObj.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    base64Image = canvas.toDataURL('image/jpeg', 0.7);
-                    $('#gambarPreview').html(`<img src="${base64Image}" class="max-h-40 mx-auto rounded-xl">`);
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        });
-
-        $('#articleForm').submit(async function(e) {
-            e.preventDefault();
-            const content = $('#isi-editor').html();
-            if(!content || content === "<br>") return Swal.fire('Error', 'Isi artikel kosong!', 'error');
-            Swal.fire({ title: 'Mengirim...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-            const formData = new URLSearchParams();
-            formData.append('tanggal', new Date().toLocaleDateString('id-ID'));
-            formData.append('judul', $('#judul').val());
-            formData.append('penulis', $('#penulis').val());
-            formData.append('isi', content);
-            formData.append('gambar', base64Image);
-            try {
-                await fetch(scriptURL, { method: 'POST', body: formData, mode: 'no-cors' });
-                Swal.fire('Berhasil', 'Artikel terbit!', 'success').then(() => location.reload());
-            } catch (e) { Swal.fire('Gagal', 'Error.', 'error'); }
-        });
-
-        // --- FETCH NEWS ---
-        async function fetchNews() {
-            try {
-                const response = await fetch(`${scriptURL}?t=${new Date().getTime()}`);
-                const data = await response.json();
-                globalNewsData = data;
-                renderNews(data);
-            } catch (e) { console.error("Error news", e); }
-        }
-
-        function renderNews(data) {
-            const homeContainer = $('#latest-news-home');
-            const listContainer = $('#all-news-list');
-            homeContainer.empty(); listContainer.empty();
-            data.forEach((row, index) => {
-                const dateClean = new Date(row[0]).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-                const html = `<div class="news-item flex p-3 rounded-xl shadow-sm items-center gap-4" onclick="openDetail(${index})">
-                    <img src="${row[4]}" class="w-20 h-20 object-cover rounded-lg">
-                    <div class="flex-1"><h4 class="font-bold text-sm line-clamp-2 text-slate-800">${row[1]}</h4><p class="text-[10px] text-gray-400 mt-1 uppercase">${dateClean}</p></div>
-                </div>`;
-                if(index < 4) homeContainer.append(html);
-                listContainer.append(html);
+        $(document).ready(function () {
+            // Navbar & Scroll Logic
+            $(window).scroll(function () {
+                if (this.scrollY > 20) { $(".navbar").addClass("sticky"); } 
+                else { $(".navbar").removeClass("sticky"); }
+                if (this.scrollY > 500) { $(".scroll-up-btn").addClass("show"); } 
+                else { $(".scroll-up-btn").removeClass("show"); }
             });
-        }
 
-        function openDetail(index) {
-            const article = globalNewsData[index];
-            $('#det-title').text(article[1]);
-            $('#det-date').text(new Date(article[0]).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }));
-            $('#det-author').text(article[2] || 'Admin');
-            $('#det-views').text(article[5] || '0');
-            $('#det-image').attr('src', article[4]);
-            $('#det-body').html(article[3]);
-            showPage('page-detail');
-        }
+            $(".scroll-up-btn").click(function () { $("html").animate({ scrollTop: 0 }); });
+            $(".menu-btn").click(function () {
+                $(".navbar .menu").toggleClass("active");
+                $(".menu-btn i").toggleClass("active");
+            });
 
-        // --- ABSEN LOGIC ---
-        async function showAbsenPage() {
-            showPage('page-absen');
-            if(!absenConfig) {
-                Swal.fire({ title: 'Sinkronisasi...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            $(".carousel").owlCarousel({
+                margin: 20, loop: true, autoplay: true, autoplayTimeOut: 3000,
+                responsive: { 0: { items: 1 }, 600: { items: 2 }, 1000: { items: 3 } }
+            });
+
+            // News Dupta Logic
+            async function fetchHomeNews() {
+                const container = document.getElementById('latest-news-home');
+                const skeleton = document.getElementById('news-skeleton');
                 try {
-                    const response = await fetch(ABSEN_URL, { method: "POST", body: JSON.stringify({ action: "getAppConfig" }) });
-                    const res = await response.json();
-                    absenConfig = res.result;
-                    const classSel = document.getElementById('class-select');
-                    classSel.innerHTML = '<option value="">-- PILIH DIVISI --</option>';
-                    absenConfig.classes.forEach(c => { let o = document.createElement('option'); o.value = o.text = c; classSel.add(o); });
-                } catch(e) { Swal.fire('Error', 'Gagal koneksi backend.', 'error'); }
-                Swal.close();
+                    const response = await fetch(`${scriptURL}?t=${new Date().getTime()}`);
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        localStorage.setItem('all_news', JSON.stringify(data));
+                        renderNews(data);
+                    }
+                } catch (e) {
+                    const cached = localStorage.getItem('all_news');
+                    if (cached) renderNews(JSON.parse(cached));
+                }
             }
-            startCamera(); initMap();
-        }
 
-        function filterSiswa() {
-            const kls = $('#class-select').val();
-            const stuSel = document.getElementById('student-select');
-            stuSel.innerHTML = '<option value="">-- PILIH NAMA --</option>';
-            if(absenConfig) {
-                absenConfig.students.filter(s => s.kelas == kls).forEach(s => {
-                    let o = document.createElement('option'); o.value = o.text = s.nama; stuSel.add(o);
+            function renderNews(data) {
+                const container = document.getElementById('latest-news-home');
+                const skeleton = document.getElementById('news-skeleton');
+                container.innerHTML = '';
+                
+                data.slice(0, 3).forEach((row, index) => {
+                    const date = new Date(row[0]).toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+                    const slug = row[1].toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+                    const desc = row[3].replace(/<[^>]*>?/gm, ''); // Teks Deskripsi muncul
+
+                    const card = `
+                        <div class="news-card p-4">
+                            <img src="${row[4]}" class="w-full h-48 object-cover rounded-md mb-4" style="border: 1px solid #eee;">
+                            <div class="flex justify-between text-[10px] font-bold text-gray-400 uppercase">
+                                <span>${date}</span>
+                                <span class="text-crimson"><i class="far fa-eye"></i> ${row[5] || 0}</span>
+                            </div>
+                            <h3 class="font-bold text-lg mt-2 text-black line-clamp-2 h-12">${row[1]}</h3>
+                            <p class="text-gray-600 text-sm mt-2 line-clamp-2">${desc}</p>
+                            <a href="detail.html?post=${slug}&id=${index}" class="text-red-600 font-bold text-sm mt-4 inline-block">Baca Selengkapnya →</a>
+                        </div>`;
+                    container.insertAdjacentHTML('beforeend', card);
                 });
+                skeleton.classList.add('hidden');
+                container.classList.remove('hidden');
             }
-        }
 
-        async function startCamera() {
-            const video = document.getElementById('video-absen');
-            try {
-                const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
-                video.srcObject = s;
-            } catch (e) { console.log("Cam Error"); }
-        }
-
-        function stopCamera() {
-            const v = document.getElementById('video-absen');
-            if (v && v.srcObject) v.srcObject.getTracks().forEach(t => t.stop());
-        }
-
-        function toggleCam() {
-            const s = $('#status-select').val();
-            if(s === 'Hadir' || s === 'Terlambat') { $('#camera-section').show(); $('#ket-section').addClass('hidden-element'); } 
-            else { $('#camera-section').hide(); $('#ket-section').removeClass('hidden-element'); }
-        }
-
-        function initMap() {
-            navigator.geolocation.getCurrentPosition(p => {
-                absenCoords = { lat: p.coords.latitude, lng: p.coords.longitude };
-                if(!mapObj) {
-                    mapObj = L.map('map-absen',{zoomControl:false, attributionControl:false}).setView([absenCoords.lat, absenCoords.lng], 16);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapObj);
-                    L.marker([absenCoords.lat, absenCoords.lng]).addTo(mapObj);
-                } else { mapObj.setView([absenCoords.lat, absenCoords.lng], 16); }
-            }, null, { enableHighAccuracy: true });
-        }
-
-        async function kirimAbsensi() {
-            const name = $('#student-select').val();
-            const kls = $('#class-select').val();
-            if(!name || !kls) return Swal.fire('Peringatan', 'Lengkapi data!', 'warning');
-            $('#loader-absen').css('display', 'flex');
-            let photo = "-";
-            if($('#status-select').val() === 'Hadir' || $('#status-select').val() === 'Terlambat') {
-                const canv = document.getElementById('canvas-absen');
-                const vid = document.getElementById('video-absen');
-                canv.width = vid.videoWidth; canv.height = vid.videoHeight;
-                canv.getContext('2d').drawImage(vid, 0, 0);
-                photo = canv.toDataURL('image/jpeg', 0.5);
-            }
-            try {
-                const res = await fetch(ABSEN_URL, { method: "POST", body: JSON.stringify({ 
-                    action: "simpanAbsensi", 
-                    data: { divisi: kls, name: name, status: $('#status-select').val(), lat: absenCoords.lat, lng: absenCoords.lng, keterangan: $('#keterangan-absen').val(), photo: photo } 
-                })});
-                Swal.fire('Berhasil', 'Presensi terkirim!', 'success').then(() => showPage('page-home'));
-            } catch(e) { Swal.fire('Error', 'Gagal kirim.', 'error'); }
-            $('#loader-absen').hide();
-        }
-
-        $(document).ready(function() { fetchNews(); $('.page-content').hide(); $('#page-home').show(); });
+            fetchHomeNews();
+        });
     </script>
 </body>
 </html>
+
