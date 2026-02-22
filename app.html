@@ -640,27 +640,79 @@
         }
 
         async function kirimAbsensi() {
-            const name = $('#student-select').val();
-            const kls = $('#class-select').val();
-            if(!name || !kls) return Swal.fire('Peringatan', 'Lengkapi data!', 'warning');
-            $('#loader-absen').css('display', 'flex');
-            let photo = "-";
-            if($('#status-select').val() === 'Hadir' || $('#status-select').val() === 'Terlambat') {
-                const canv = document.getElementById('canvas-absen');
-                const vid = document.getElementById('video-absen');
-                canv.width = vid.videoWidth; canv.height = vid.videoHeight;
-                canv.getContext('2d').drawImage(vid, 0, 0);
-                photo = canv.toDataURL('image/jpeg', 0.5);
-            }
-            try {
-                const res = await fetch(ABSEN_URL, { method: "POST", body: JSON.stringify({ 
-                    action: "simpanAbsensi", 
-                    data: { divisi: kls, name: name, status: $('#status-select').val(), lat: absenCoords.lat, lng: absenCoords.lng, keterangan: $('#keterangan-absen').val(), photo: photo } 
-                })});
-                Swal.fire('Berhasil', 'Presensi terkirim!', 'success').then(() => showPage('page-home'));
-            } catch(e) { Swal.fire('Error', 'Gagal kirim.', 'error'); }
-            $('#loader-absen').hide();
+    const name = $('#student-select').val();
+    const kls = $('#class-select').val();
+    const status = $('#status-select').val();
+    
+    if(!name || !kls || !status) return Swal.fire('Peringatan', 'Lengkapi data!', 'warning');
+    
+    $('#loader-absen').css('display', 'flex');
+    let photo = "-";
+    
+    // Ambil foto jika status Hadir atau Terlambat
+    if(status === 'Hadir' || status === 'Terlambat') {
+        const canv = document.getElementById('canvas-absen');
+        const vid = document.getElementById('video-absen');
+        canv.width = vid.videoWidth; 
+        canv.height = vid.videoHeight;
+        canv.getContext('2d').drawImage(vid, 0, 0);
+        photo = canv.toDataURL('image/jpeg', 0.5);
+    }
+
+    // Mendapatkan waktu sekarang untuk dikirim ke kolom 'Waktu' (data.timestamp)
+    const waktuSekarang = new Date().toLocaleString('id-ID', { 
+        timeZone: 'Asia/Jakarta',
+        dateStyle: 'medium', 
+        timeStyle: 'medium' 
+    });
+
+    // Sesuaikan payload dengan request JSON.parse(e.postData.contents) di Apps Script
+    const payload = {
+        action: "simpanAbsensi",
+        data: {
+            timestamp: waktuSekarang, // Apps Script mengharapkan data.timestamp
+            divisi: kls,
+            name: name,
+            status: status,
+            keterangan: $('#keterangan-absen').val() || "-",
+            photo: photo,
+            lat: absenCoords.lat || 0,
+            lng: absenCoords.lng || 0
         }
+    };
+
+    try {
+        // Menggunakan mode 'cors' karena Apps Script Anda sudah mendukung JSON response
+        const response = await fetch(ABSEN_URL, { 
+            method: "POST",
+            mode: "cors", // Mengaktifkan CORS agar bisa membaca response success
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const resJson = await response.json();
+
+        if(resJson.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil',
+                text: 'Presensi telah tercatat di sistem!',
+                confirmButtonColor: '#dc2626'
+            }).then(() => {
+                location.reload(); // Refresh untuk reset form
+            });
+        } else {
+            throw new Error(resJson.error);
+        }
+    } catch(e) { 
+        console.error(e);
+        Swal.fire('Error', 'Gagal mengirim data: ' + e.message, 'error'); 
+    } finally {
+        $('#loader-absen').hide();
+    }
+}
 
         // --- DAFTAR BARU LOGIC ---
         const passInputB = document.getElementById('password_baru');
