@@ -292,19 +292,26 @@
             <div id="all-news-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
-        <div id="page-detail" class="page-content">
-            <div class="bg-white p-5 rounded-3xl shadow-sm">
-                <h1 id="det-title" class="text-xl font-extrabold leading-tight mb-3 text-slate-900"></h1>
-                <div class="flex flex-wrap gap-4 text-[10px] text-gray-400 mb-5 border-b pb-3 uppercase font-bold tracking-wider">
-                    <span><i class="far fa-calendar-alt text-red-600 mr-1"></i> <span id="det-date"></span></span>
-                    <span><i class="far fa-user text-red-600 mr-1"></i> <span id="det-author"></span></span>
-                    <span><i class="far fa-eye text-red-600 mr-1"></i> <span id="det-views">0</span> VIEWS</span>
-                </div>
-                <img id="det-image" src="" class="w-full rounded-2xl mb-6 shadow-sm border border-slate-100">
-                <div id="det-body" class="content-area"></div>
-                <div id="det-pdf" class="mt-6"></div>
-            </div>
+<div id="page-detail" class="page-content">
+    <div class="bg-white p-5 rounded-3xl shadow-sm">
+        <div class="flex justify-between items-start gap-4 mb-3">
+            <h1 id="det-title" class="text-xl font-extrabold leading-tight text-slate-900"></h1>
+            <button onclick="shareBerita()" class="w-10 h-10 bg-slate-50 text-slate-600 rounded-2xl flex items-center justify-center flex-shrink-0 border border-slate-100 active:scale-90 transition-transform">
+                <i class="fas fa-share-alt text-lg"></i>
+            </button>
         </div>
+
+        <div class="flex flex-wrap gap-4 text-[10px] text-gray-400 mb-5 border-b pb-3 uppercase font-bold tracking-wider">
+            <span><i class="far fa-calendar-alt text-red-600 mr-1"></i> <span id="det-date"></span></span>
+            <span><i class="far fa-user text-red-600 mr-1"></i> <span id="det-author"></span></span>
+            <span><i class="far fa-eye text-red-600 mr-1"></i> <span id="det-views">0</span> VIEWS</span>
+        </div>
+        
+        <img id="det-image" src="" class="w-full rounded-2xl mb-6 shadow-sm border border-slate-100">
+        <div id="det-body" class="content-area"></div>
+        <div id="det-pdf" class="mt-6"></div>
+    </div>
+</div>
 
        <div id="page-proker" class="page-content">
             <h2 class="text-xl font-bold mb-4 px-2 text-slate-800">Program Kerja</h2>
@@ -546,13 +553,25 @@
 
         // --- FETCH NEWS ---
         async function fetchNews() {
-            try {
-                const response = await fetch(`${scriptURL}?t=${new Date().getTime()}`);
-                const data = await response.json();
-                globalNewsData = data;
-                renderNews(data);
-            } catch (e) { console.error("Error news", e); }
+    try {
+        const response = await fetch(`${scriptURL}?t=${new Date().getTime()}`);
+        const data = await response.json();
+        globalNewsData = data; // Simpan ke variabel global
+        renderNews(data);      // Tampilkan daftar berita
+        
+        // --- TAMBAHKAN LOGIKA INI DI SINI ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const newsID = urlParams.get('news');
+        if (newsID) {
+            const indexBerita = globalNewsData.findIndex(row => row[6] == newsID);
+            if (indexBerita !== -1) {
+                openDetail(indexBerita);
+            }
         }
+    } catch (e) { 
+        console.error("Gagal memuat berita", e); 
+    }
+}
 
         function renderNews(data) {
             const homeContainer = $('#latest-news-home');
@@ -569,17 +588,69 @@
             });
         }
 
-        function openDetail(index) {
-            const article = globalNewsData[index];
-            $('#det-title').text(article[1]);
-            $('#det-date').text(new Date(article[0]).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }));
-            $('#det-author').text(article[2] || 'Admin');
-            $('#det-views').text(article[5] || '0');
-            $('#det-image').attr('src', article[4]);
-            $('#det-body').html(article[3]);
-            showPage('page-detail');
-        }
+       async function openDetail(index) {
+    const article = globalNewsData[index];
+    if(!article) return;
 
+    // SIMPAN ID UNTUK SHARE (Kolom ke-7/index 6 adalah Original ID)
+    window.currentOriginalID = article[6]; 
+
+    $('#det-title').text(article[1]);
+    $('#det-date').text(new Date(article[0]).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }));
+    $('#det-author').text(article[2] || 'Admin');
+    
+    // Tampilkan views + 1 secara instan di UI
+    const currentViews = parseInt(article[5] || 0);
+    $('#det-views').text(currentViews + 1);
+    
+    $('#det-image').attr('src', article[4]);
+    $('#det-body').html(article[3]);
+
+    // Berpindah ke halaman detail
+    showPage('page-detail');
+
+    // Update view ke Apps Script (menggunakan scriptURL yang sudah Anda definisikan)
+    try {
+        fetch(`${scriptURL}?action=updateView&readID=${article[6]}`, { mode: 'no-cors' });
+    } catch (e) {
+        console.log("Gagal update views");
+    }
+}
+async function shareBerita() {
+    const judul = $('#det-title').text();
+    // Mengambil URL dasar tanpa parameter lama
+    const baseURL = window.location.href.split('?')[0];
+    const shareURL = `${baseURL}?news=${window.currentOriginalID}`;
+
+    const textShare = `📢 *BERITA SCOUT DUPTA* 📢\n\n"${judul}"\n\nBaca selengkapnya di sini:\n${shareURL}`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: judul,
+            text: textShare,
+            url: shareURL
+        }).catch(err => console.log(err));
+    } else {
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textShare)}`, '_blank');
+    }
+}
+
+$(document).ready(function() { 
+    // 1. Load semua berita dulu
+    fetchNews().then(() => {
+        // 2. Cek apakah di URL ada parameter ?news=...
+        const urlParams = new URLSearchParams(window.location.search);
+        const newsID = urlParams.get('news');
+        
+        if (newsID && globalNewsData.length > 0) {
+            // Cari berita yang ID-nya (kolom ke-6) cocok
+            const idx = globalNewsData.findIndex(a => a[6] == newsID);
+            if (idx !== -1) openDetail(idx);
+        }
+    });
+
+    initRegions();
+});
         // --- ABSEN LOGIC ---
         async function showAbsenPage() {
             showPage('page-absen');
