@@ -92,12 +92,56 @@
             width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem;
             border: 1px solid #e2e8f0; background: #f8fafc; transition: all 0.3s; font-size: 14px;
         }
+        
         .input-field-daftar:focus { outline: none; border-color: #DC143C; }
         .label-daftar { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 0.4rem; display: block; }
         .section-header-daftar { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; font-size: 1.1rem; margin-bottom: 1.5rem; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem; }
         .val-text { font-size: 0.65rem; transition: color 0.3s; margin-top: 2px; }
         .invalid { color: #94a3b8; }
         .valid { color: #10b981; font-weight: bold; }
+        /* Efek Animasi Shimmer */
+@keyframes shimmer {
+    0% {
+        background-position: -468px 0;
+    }
+    100% {
+        background-position: 468px 0;
+    }
+}
+
+.skeleton {
+    background: #f6f7f8;
+    background-image: linear-gradient(
+        to right,
+        #f6f7f8 0%,
+        #edeef1 20%,
+        #f6f7f8 40%,
+        #f6f7f8 100%
+    );
+    background-repeat: no-repeat;
+    background-size: 800px 104px; /* Ukuran gradient */
+    display: inline-block;
+    position: relative;
+    animation: shimmer 1.2s linear infinite forwards;
+    border-radius: 8px;
+}
+
+/* Ukuran spesifik untuk elemen skeleton */
+.skeleton-img {
+    width: 80px;
+    height: 80px;
+}
+
+.skeleton-title {
+    width: 100%;
+    height: 18px;
+    margin-bottom: 8px;
+}
+
+.skeleton-text {
+    width: 40%;
+    height: 12px;
+}
     </style>
 </head>
 <body>
@@ -310,6 +354,8 @@
         <img id="det-image" src="" class="w-full rounded-2xl mb-6 shadow-sm border border-slate-100">
         <div id="det-body" class="content-area"></div>
         <div id="det-pdf" class="mt-6"></div>
+        <div id="det-body"></div>
+<div id="pdf-container"></div>
     </div>
 </div>
 
@@ -347,10 +393,42 @@
                     <input type="password" name="password" id="passwordInput" class="form-input text-sm" placeholder="Password" required>
                     <button type="submit" id="btnLogin" class="w-full py-3 bg-red-600 text-white font-bold rounded-xl text-sm shadow-lg">MASUK</button>
                 </form>
-                <p class="text-center text-xs mt-6">Belum punya akun? <a href="javascript:void(0)" onclick="showPage('page-daftar-baru')" class="text-red-600 font-bold">Daftar di sini</a></p>
+                <p class="text-center text-xs mt-6">Belum punya akun? <a href="javascript:void(0)" onclick="showPage('page-daftar-penulis')" class="text-red-600 font-bold">Daftar di sini</a></p>
             </div>
         </div>
-
+<div id="page-daftar-penulis" class="page-content" style="display:none;">
+    <div class="p-6">
+        <h2 class="text-2xl font-bold text-slate-800 mb-2">Daftar Penulis</h2>
+        <p class="text-gray-500 mb-6 text-sm">Lengkapi data untuk membuat akun artikel.</p>
+        
+        <form id="formDaftarPenulis" class="space-y-4">
+            <div>
+                <label class="text-xs font-bold text-gray-400 uppercase">Nama Lengkap</label>
+                <input type="text" id="regNama" required class="w-full p-3 rounded-xl border border-gray-100 bg-gray-50 focus:ring-2 focus:ring-red-500 outline-none">
+            </div>
+            <div>
+                <label class="text-xs font-bold text-gray-400 uppercase">Email</label>
+                <input type="email" id="regEmail" required class="w-full p-3 rounded-xl border border-gray-100 bg-gray-50 focus:ring-2 focus:ring-red-500 outline-none">
+            </div>
+            <div>
+                <label class="text-xs font-bold text-gray-400 uppercase">Nomor Telepon</label>
+                <input type="number" id="regTelepon" required class="w-full p-3 rounded-xl border border-gray-100 bg-gray-50 focus:ring-2 focus:ring-red-500 outline-none">
+            </div>
+            <div>
+                <label class="text-xs font-bold text-gray-400 uppercase">Password</label>
+                <input type="password" id="regPassword" required class="w-full p-3 rounded-xl border border-gray-100 bg-gray-50 focus:ring-2 focus:ring-red-500 outline-none">
+            </div>
+            
+            <button type="submit" id="btnProsesDaftar" class="w-full bg-red-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-red-200 transition-all active:scale-95">
+                DAFTAR SEKARANG
+            </button>
+            
+            <button type="button" onclick="showPage('page-login')" class="w-full text-gray-400 text-sm font-medium py-2">
+                Sudah punya akun? Login
+            </button>
+        </form>
+    </div>
+</div>
         <div id="page-artikel" class="page-content">
             <div class="bg-white p-6 rounded-3xl shadow-sm">
                 <div class="flex justify-between items-center mb-4">
@@ -469,31 +547,199 @@
             else showPage('page-home');
         }
 
-        // --- AUTH LOGIC ---
-        function checkAuthAndRedirect() {
-            if (localStorage.getItem("isLoggedIn") === "true") {
-                $('#penulis').val(localStorage.getItem("namaUser") || "Penulis Dupta");
-                showPage('page-artikel');
-            } else { showPage('page-login'); }
+async function fetchNews() {
+    const homeContainer = $('#latest-news-home');
+    const listContainer = $('#all-news-list');
+
+    // 1. CEK CACHE: Ambil data lama dari memori HP
+    const cachedData = localStorage.getItem("cached_news");
+    if (cachedData) {
+        globalNewsData = JSON.parse(cachedData);
+        renderNews(globalNewsData); // Tampilkan secara instan
+    } else {
+        // Jika tidak ada cache, tampilkan skeleton loading
+        renderSkeleton(homeContainer);
+        renderSkeleton(listContainer);
+    }
+
+    try {
+        // 2. FETCH DATA BARU: Ambil dari Google Apps Script
+        const response = await fetch(`${scriptURL}?t=${new Date().getTime()}`);
+        const data = await response.json();
+        
+        // 3. UPDATE CACHE & UI: Simpan data baru dan perbarui tampilan
+        globalNewsData = data; 
+        localStorage.setItem("cached_news", JSON.stringify(data));
+        renderNews(data);      
+        
+        // Cek Deep Linking setelah data siap
+        checkDeepLinking();
+
+    } catch (e) { 
+        console.error("Gagal memuat berita terbaru", e); 
+    }
+}
+
+// Fungsi tambahan untuk Deep Linking agar lebih rapi
+function checkDeepLinking() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const newsID = urlParams.get('news');
+    if (newsID && globalNewsData.length > 0) {
+        const indexBerita = globalNewsData.findIndex(row => row[6] == newsID);
+        if (indexBerita !== -1) {
+            setTimeout(() => openDetail(indexBerita), 200);
         }
+    }
+}
+function renderSkeleton(container) {
+    let html = '';
+    for (let i = 0; i < 4; i++) {
+        html += `
+            <div class="news-item flex p-3 gap-4 animate-pulse">
+                <div class="w-20 h-20 bg-gray-200 rounded-lg"></div>
+                <div class="flex-1">
+                    <div class="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                    <div class="h-3 bg-gray-200 rounded w-1/4"></div>
+                </div>
+            </div>`;
+    }
+    container.html(html);
+}
 
-        function logout() { localStorage.clear(); showPage('page-home'); }
+function renderNews(data = null) {
+    const homeContainer = $('#latest-news-home');
+    const listContainer = $('#all-news-list');
 
-        $('#loginForm').submit(function(e) {
-            e.preventDefault();
-            const btn = $('#btnLogin');
-            btn.html('MEMPROSES...').prop('disabled', true);
-            const formData = new URLSearchParams(new FormData(this));
-            formData.append('action', 'login');
-            fetch(scriptURL_Auth, { method: 'POST', body: formData, mode: 'no-cors' }).then(() => {
-                localStorage.setItem("isLoggedIn", "true");
-                if(!localStorage.getItem("namaUser")) {
-                    localStorage.setItem("namaUser", $('#emailInput').val().split('@')[0]);
-                }
-                checkAuthAndRedirect();
-            }).finally(() => { btn.html('MASUK').prop('disabled', false); });
+    // --- 1. KONDISI LOADING (SKELETON) ---
+    if (!data || data.length === 0) {
+        let skeletonHtml = '';
+        for (let i = 0; i < 4; i++) {
+            skeletonHtml += `
+                <div class="news-item flex p-3 gap-4 items-center animate-pulse">
+                    <div class="skeleton skeleton-img w-20 h-20 bg-gray-200 rounded-lg flex-shrink-0"></div>
+                    <div class="flex-1">
+                        <div class="skeleton skeleton-title h-4 bg-gray-200 rounded w-full mb-2"></div>
+                        <div class="skeleton skeleton-text h-3 bg-gray-200 rounded w-1/3"></div>
+                    </div>
+                </div>`;
+        }
+        homeContainer.html(skeletonHtml);
+        listContainer.html(skeletonHtml);
+        return; // Keluar dari fungsi agar tidak menghapus skeleton sebelum data siap
+    }
+
+    // --- 2. KONDISI DATA SIAP (BERITA ASLI) ---
+    homeContainer.empty(); 
+    listContainer.empty();
+
+    data.forEach((row, index) => {
+        // Format tanggal Indonesia: 23 Feb 2026
+        const dateClean = new Date(row[0]).toLocaleDateString('id-ID', { 
+            day: 'numeric', 
+            month: 'short', 
+            year: 'numeric' 
         });
 
+        // Template Berita
+        const html = `
+            <div class="news-item flex p-3 rounded-xl shadow-sm items-center gap-4 cursor-pointer hover:bg-gray-50 transition" onclick="openDetail(${index})">
+                <img src="${row[4] || 'https://via.placeholder.com/150'}" 
+                     class="w-20 h-20 object-cover rounded-lg bg-gray-100" 
+                     onerror="this.src='https://via.placeholder.com/150'"
+                     loading="lazy">
+                <div class="flex-1">
+                    <h4 class="font-bold text-sm line-clamp-2 text-slate-800">${row[1]}</h4>
+                    <p class="text-[10px] text-gray-400 mt-1 uppercase">${dateClean}</p>
+                </div>
+            </div>`;
+
+        // Masukkan ke Home (Maksimal 4 berita terbaru)
+        if(index < 4) homeContainer.append(html);
+        
+        // Masukkan ke Daftar Semua Berita
+        listContainer.append(html);
+    });
+}
+async function openDetail(index) {
+    const article = globalNewsData[index];
+    if(!article) return;
+
+    // Simpan Original ID untuk fitur Share
+    window.currentOriginalID = article[6]; 
+
+    // Mapping Data ke UI
+    $('#det-title').text(article[1]);
+    $('#det-date').text(new Date(article[0]).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }));
+    $('#det-author').text(article[2] || 'Admin');
+    
+    // Tampilkan views + 1 secara instan di UI
+    const currentViews = parseInt(article[5] || 0);
+    $('#det-views').text(currentViews + 1);
+    
+    $('#det-image').attr('src', article[4]);
+    $('#det-body').html(article[3]);
+
+   
+    // Pindah ke halaman detail
+    showPage('page-detail');
+
+    // Update view ke Apps Script (Background process)
+    try {
+        fetch(`${scriptURL}?action=updateView&readID=${article[6]}`, { mode: 'no-cors' });
+    } catch (e) {
+        console.log("Gagal update views");
+    }
+}
+
+async function shareBerita() {
+    const judul = $('#det-title').text();
+    const baseURL = window.location.href.split('?')[0];
+    const shareURL = `${baseURL}?news=${window.currentOriginalID}`;
+
+    const textShare = `📢 *BERITA SCOUT DUPTA* 📢\n\n"${judul}"\n\nBaca selengkapnya di sini:\n${shareURL}`;
+
+    if (navigator.share) {
+        navigator.share({
+            title: judul,
+            text: textShare,
+            url: shareURL
+        }).catch(err => console.log("Share dibatalkan"));
+    } else {
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(textShare)}`, '_blank');
+    }
+}
+
+// --- INITIALIZATION ---
+$(document).ready(function() { 
+    // Load data utama
+    fetchNews();
+    
+    // Inisialisasi data wilayah (Provinsi/Kota)
+    if (typeof initRegions === "function") {
+        initRegions();
+    }
+});
+// Tambahkan ini di bagian bawah Kode 2 sebelum tag penutup
+function checkAuthAndRedirect() {
+    const user = JSON.parse(localStorage.getItem("penulis_session"));
+    
+    if (user && user.isLoggedIn) {
+        // Jika sudah login, isi nama penulis secara otomatis
+        $('#penulis').val(user.nama); 
+        showPage('page-artikel');
+    } else {
+        // Jika belum login, arahkan ke halaman login penulis
+        showPage('page-login');
+    }
+}
+
+// Fungsi Logout untuk tombol keluar
+function logout() {
+    localStorage.removeItem("penulis_session");
+    Swal.fire('Logged Out', 'Anda telah keluar.', 'success').then(() => {
+        showPage('page-home');
+    });
+}
         // --- EDITOR & PREVIEW LOGIC ---
         function execCmd(command) { document.execCommand(command, false, null); }
 
@@ -608,6 +854,28 @@
 
     // Berpindah ke halaman detail
     showPage('page-detail');
+        // --- LOGIKA PDF SESUAI KEINGINAN LO ---
+            const pdfContainer = document.getElementById('pdf-container');
+            if (row[1].toLowerCase().includes("arah kebijakan")) {
+                // Ambil link drive dari isi berita (row[3]) dan pastikan pakai /preview
+                let driveUrl = row[3].trim().replace('/view?usp=sharing', '/preview').replace('/view', '/preview');
+
+                pdfContainer.innerHTML = `
+                  <div class="mt-12 border-t-4 border-red-600 pt-8">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <svg class="w-6 h-6 mr-2 text-red-600" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"></path></svg>
+                        Dokumen Lampiran:
+                    </h3>
+                    <div style="position:relative; padding-top:141.4%; height:0; overflow:hidden; border-radius:12px; border:2px solid #eee;">
+                      <iframe src="https://drive.google.com/file/d/1iGIOK7EmnnUkQYiOwfqep_diOcb_hH5y/preview" 
+                              style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;" 
+                              allow="autoplay"></iframe>
+                    </div>
+                    <p class="mt-4 text-sm text-gray-500 italic">* Jika dokumen tidak muncul, pastikan Anda masuk ke akun Google.</p>
+                  </div>`;
+            } else {
+                pdfContainer.innerHTML = '';
+            }
 
     // Update view ke Apps Script (menggunakan scriptURL yang sudah Anda definisikan)
     try {
@@ -651,6 +919,7 @@ $(document).ready(function() {
 
     initRegions();
 });
+
         // --- ABSEN LOGIC ---
         async function showAbsenPage() {
             showPage('page-absen');
