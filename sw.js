@@ -1,7 +1,7 @@
 const CACHE_NAME = 'pradupta-cache-v1';
 const urlsToCache = [
   '/',
-  'index.html',
+  'app.html',
   'https://pradupta.github.io/web/web/style.css'
 ];
 
