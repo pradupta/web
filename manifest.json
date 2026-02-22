@@ -2,7 +2,7 @@
   "name": "Pradupta - Gerakan Pramuka",
   "short_name": "Pradupta",
   "description": "Website Resmi Ambalan ScoutDupta",
-  "start_url": "/web/app.html",
+  "start_url": "app.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#dc143c",
