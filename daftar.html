@@ -7,8 +7,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
-   <link rel="shortcut icon" href="https://pradupta.github.io/web/img/logo.png">
+  <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
+  <link rel="shortcut icon" href="https://pradupta.github.io/web/img/logo.png">
   
   <script>
     tailwind.config = {
@@ -17,22 +17,21 @@
   </script>
 
   <style>
-    body { font-family: 'Poppins', sans-serif; background-color: #0f0f0f; color: #fff; scroll-behavior: smooth; }
+    body { font-family: 'Poppins', sans-serif; background-color: #ffffff; color: #1e293b; scroll-behavior: smooth; }
     .logo-text { font-family: 'Pacifico', cursive; }
     .form-card { 
       background: #ffffff; color: #1a1a1a; border-radius: 1.5rem; 
-      box-shadow: 0 10px 40px rgba(0,0,0,0.5); border-left: 6px solid #DC143C;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 1px solid #e2e8f0; border-left: 6px solid #DC143C;
       margin-bottom: 2rem; padding: 2rem;
     }
     .input-field {
       width: 100%; padding: 0.75rem 1rem; border-radius: 0.75rem;
-      border: 1px solid #e2e8f0; background: #f8fafc; transition: all 0.3s;
+      border: 1px solid #cbd5e1; background: #f8fafc; color: #0f172a; transition: all 0.3s;
     }
-    .input-field:focus { outline: none; border-color: #DC143C; ring: 3px rgba(220, 20, 60, 0.1); }
-    label { font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 0.4rem; display: block; }
+    .input-field:focus { outline: none; border-color: #DC143C; ring: 3px rgba(220, 20, 60, 0.1); background: #ffffff; }
+    label { font-size: 0.7rem; font-weight: 700; color: #475569; text-transform: uppercase; margin-bottom: 0.4rem; display: block; }
     .section-header { display: flex; align-items: center; gap: 0.6rem; font-weight: 700; font-size: 1.1rem; margin-bottom: 1.5rem; color: #0f172a; border-bottom: 2px solid #f1f5f9; padding-bottom: 0.5rem; }
     
-    /* Password Indicator Style */
     .val-text { font-size: 0.65rem; transition: color 0.3s; margin-top: 2px; }
     .invalid { color: #94a3b8; }
     .valid { color: #10b981; font-weight: bold; }
@@ -45,7 +44,7 @@
 
   <header class="text-center mb-10">
     <div class="logo-text text-crimson text-5xl mb-2">ScoutDupta</div>
-    <p class="text-gray-400 tracking-widest uppercase text-xs font-bold">SMAN 20 Kabupaten Tangerang</p>
+    <p class="text-slate-600 tracking-widest uppercase text-xs font-bold">SMAN 20 Kabupaten Tangerang</p>
   </header>
 
   <form id="registration-form" class="max-w-4xl mx-auto">
@@ -113,8 +112,13 @@
         <div><label>Pas Foto</label><input type="file" id="pas_foto" accept="image/*" required class="input-field"></div>
         <div>
           <label>Password Akun</label>
-          <input type="password" name="password" id="password" required class="input-field" placeholder="Ketik Password...">
-          <div class="mt-2 grid grid-cols-2 gap-1 p-2 bg-gray-50 rounded-lg border border-gray-100">
+          <div class="relative">
+            <input type="password" name="password" id="password" required class="input-field pr-12" placeholder="Ketik Password...">
+            <button type="button" id="toggle-password" class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-crimson cursor-pointer transition-colors focus:outline-none">
+              <i class="fas fa-eye" id="eye-icon"></i>
+            </button>
+          </div>
+          <div class="mt-2 grid grid-cols-2 gap-1 p-2 bg-slate-100 rounded-lg border border-slate-200">
             <div id="len" class="val-text invalid"><i class="fas fa-circle text-[6px]"></i> Min 8 Karakter</div>
             <div id="upp" class="val-text invalid"><i class="fas fa-circle text-[6px]"></i> Huruf Besar (A-Z)</div>
             <div id="low" class="val-text invalid"><i class="fas fa-circle text-[6px]"></i> Huruf Kecil (a-z)</div>
@@ -126,13 +130,13 @@
     </div>
 
     <div class="text-center pb-20">
-      <button type="submit" id="submit-btn" class="bg-crimson hover:bg-red-700 text-white font-bold px-12 py-4 rounded-2xl shadow-xl transition-all inline-flex items-center gap-3">
+      <button type="submit" id="submit-btn" class="bg-crimson hover:bg-red-700 text-white font-bold px-12 py-4 rounded-2xl shadow-xl transition-all inline-flex items-center gap-3 cursor-pointer">
         <span>DAFTAR SEKARANG</span> <i class="fas fa-paper-plane"></i>
       </button>
     </div>
   </form>
 
-  <div id="success-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
+  <div id="success-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-[2.5rem] p-8 max-w-md w-full text-center text-gray-900 border-t-8 border-crimson">
       <div class="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl"><i class="fas fa-check"></i></div>
       <h3 class="text-3xl font-bold mb-2">Pendaftaran Berhasil!</h3>
@@ -147,7 +151,7 @@
       </div>
 
       <div id="download-box" class="hidden">
-        <button id="btn-download" class="w-full bg-crimson text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg">
+        <button id="btn-download" class="w-full bg-crimson text-white py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-lg cursor-pointer">
           <i class="fas fa-file-download"></i> DOWNLOAD BIODATA
         </button>
       </div>
@@ -179,7 +183,24 @@
       });
     });
 
-    // --- 2. WILAYAH LOGIC ---
+    // --- 2. LOGIKA LIHAT/SEMBUNYIKAN PASSWORD ---
+    const togglePasswordBtn = document.getElementById('toggle-password');
+    const eyeIcon = document.getElementById('eye-icon');
+
+    togglePasswordBtn.addEventListener('click', function () {
+      const type = passInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passInput.setAttribute('type', type);
+      
+      if (type === 'text') {
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
+      } else {
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
+      }
+    });
+
+    // --- 3. WILAYAH LOGIC ---
     const REGIONS_API = 'https://www.emsifa.com/api-wilayah-indonesia/api';
     async function initRegions() {
       const res = await fetch(`${REGIONS_API}/provinces.json`);
@@ -205,7 +226,7 @@
       data.forEach(v => el.innerHTML += `<option value="${v.id}" data-name="${v.name}">${v.name}</option>`);
     };
 
-    // --- 3. SUBMIT & TIMER LOGIC ---
+    // --- 4. SUBMIT & TIMER LOGIC ---
     function startTimer() {
       let seconds = 60;
       const interval = setInterval(() => {
@@ -223,7 +244,6 @@
     document.getElementById('registration-form').onsubmit = async function(e) {
       e.preventDefault();
       
-      // Final Password Check
       const pass = passInput.value;
       const isAllValid = Object.values(requirements).every(reg => reg.test(pass));
       if(!isAllValid) {
@@ -232,7 +252,8 @@
       }
 
       const btn = document.getElementById('submit-btn');
-      btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+      btn.disabled = true; 
+      btn.innerHTML = '<span>MEMPROSES...</span> <i class="fas fa-circle-notch fa-spin"></i>';
 
       const fileInput = document.getElementById('pas_foto');
       let fotoBase64 = ""; let fotoName = ""; let fotoMime = "";
@@ -241,6 +262,7 @@
         fotoMime = fileInput.files[0].type;
         fotoBase64 = await new Promise(r => {
           const reader = new FileReader();
+          // Memotong tanda koma agar menghasilkan string Base64 murni yang siap di-decode oleh Utilities.base64Decode() di kode.gs
           reader.onload = () => r(reader.result.split(',')[1]);
           reader.readAsDataURL(fileInput.files[0]);
         });
@@ -267,10 +289,11 @@
         kelas: e.target.kelas.value,
         email: e.target.email.value,
         no_wa: e.target.no_wa.value,
-        hobi: e.target.hobi.value,
-        cita_cita: e.target.cita_cita.value,
-        motto: e.target.motto.value,
-        alasan: e.target.alasan.value,
+        hobi: e.target.hobi.value || "-",
+        cita_cita: e.target.cita_cita.value || "-",
+        motto: e.target.motto.value || "-",
+        alasan: e.target.alasan.value || "-",
+        // Struktur data penampung berkas foto disesuaikan agar dibaca tepat oleh baris 'row[21]' di kode.gs kamu
         foto_base64: fotoBase64,
         foto_nama: fotoName,
         foto_mime: fotoMime,
@@ -281,7 +304,12 @@
         await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
         document.getElementById('success-modal').classList.remove('hidden');
         startTimer();
-      } catch (err) { alert("Gagal mengirim data."); btn.disabled = false; }
+      } catch (err) { 
+        alert("Gagal mengirim data."); 
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span>DAFTAR SEKARANG</span> <i class="fas fa-paper-plane"></i>';
+      }
     };
 
     document.getElementById('btn-download').onclick = () => {
