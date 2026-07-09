@@ -10,7 +10,6 @@
   <link rel="icon" type="image/png" href="https://pradupta.github.io/web/img/logo.png">
   <link rel="shortcut icon" href="https://pradupta.github.io/web/img/logo.png">
   
-  <!-- Supabase JS Library v2 -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <script>
@@ -60,7 +59,9 @@
         <div><label>Nama Lengkap</label><input type="text" name="nama_lengkap" required class="input-field"></div>
         <div><label>Jenis Kelamin</label>
           <select name="jenis_kelamin" required class="input-field">
-            <option value="">Pilih</option><option value="Putra">Putra</option><option value="Putri">Putri</option>
+            <option value="">Pilih</option>
+            <option value="Laki-laki">Laki-laki</option>
+            <option value="Perempuan">Perempuan</option>
           </select>
         </div>
         <div><label>Agama</label>
@@ -212,7 +213,7 @@
       data.forEach(v => el.innerHTML += `<option value="${v.id}" data-name="${v.name}">${v.name}</option>`);
     };
 
-    // --- 3. KOMPRESI FOTO CLIENT-SIDE ---
+    // --- 3. COMPRESS FILE KE JPG (SUPAYA WEB TRANSAKSI RINGAN) ---
     function kompresGambar(file, maxWidth = 500) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -228,14 +229,15 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             canvas.toBlob((blob) => {
-              resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+              const namaBaru = file.name.substring(0, file.name.lastIndexOf('.')) + '.jpg';
+              resolve(new File([blob], namaBaru, { type: 'image/jpeg' }));
             }, 'image/jpeg', 0.85);
           };
         };
       });
     }
 
-    // --- 4. TIMER LOGIC ---
+    // --- 4. TIMER COUNTDOWN SUKSES ---
     function startTimer() {
       let seconds = 60;
       const interval = setInterval(() => {
@@ -250,11 +252,10 @@
       }, 1000);
     }
 
-    // --- 5. SUBMIT TO SUPABASE LOGIC ---
+    // --- 5. LOGIKA SUBMIT KE DATABASE & STORAGE SUPABASE ---
     document.getElementById('registration-form').onsubmit = async function(e) {
       e.preventDefault();
       
-      // Final Password Check
       const pass = passInput.value;
       const isAllValid = Object.values(requirements).every(reg => reg.test(pass));
       if(!isAllValid) {
@@ -263,13 +264,14 @@
       }
 
       const btn = document.getElementById('submit-btn');
-      btn.disabled = true; btn.innerHTML = '<span>MEMPROSES...</span> <i class="fas fa-circle-notch fa-spin"></i>';
+      btn.disabled = true; 
+      btn.innerHTML = '<span>MEMPROSES...</span> <i class="fas fa-circle-notch fa-spin"></i>';
 
       try {
         const fileInput = document.getElementById('pas_foto');
         let urlFotoPublic = "-";
 
-        // Upload Foto ke Supabase Storage jika ada berkas
+        // Proses Unggah Foto
         if(fileInput.files[0]) {
           const fileKompres = await kompresGambar(fileInput.files[0], 500);
           const namaFileUnik = `${Date.now()}_${fileKompres.name.replace(/\s+/g, '_')}`;
@@ -294,7 +296,7 @@
           return el.options[el.selectedIndex]?.getAttribute('data-name') || "";
         };
 
-        // Pemetaan objek data sesuai kolom tabel SQL Supabase kamu
+        // Pemetaan struktur data disamakan persis dengan nama kolom database SQL Supabase
         const dataInput = {
           nama_singkat: e.target.nama_singkat.value,
           nama_lengkap: e.target.nama_lengkap.value,
@@ -303,7 +305,7 @@
           tempat_lahir: e.target.tempat_lahir.value,
           tanggal_lahir: e.target.tanggal_lahir.value,
           provinsi: getName('provinsi'),
-          kab_kota: getName('kabkota'), // Menyesuaikan nama kolom database
+          kab_kota: getName('kabkota'), 
           kecamatan: getName('kecamatan'),
           kelurahan: getName('kelurahan'),
           kode_pos: e.target.kode_pos.value,
@@ -313,20 +315,20 @@
           no_wa: e.target.no_wa.value,
           hobi: e.target.hobi.value || "-",
           cita_cita: e.target.cita_cita.value || "-",
-          motto_hidup: e.target.motto.value || "-", // Menyesuaikan nama kolom database
+          motto_hidup: e.target.motto.value || "-", 
           alasan: e.target.alasan.value || "-",
           foto_url: urlFotoPublic,
           password: e.target.password.value
         };
 
-        // Menyimpan data langsung ke baris tabel SQL Supabase
+        // Menyimpan data teks ke baris database
         const { error: tableError } = await _supabase
           .from('pendaftar')
           .insert([dataInput]);
 
-        if (tableError) throw new Error("Database SQL Menolak: " + tableError.message);
+        if (tableError) throw new Error("Gagal menyimpan data ke SQL: " + tableError.message);
 
-        // Jika berhasil, tampilkan modal sukses bawaan kamu
+        // Menampilkan modal sukses bawaan desain kamu
         document.getElementById('success-modal').classList.remove('hidden');
         startTimer();
         document.getElementById('registration-form').reset();
