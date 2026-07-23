@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Monopoly Banker - Board Edition</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -16,139 +16,164 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body {
+    /* Kunci Layar 100% tanpa scroll pada body */
+    html, body {
+      height: 100dvh;
+      width: 100vw;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
       font-family: 'Plus Jakarta Sans', sans-serif;
       background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #fef3c7 100%);
     }
+
     .glass-card {
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.9);
     }
+
+    /* Penyesuaian Video Kamera Scanner */
+    #reader {
+      width: 100% !important;
+      height: 100% !important;
+      border: none !important;
+    }
+
     #reader video {
-      border-radius: 1rem !important;
+      width: 100% !important;
+      height: 100% !important;
       object-fit: cover !important;
+      border-radius: 0.75rem !important;
+    }
+
+    /* Scrollbar Halus untuk Riwayat */
+    .custom-scroll::-webkit-scrollbar {
+      width: 3px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
     }
   </style>
 </head>
-<body class="min-h-screen text-slate-800 pb-12">
+<body class="flex flex-col text-slate-800">
 
-  <!-- HEADER -->
-  <header class="sticky top-0 z-50 glass-card shadow-sm px-6 py-4 flex justify-between items-center mb-6">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-lg shadow-emerald-200">
-        <i class="fa-solid fa-vault text-lg"></i>
+  <!-- HEADER (Fixed Height) -->
+  <header class="sticky top-0 z-50 glass-card shadow-sm px-4 py-2.5 flex justify-between items-center flex-shrink-0">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-200">
+        <i class="fa-solid fa-vault text-sm"></i>
       </div>
       <div>
-        <h1 class="font-extrabold text-base tracking-tight text-slate-800">MONOPOLY <span class="text-emerald-600">BANKER</span></h1>
-        <p class="text-[10px] font-medium text-slate-500 uppercase tracking-wider">Digital Cashier System</p>
+        <h1 class="font-extrabold text-sm tracking-tight text-slate-800 leading-none">MONOPOLY <span class="text-emerald-600">BANKER</span></h1>
+        <p class="text-[9px] font-medium text-slate-500 uppercase tracking-wider mt-0.5">Digital Cashier System</p>
       </div>
     </div>
-    <button onclick="resetGame()" class="text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 px-3.5 py-2 rounded-xl transition-all shadow-sm active:scale-95">
-      <i class="fa-solid fa-rotate-right mr-1.5"></i> Reset
+    <button onclick="resetGame()" class="text-[11px] font-semibold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 px-3 py-1.5 rounded-xl transition-all shadow-sm active:scale-95 flex items-center gap-1">
+      <i class="fa-solid fa-rotate-right"></i> Reset
     </button>
   </header>
 
-  <main class="max-w-md mx-auto px-4 space-y-6">
+  <!-- CONTAINER UTAMA (Fit Remaining Viewport) -->
+  <main class="max-w-md w-full mx-auto p-2.5 flex-1 min-h-0 flex flex-col gap-2 overflow-hidden">
 
-    <!-- DASHBOARD PEMAIN -->
-    <section class="glass-card rounded-3xl p-5 shadow-xl shadow-slate-200/50">
-      <div class="flex justify-between items-center mb-3">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-users text-emerald-600 text-sm"></i>
-          <h2 class="text-xs font-bold uppercase tracking-wider text-slate-600">Pemain Terdaftar</h2>
+    <!-- DASHBOARD PEMAIN (Compact Flex-Shrink) -->
+    <section class="glass-card rounded-2xl p-2.5 shadow-sm flex-shrink-0">
+      <div class="flex justify-between items-center mb-1.5">
+        <div class="flex items-center gap-1.5">
+          <i class="fa-solid fa-users text-emerald-600 text-xs"></i>
+          <h2 class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Pemain Terdaftar</h2>
         </div>
-        <span id="player-count-badge" class="text-[11px] font-bold bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full">
+        <span id="player-count-badge" class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
           0 Pemain
         </span>
       </div>
 
-      <div id="player-list" class="grid grid-cols-2 gap-3">
+      <div id="player-list" class="grid grid-cols-2 gap-1.5">
         <!-- Rendered by JS -->
       </div>
     </section>
 
-    <!-- AREA SCANNER -->
-    <section class="glass-card rounded-3xl p-5 shadow-xl shadow-slate-200/50 space-y-4">
-      <div class="flex justify-between items-center">
-        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+    <!-- AREA SCANNER (Mengisi Sisa Ruang Fleksibel) -->
+    <section class="glass-card rounded-2xl p-2.5 shadow-sm flex-1 min-h-0 flex flex-col gap-2 overflow-hidden">
+      <div class="flex justify-between items-center flex-shrink-0">
+        <h2 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
           <i class="fa-solid fa-qrcode text-emerald-600"></i> Scanner
         </h2>
-        <span id="game-status-badge" class="text-[10px] font-bold bg-amber-100 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-full">
+        <span id="game-status-badge" class="text-[9px] font-bold bg-amber-100 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full">
           Fase: Registrasi
         </span>
       </div>
 
-      <!-- Kamera Scanner Frame -->
-      <div class="relative rounded-2xl overflow-hidden bg-slate-900 border-2 border-white shadow-inner min-h-[220px]">
-        <div id="reader" class="w-full"></div>
+      <!-- Kamera Scanner Frame (Dynamic Flex Fill) -->
+      <div class="relative rounded-xl overflow-hidden bg-slate-900 border border-slate-200 flex-1 min-h-0 w-full flex items-center justify-center">
+        <div id="reader" class="w-full h-full"></div>
       </div>
       
-      <button id="btn-start-camera" onclick="startCamera()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-3 rounded-2xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 transition-all active:scale-98">
+      <button id="btn-start-camera" onclick="startCamera()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-200 transition-all active:scale-98 flex-shrink-0">
         <i class="fa-solid fa-camera"></i> Buka Kamera Scanner
       </button>
 
       <!-- FASE 1: PANEL REGISTRASI -->
-      <div id="panel-registration" class="space-y-3">
-        <div class="bg-emerald-50/60 border border-emerald-100 rounded-2xl p-3.5 text-center">
-          <p class="text-[11px] font-medium text-slate-500">Instruksi Registrasi:</p>
-          <p id="reg-status-text" class="text-xs font-semibold text-emerald-800 mt-0.5">
-            Scan QR Pemain untuk mendaftar & klaim modal awal ($150.000).
+      <div id="panel-registration" class="space-y-1.5 flex-shrink-0">
+        <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl p-2 text-center">
+          <p class="text-[10px] font-medium text-slate-500">Instruksi Registrasi:</p>
+          <p id="reg-status-text" class="text-[11px] font-semibold text-emerald-800">
+            Scan QR Pemain untuk mendaftar & klaim modal ($150.000).
           </p>
         </div>
-        <button id="btn-start-game" onclick="finalizeRegistration()" disabled class="w-full bg-slate-200 text-slate-400 font-bold py-3 rounded-2xl text-xs transition-all flex items-center justify-center gap-2">
+        <button id="btn-start-game" onclick="finalizeRegistration()" disabled class="w-full bg-slate-200 text-slate-400 font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-play"></i> Mulai Game (Min 2 Pemain)
         </button>
       </div>
 
       <!-- FASE 2: PANEL GAMEPLAY -->
-      <div id="panel-gameplay" class="hidden space-y-3">
+      <div id="panel-gameplay" class="hidden space-y-2 flex-shrink-0">
         <!-- Mode Selector -->
-        <div class="grid grid-cols-4 gap-1.5">
-          <button onclick="setTransactionMode('BUY')" id="btn-BUY" class="mode-btn bg-emerald-600 text-white py-2 px-1 rounded-xl font-bold text-[11px] flex flex-col items-center gap-1 shadow-md shadow-emerald-200 transition-all">
+        <div class="grid grid-cols-4 gap-1">
+          <button onclick="setTransactionMode('BUY')" id="btn-BUY" class="mode-btn bg-emerald-600 text-white py-1.5 px-1 rounded-lg font-bold text-[10px] flex flex-col items-center gap-0.5 shadow-sm transition-all">
             <i class="fa-solid fa-cart-plus text-xs"></i> Beli/Up
           </button>
-          <button onclick="setTransactionMode('RENT')" id="btn-RENT" class="mode-btn bg-white text-slate-600 border border-slate-200 py-2 px-1 rounded-xl font-bold text-[11px] flex flex-col items-center gap-1 transition-all">
+          <button onclick="setTransactionMode('RENT')" id="btn-RENT" class="mode-btn bg-white text-slate-600 border border-slate-200 py-1.5 px-1 rounded-lg font-bold text-[10px] flex flex-col items-center gap-0.5 transition-all">
             <i class="fa-solid fa-hand-holding-dollar text-xs"></i> Sewa
           </button>
-          <button onclick="setTransactionMode('GO')" id="btn-GO" class="mode-btn bg-white text-slate-600 border border-slate-200 py-2 px-1 rounded-xl font-bold text-[11px] flex flex-col items-center gap-1 transition-all">
+          <button onclick="setTransactionMode('GO')" id="btn-GO" class="mode-btn bg-white text-slate-600 border border-slate-200 py-1.5 px-1 rounded-lg font-bold text-[10px] flex flex-col items-center gap-0.5 transition-all">
             <i class="fa-solid fa-flag-checkered text-xs"></i> START
           </button>
-          <button onclick="setTransactionMode('BANK')" id="btn-BANK" class="mode-btn bg-white text-slate-600 border border-slate-200 py-2 px-1 rounded-xl font-bold text-[11px] flex flex-col items-center gap-1 transition-all">
-            <i class="fa-solid fa-box-open text-xs"></i> Kartu/Bank
+          <button onclick="setTransactionMode('BANK')" id="btn-BANK" class="mode-btn bg-white text-slate-600 border border-slate-200 py-1.5 px-1 rounded-lg font-bold text-[10px] flex flex-col items-center gap-0.5 transition-all">
+            <i class="fa-solid fa-box-open text-xs"></i> Bank
           </button>
         </div>
 
         <!-- FORM INPUT UNTUK KARTU / DANA UMUM -->
-        <div id="bank-input-container" class="hidden bg-purple-50/80 border border-purple-100 p-3 rounded-2xl space-y-2">
-          <div class="flex items-center justify-between gap-2">
-            <select id="bank-action-type" class="bg-white border border-slate-200 text-xs font-bold text-slate-700 rounded-xl px-2.5 py-1.5 outline-none focus:border-purple-400">
+        <div id="bank-input-container" class="hidden bg-purple-50/80 border border-purple-100 p-2 rounded-xl space-y-1.5">
+          <div class="flex items-center justify-between gap-1.5">
+            <select id="bank-action-type" class="bg-white border border-slate-200 text-[11px] font-bold text-slate-700 rounded-lg px-2 py-1 outline-none focus:border-purple-400">
               <option value="RECEIVE">Dapat Uang (+)</option>
               <option value="PAY">Bayar Denda/Pajak (-)</option>
             </select>
-            <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-xl px-2 py-1">
-              <span class="text-xs font-bold text-slate-400">$</span>
-              <input type="number" id="bank-amount" placeholder="Nominal" value="10000" step="1000" class="w-20 text-xs font-bold text-slate-800 outline-none">
+            <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-lg px-2 py-1">
+              <span class="text-[11px] font-bold text-slate-400">$</span>
+              <input type="number" id="bank-amount" placeholder="Nominal" value="10000" step="1000" class="w-16 text-[11px] font-bold text-slate-800 outline-none">
             </div>
           </div>
-          <p class="text-[10px] text-purple-600 font-medium text-center">Set nominal, lalu **Scan QR Pemain**.</p>
         </div>
 
-        <div class="bg-white/80 border border-slate-200/80 rounded-2xl p-3.5 text-center shadow-sm">
-          <p class="text-[11px] font-medium text-slate-400">Instruksi Transaksi:</p>
-          <p id="status-text" class="text-xs font-bold text-emerald-700 mt-0.5">[Mode BUY] Scan QR Pemain terlebih dahulu.</p>
+        <div class="bg-white/90 border border-slate-200/80 rounded-xl p-2 text-center shadow-sm">
+          <p id="status-text" class="text-[11px] font-bold text-emerald-700">[Mode BUY] Scan QR Pemain terlebih dahulu.</p>
         </div>
       </div>
 
     </section>
 
-    <!-- RIWAYAT TRANSAKSI -->
-    <section class="glass-card rounded-3xl p-5 shadow-xl shadow-slate-200/50">
-      <h2 class="text-xs font-bold text-slate-600 uppercase tracking-wider mb-3 flex items-center gap-2">
+    <!-- RIWAYAT TRANSAKSI (Compact Fixed-Height Panel) -->
+    <section class="glass-card rounded-2xl p-2.5 shadow-sm flex-shrink-0 flex flex-col max-h-[110px] overflow-hidden">
+      <h2 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1 flex items-center gap-1.5 flex-shrink-0">
         <i class="fa-solid fa-clock-rotate-left text-emerald-600"></i> Riwayat Transaksi
       </h2>
-      <div id="log-list" class="space-y-2 max-h-48 overflow-y-auto text-xs pr-1">
+      <div id="log-list" class="space-y-1 overflow-y-auto custom-scroll text-[11px] pr-1 flex-1">
         <!-- Rendered by JS -->
       </div>
     </section>
@@ -158,9 +183,9 @@
   <script>
     const INITIAL_BANK_MONEY = 150000;
 
-    // DATABASE 28 KARTU PROPERTI (Harga Beli disesuaikan persis dengan foto BOARD Papan Permainan)
+    // DATABASE 28 KARTU PROPERTI
     const PROPERTIES = {
-      // --- SISI KANAN (START -> BENJARA) ---
+      // --- SISI KANAN (START -> PENJARA) ---
       'PROP_IDN': { type: 'COUNTRY', name: 'Indonesia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [400, 2000, 6000, 18000, 32000, 45000], mortgage: 3000 },
       'PROP_MYS': { type: 'COUNTRY', name: 'Malaysia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [200, 1000, 3000, 9000, 16000, 25000], mortgage: 3000 },
       'PROP_STN_CHANGI': { type: 'STATION', name: 'Bandara Changi ✈️', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
@@ -168,7 +193,7 @@
       'PROP_HKG': { type: 'COUNTRY', name: 'Hongkong (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
       'PROP_TWN': { type: 'COUNTRY', name: 'Taiwan (Kompleks B)', price: 12000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
 
-      // --- SISI BAWAH (BENJARA -> BEBAS PARKIR) ---
+      // --- SISI BAWAH (PENJARA -> BEBAS PARKIR) ---
       'PROP_PHL': { type: 'COUNTRY', name: 'Philipina (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1200, 6000, 8000, 50000, 70000, 90000], mortgage: 8000 },
       'PROP_ELEC': { type: 'UTILITY', name: 'Perusahaan Listrik ⚡', price: 15000, mortgage: 3750, rules: '1 Kompleks = 4x dadu | 2 Kompleks = 10x dadu' },
       'PROP_THA': { type: 'COUNTRY', name: 'Thailand (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
@@ -270,7 +295,7 @@
             return;
           }
           state.players[data] = { ...MASTER_PLAYERS[data], balance: INITIAL_BANK_MONEY };
-          addLog(`<b>${MASTER_PLAYERS[data].name}</b> terdaftar & menerima modal awal <b>$${INITIAL_BANK_MONEY.toLocaleString()}</b>`);
+          addLog(`<b>${MASTER_PLAYERS[data].name}</b> terdaftar ($${INITIAL_BANK_MONEY.toLocaleString()})`);
           renderPlayers();
           updateLobbyUI();
         } else {
@@ -299,14 +324,14 @@
 
           if (action === 'RECEIVE') {
             state.players[data].balance += amount;
-            addLog(`🎁 <b>${state.players[data].name}</b> menerima <b>$${amount.toLocaleString()}</b> dari Bank / Kartu`);
+            addLog(`🎁 <b>${state.players[data].name}</b> terima <b>$${amount.toLocaleString()}</b>`);
           } else if (action === 'PAY') {
             if (state.players[data].balance < amount) {
-              alert(`Saldo ${state.players[data].name} tidak mencukupi untuk bayar $${amount.toLocaleString()}!`);
+              alert(`Saldo ${state.players[data].name} tidak cukup!`);
               return;
             }
             state.players[data].balance -= amount;
-            addLog(`💸 <b>${state.players[data].name}</b> membayar <b>$${amount.toLocaleString()}</b> ke Bank / Denda`);
+            addLog(`💸 <b>${state.players[data].name}</b> bayar <b>$${amount.toLocaleString()}</b>`);
           }
 
           state.selectedPlayer = null;
@@ -317,7 +342,7 @@
         return;
       }
 
-      // PROPERTI SCAN (Negara / Utilitas / Transportasi)
+      // PROPERTI SCAN
       if (PROPERTIES[data]) {
         const prop = PROPERTIES[data];
         const propState = state.ownership[data];
@@ -326,13 +351,12 @@
           if (!state.selectedPlayer) { alert("Scan QR Pemain terlebih dahulu!"); return; }
 
           if (!propState) {
-            if (state.players[state.selectedPlayer].balance < prop.price) { alert(`Saldo tidak cukup untuk membeli ${prop.name}! Harga: $${prop.price.toLocaleString()}`); return; }
+            if (state.players[state.selectedPlayer].balance < prop.price) { alert(`Saldo tidak cukup! Harga: $${prop.price.toLocaleString()}`); return; }
 
             state.players[state.selectedPlayer].balance -= prop.price;
             state.ownership[data] = { owner: state.selectedPlayer, level: 0 };
-            addLog(`<b>${state.players[state.selectedPlayer].name}</b> membeli <b>${prop.name}</b> (- $${prop.price.toLocaleString()})`);
+            addLog(`<b>${state.players[state.selectedPlayer].name}</b> beli <b>${prop.name}</b> (-$${prop.price.toLocaleString()})`);
           } else if (propState.owner === state.selectedPlayer) {
-            // Hanya properti jenis NEGARA yang bisa di-upgrade rumah/hotel
             if (prop.type !== 'COUNTRY') {
               alert(`Properti ${prop.name} tidak dapat dibangun Rumah/Hotel!`);
               return;
@@ -343,14 +367,14 @@
             const upgradeCost = propState.level === 4 ? prop.hotelPrice : prop.housePrice;
 
             if (state.players[state.selectedPlayer].balance < upgradeCost) { 
-              alert(`Saldo tidak cukup! Biaya Upgrade: $${upgradeCost.toLocaleString()}`); 
+              alert(`Saldo tidak cukup! Biaya: $${upgradeCost.toLocaleString()}`); 
               return; 
             }
 
             state.players[state.selectedPlayer].balance -= upgradeCost;
             propState.level += 1;
             const label = propState.level === 5 ? "Hotel 🏨" : `Rumah ke-${propState.level} 🏠`;
-            addLog(`<b>${state.players[state.selectedPlayer].name}</b> membangun ${label} di <b>${prop.name}</b> (- $${upgradeCost.toLocaleString()})`);
+            addLog(`<b>${state.players[state.selectedPlayer].name}</b> bangun ${label} di <b>${prop.name}</b>`);
           } else {
             alert(`Properti ini milik ${state.players[propState.owner].name}!`);
           }
@@ -361,18 +385,17 @@
 
         } else if (state.mode === 'RENT') {
           if (!propState) { alert(`Properti ${prop.name} belum dimiliki siapapun!`); return; }
-          if (!state.selectedPlayer) { alert("Scan QR Pemain yang singgah terlebih dahulu!"); return; }
-          if (propState.owner === state.selectedPlayer) { alert("Pemain berada di properti milik sendiri!"); state.selectedPlayer = null; updateStatusUI(); return; }
+          if (!state.selectedPlayer) { alert("Scan QR Pemain yang singgah!"); return; }
+          if (propState.owner === state.selectedPlayer) { alert("Pemain berada di properti sendiri!"); state.selectedPlayer = null; updateStatusUI(); return; }
 
           const visitorId = state.selectedPlayer;
           const ownerId = propState.owner;
           let calculatedRent = 0;
 
-          // HITUNG SEWA BERDASARKAN JENIS PROPERTI
           if (prop.type === 'COUNTRY') {
             calculatedRent = prop.rent[propState.level];
           } else if (prop.type === 'UTILITY') {
-            const diceInput = prompt(`Kalkulasi Sewa (${prop.name}):\nMasukkan total angka kocokan 2 Dadu:`, "7");
+            const diceInput = prompt(`Kalkulasi Sewa (${prop.name}):\nMasukkan total kocokan 2 Dadu:`, "7");
             const diceVal = parseInt(diceInput) || 0;
             
             const utilityCount = Object.keys(state.ownership).filter(pKey => {
@@ -381,7 +404,6 @@
 
             const multiplier = utilityCount >= 2 ? 10 : 4;
             calculatedRent = diceVal * multiplier;
-            alert(`Sewa Fasilitas (${multiplier}x Dadu [${diceVal}]): $${calculatedRent.toLocaleString()}`);
           } else if (prop.type === 'STATION') {
             const stationCount = Object.keys(state.ownership).filter(pKey => {
               return PROPERTIES[pKey].type === 'STATION' && state.ownership[pKey].owner === ownerId;
@@ -399,14 +421,14 @@
           state.players[visitorId].balance -= calculatedRent;
           state.players[ownerId].balance += calculatedRent;
 
-          addLog(`<b>${state.players[visitorId].name}</b> bayar sewa <b>${prop.name}</b> ke <b>${state.players[ownerId].name}</b> ($${calculatedRent.toLocaleString()})`);
+          addLog(`<b>${state.players[visitorId].name}</b> bayar sewa ke <b>${state.players[ownerId].name}</b> ($${calculatedRent.toLocaleString()})`);
 
           state.selectedPlayer = null;
           renderPlayers();
           updateStatusUI();
         }
       } else {
-        alert(`Kode "${qrCodeData}" tidak terdaftar dalam sistem!`);
+        alert(`Kode "${qrCodeData}" tidak terdaftar!`);
       }
     }
 
@@ -417,10 +439,10 @@
       const startBtn = document.getElementById('btn-start-game');
       if (count >= 2) {
         startBtn.disabled = false;
-        startBtn.className = "w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-3 rounded-2xl text-xs transition-all shadow-lg shadow-emerald-200 active:scale-98 flex items-center justify-center gap-2 cursor-pointer";
+        startBtn.className = "w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-2 rounded-xl text-xs transition-all shadow-md shadow-emerald-200 active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer flex-shrink-0";
       } else {
         startBtn.disabled = true;
-        startBtn.className = "w-full bg-slate-200 text-slate-400 font-bold py-3 rounded-2xl text-xs transition-all flex items-center justify-center gap-2 cursor-not-allowed";
+        startBtn.className = "w-full bg-slate-200 text-slate-400 font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-not-allowed flex-shrink-0";
       }
     }
 
@@ -429,13 +451,13 @@
       state.isStarted = true;
       
       const badge = document.getElementById('game-status-badge');
-      badge.className = "text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full";
+      badge.className = "text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full";
       badge.innerText = "Status: Game Berjalan";
 
       document.getElementById('panel-registration').classList.add('hidden');
       document.getElementById('panel-gameplay').classList.remove('hidden');
 
-      addLog("🎲 <b>Permainan Dimulai!</b> Selamat bertransaksi.");
+      addLog("🎲 <b>Permainan Dimulai!</b>");
       updateStatusUI();
     }
 
@@ -446,9 +468,8 @@
 
       if (playerKeys.length === 0) {
         container.innerHTML = `
-          <div class="col-span-2 text-center py-8 border-2 border-dashed border-slate-200 rounded-2xl bg-white/40">
-            <i class="fa-solid fa-id-card text-2xl text-slate-300 mb-1"></i>
-            <p class="text-xs font-semibold text-slate-400">Belum ada pemain terdaftar</p>
+          <div class="col-span-2 text-center py-3 border border-dashed border-slate-300 rounded-xl bg-white/40">
+            <p class="text-[11px] font-semibold text-slate-400">Belum ada pemain terdaftar</p>
           </div>
         `;
         return;
@@ -459,15 +480,15 @@
         const properties = Object.keys(state.ownership).filter(prop => state.ownership[prop].owner === pId);
         
         container.innerHTML += `
-          <div class="bg-gradient-to-br ${p.bg} border ${p.border} p-3.5 rounded-2xl shadow-sm flex flex-col justify-between">
-            <div class="flex justify-between items-center mb-2">
-              <div class="flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full ${p.badge}"></span>
-                <span class="font-bold text-xs text-slate-700">${p.name}</span>
+          <div class="bg-gradient-to-br ${p.bg} border ${p.border} px-2.5 py-1.5 rounded-xl shadow-sm flex flex-col justify-between">
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full ${p.badge}"></span>
+                <span class="font-bold text-[11px] text-slate-700">${p.name}</span>
               </div>
-              <span class="text-[10px] font-bold bg-white/80 text-slate-500 px-2 py-0.5 rounded-full border border-slate-100">${properties.length} Aset</span>
+              <span class="text-[9px] font-bold bg-white/80 text-slate-500 px-1.5 py-0.2 rounded-md border border-slate-100">${properties.length} Aset</span>
             </div>
-            <p class="text-base font-extrabold text-slate-800">$${p.balance.toLocaleString()}</p>
+            <p class="text-xs font-extrabold text-slate-800 mt-0.5">$${p.balance.toLocaleString()}</p>
           </div>
         `;
       });
@@ -478,7 +499,7 @@
       state.selectedPlayer = null;
       
       document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.className = 'mode-btn bg-white text-slate-600 border border-slate-200 py-2 px-1 rounded-xl font-bold text-[11px] flex flex-col items-center gap-1 transition-all';
+        btn.className = 'mode-btn bg-white text-slate-600 border border-slate-200 py-1.5 px-1 rounded-lg font-bold text-[10px] flex flex-col items-center gap-0.5 transition-all';
       });
 
       const bankContainer = document.getElementById('bank-input-container');
@@ -489,10 +510,10 @@
       }
 
       const activeBtn = document.getElementById(`btn-${mode}`);
-      if (mode === 'BUY') activeBtn.className = 'mode-btn bg-emerald-600 text-white py-2 px-1 rounded-xl font-bold text-[11px] flex flex-col items-center gap-1 shadow-md shadow-emerald-200 transition-all';
-      if (mode === 'RENT') activeBtn.className = 'mode-btn bg-amber-500 text-white py-2 px-1 rounded-xl font-bold text-[11px] flex flex-col items-center gap-1 shadow-md shadow-amber-200 transition-all';
-      if (mode === 'GO') activeBtn.className = 'mode-btn bg-sky-500 text-white py-2 px-1 rounded-xl font-bold text-[11px] flex flex-col items-center gap-1 shadow-md shadow-sky-200 transition-all';
-      if (mode === 'BANK') activeBtn.className = 'mode-btn bg-purple-600 text-white py-2 px-1 rounded-xl font-bold text-[11px] flex flex-col items-center gap-1 shadow-md shadow-purple-200 transition-all';
+      if (mode === 'BUY') activeBtn.className = 'mode-btn bg-emerald-600 text-white py-1.5 px-1 rounded-lg font-bold text-[10px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'RENT') activeBtn.className = 'mode-btn bg-amber-500 text-white py-1.5 px-1 rounded-lg font-bold text-[10px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'GO') activeBtn.className = 'mode-btn bg-sky-500 text-white py-1.5 px-1 rounded-lg font-bold text-[10px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'BANK') activeBtn.className = 'mode-btn bg-purple-600 text-white py-1.5 px-1 rounded-lg font-bold text-[10px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
 
       updateStatusUI();
     }
@@ -501,7 +522,7 @@
       const statusText = document.getElementById('status-text');
 
       if (state.mode === 'BANK') {
-        statusText.innerText = `[Mode Kartu/Bank] Tentukan nominal lalu Scan QR Pemain.`;
+        statusText.innerText = `[Mode Bank] Tentukan nominal lalu Scan QR Pemain.`;
       } else if (!state.selectedPlayer) {
         statusText.innerText = `[Mode ${state.mode}] Scan QR Pemain terlebih dahulu.`;
       } else {
@@ -518,14 +539,14 @@
     function renderLogs() {
       const container = document.getElementById('log-list');
       if (state.logs.length === 0) {
-        container.innerHTML = `<p class="text-slate-400 text-center py-4 text-xs font-medium">Belum ada aktivitas transaksi.</p>`;
+        container.innerHTML = `<p class="text-slate-400 text-center py-2 text-[10px]">Belum ada aktivitas transaksi.</p>`;
         return;
       }
       
       container.innerHTML = state.logs.map(log => `
-        <div class="flex justify-between items-center p-2.5 bg-white/70 rounded-xl border border-slate-100 shadow-sm">
-          <span class="text-slate-700 text-[11px]">${log.message}</span>
-          <span class="text-[10px] text-slate-400 font-mono ml-2 shrink-0">${log.time}</span>
+        <div class="flex justify-between items-center p-1.5 bg-white/70 rounded-lg border border-slate-100 shadow-2xs">
+          <span class="text-slate-700 text-[10px]">${log.message}</span>
+          <span class="text-[9px] text-slate-400 font-mono ml-2 shrink-0">${log.time}</span>
         </div>
       `).join('');
     }
