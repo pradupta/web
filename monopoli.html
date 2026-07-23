@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monopoly Banker - Dynamic Lobby</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans pb-10">
+
+  <!-- Header -->
+  <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 flex justify-between items-center shadow-md">
+    <div class="flex items-center gap-2">
+      <i class="fa-solid fa-building-columns text-emerald-400 text-xl"></i>
+      <h1 class="font-bold text-lg text-emerald-400 tracking-wide">MONOPOLY BANKER</h1>
+    </div>
+    <button onclick="resetGame()" class="text-xs bg-rose-900/50 text-rose-300 border border-rose-800 px-3 py-1 rounded-lg hover:bg-rose-800 transition">
+      <i class="fa-solid fa-rotate-right mr-1"></i> Reset
+    </button>
+  </header>
+
+  <main class="max-w-md mx-auto p-4 space-y-5">
+
+    <!-- DASHBOARD PEMAIN AKTIF -->
+    <section>
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Pemain Terdaftar</h2>
+        <span id="player-count-badge" class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-full font-mono">0 Pemain</span>
+      </div>
+      <div id="player-list" class="grid grid-cols-2 gap-3">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- SCANNER & KONTROL GAMPLAY -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4">
+      <div class="flex justify-between items-center">
+        <h2 class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+          <i class="fa-solid fa-qrcode text-emerald-400"></i> Scanner Transaksi
+        </h2>
+        <span id="game-status-badge" class="text-[10px] bg-amber-950 text-amber-400 border border-amber-800 px-2 py-0.5 rounded-full font-mono">
+          Fase: Registrasi
+        </span>
+      </div>
+
+      <!-- Camera Area -->
+      <div id="reader" class="w-full rounded-xl overflow-hidden border border-slate-700 bg-slate-950 min-h-[220px]"></div>
+      
+      <!-- Tombol Aktifkan Kamera Manual -->
+      <button id="btn-start-camera" onclick="startCamera()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-2 shadow">
+        <i class="fa-solid fa-camera"></i> Buka Kamera Scanner
+      </button>
+
+      <!-- PANELS SESUAI FASE GAME -->
+      
+      <!-- Panel 1: Fase Registrasi -->
+      <div id="panel-registration" class="space-y-3">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-center">
+          <p class="text-[11px] text-slate-400">Instruksi Registrasi:</p>
+          <p id="reg-status-text" class="text-xs font-medium text-emerald-400 mt-0.5">Scan QR Kartu Pemain untuk bergabung & ambil modal awal ($150.000).</p>
+        </div>
+        <button id="btn-start-game" onclick="finalizeRegistration()" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-play"></i> Mulai Game (Min 2 Pemain)
+        </button>
+      </div>
+
+      <!-- Panel 2: Fase Game Berjalan -->
+      <div id="panel-gameplay" class="hidden space-y-3">
+        <!-- Mode Selector Buttons -->
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="setTransactionMode('BUY')" id="btn-BUY" class="mode-btn bg-emerald-600 text-white py-2 px-1 rounded-lg font-semibold text-xs flex flex-col items-center gap-1 shadow">
+            <i class="fa-solid fa-cart-plus"></i> Beli / Upgrade
+          </button>
+          <button onclick="setTransactionMode('RENT')" id="btn-RENT" class="mode-btn bg-slate-800 text-slate-400 py-2 px-1 rounded-lg font-semibold text-xs flex flex-col items-center gap-1 border border-slate-700">
+            <i class="fa-solid fa-hand-holding-dollar"></i> Bayar Sewa
+          </button>
+          <button onclick="setTransactionMode('GO')" id="btn-GO" class="mode-btn bg-slate-800 text-slate-400 py-2 px-1 rounded-lg font-semibold text-xs flex flex-col items-center gap-1 border border-slate-700">
+            <i class="fa-solid fa-flag-checkered"></i> Pass START
+          </button>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 text-center">
+          <p class="text-[11px] text-slate-400">Instruksi Gameplay:</p>
+          <p id="status-text" class="text-xs font-medium text-emerald-400 mt-0.5">[Mode BUY] Scan QR Pemain.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- LOG TRANSAKSI -->
+    <section class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+      <h2 class="text-sm font-semibold mb-3 text-slate-300 flex items-center justify-between">
+        <span><i class="fa-solid fa-clock-rotate-left text-emerald-400 mr-2"></i>Riwayat Transaksi</span>
+      </h2>
+      <div id="log-list" class="space-y-2 max-h-48 overflow-y-auto text-xs pr-1">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const INITIAL_BANK_MONEY = 150000;
+
+    const PROPERTIES = {
+      'PROP_IDN': { name: 'Indonesia', price: 6000, housePrice: 2000, rent: [1200, 2400, 4800, 8000, 12000, 18000] },
+      'PROP_MYS': { name: 'Malaysia', price: 6000, housePrice: 2000, rent: [1200, 2400, 4800, 8000, 12000, 18000] },
+      'PROP_SGP': { name: 'Singapura', price: 10000, housePrice: 3000, rent: [2000, 4000, 8000, 14000, 20000, 30000] },
+      'PROP_HKG': { name: 'Hongkong', price: 10000, housePrice: 3000, rent: [2000, 4000, 8000, 14000, 20000, 30000] },
+      'PROP_TWN': { name: 'Taiwan', price: 12000, housePrice: 3000, rent: [2400, 4800, 9600, 16000, 24000, 35000] },
+      'PROP_PHL': { name: 'Philipina', price: 14000, housePrice: 4000, rent: [2800, 5600, 11000, 18000, 28000, 40000] },
+      'PROP_THA': { name: 'Thailand', price: 14000, housePrice: 4000, rent: [2800, 5600, 11000, 18000, 28000, 40000] },
+      'PROP_VNM': { name: 'Vietnam', price: 16000, housePrice: 4000, rent: [3200, 6400, 12800, 20000, 32000, 45000] },
+      'PROP_JPN': { name: 'Jepang', price: 18000, housePrice: 5000, rent: [3600, 7200, 14400, 22000, 36000, 50000] },
+      'PROP_KOR': { name: 'Korea Selatan', price: 18000, housePrice: 5000, rent: [3600, 7200, 14400, 22000, 36000, 50000] },
+      'PROP_IND': { name: 'India', price: 20000, housePrice: 5000, rent: [4000, 8000, 16000, 25000, 40000, 55000] },
+      'PROP_CHN': { name: 'China', price: 22000, housePrice: 6000, rent: [4400, 8800, 17600, 28000, 44000, 60000] },
+      'PROP_RUS': { name: 'Rusia', price: 22000, housePrice: 6000, rent: [4400, 8800, 17600, 28000, 44000, 60000] },
+      'PROP_ITA': { name: 'Italy', price: 24000, housePrice: 6000, rent: [4800, 9600, 19200, 30000, 48000, 65000] },
+      'PROP_GBR': { name: 'Inggris', price: 25000, housePrice: 7000, rent: [5000, 10000, 20000, 32000, 50000, 70000] },
+      'PROP_FRA': { name: 'Perancis', price: 25000, housePrice: 7000, rent: [5000, 10000, 20000, 32000, 50000, 70000] },
+      'PROP_NLD': { name: 'Belanda', price: 28000, housePrice: 7000, rent: [5600, 11200, 22400, 35000, 56000, 75000] },
+      'PROP_CAN': { name: 'Kanada', price: 30000, housePrice: 8000, rent: [6000, 12000, 24000, 38000, 60000, 80000] },
+      'PROP_USA': { name: 'Amerika', price: 30000, housePrice: 8000, rent: [6000, 12000, 24000, 38000, 60000, 80000] },
+      'PROP_BRA': { name: 'Brazil', price: 32000, housePrice: 8000, rent: [6400, 12800, 25600, 40000, 64000, 85000] },
+      'PROP_AUS': { name: 'Australia', price: 35000, housePrice: 10000, rent: [7000, 14000, 28000, 45000, 70000, 95000] },
+      'PROP_EGY': { name: 'Mesir', price: 40000, housePrice: 10000, rent: [8000, 16000, 32000, 50000, 80000, 110000] }
+    };
+
+    const MASTER_PLAYERS = {
+      'P1': { name: 'Pemain 1', color: 'border-blue-500' },
+      'P2': { name: 'Pemain 2', color: 'border-red-500' },
+      'P3': { name: 'Pemain 3', color: 'border-emerald-500' },
+      'P4': { name: 'Pemain 4', color: 'border-amber-500' }
+    };
+
+    let state = {
+      isStarted: false,
+      players: {}, // Dynamic registered players
+      ownership: {},
+      logs: [],
+      mode: 'BUY',
+      selectedPlayer: null
+    };
+
+    let html5QrCode = null;
+
+    function init() {
+      renderPlayers();
+      renderLogs();
+    }
+
+    function startCamera() {
+      if (html5QrCode) {
+        html5QrCode.stop().then(() => initCameraScanner()).catch(() => initCameraScanner());
+      } else {
+        initCameraScanner();
+      }
+    }
+
+    function initCameraScanner() {
+      html5QrCode = new Html5Qrcode("reader");
+      const config = { fps: 10, qrbox: { width: 200, height: 200 } };
+
+      html5QrCode.start(
+        { facingMode: "environment" }, 
+        config, 
+        handleScanResult
+      ).then(() => {
+        document.getElementById('btn-start-camera').classList.add('hidden');
+      }).catch(err => {
+        alert("Gagal mengakses kamera. Pastikan koneksi aman (HTTPS) & Izin Kamera diberikan.");
+      });
+    }
+
+    function handleScanResult(qrCodeData) {
+      const data = qrCodeData.trim();
+
+      // ==========================================
+      // FASE 1: REGISTRASI PEMAIN DI AWAL
+      // ==========================================
+      if (!state.isStarted) {
+        if (MASTER_PLAYERS[data]) {
+          if (state.players[data]) {
+            alert(`${MASTER_PLAYERS[data].name} sudah terdaftar sebelumnya!`);
+            return;
+          }
+
+          // Daftarkan pemain dan beri modal awal
+          state.players[data] = {
+            name: MASTER_PLAYERS[data].name,
+            color: MASTER_PLAYERS[data].color,
+            balance: INITIAL_BANK_MONEY
+          };
+
+          addLog(`<b>${MASTER_PLAYERS[data].name}</b> bergabung & menerima modal awal ($${INITIAL_BANK_MONEY.toLocaleString()})`);
+          renderPlayers();
+          updateLobbyUI();
+        } else {
+          alert("QR Code tidak dikenali sebagai Kartu Pemain!");
+        }
+        return;
+      }
+
+      // ==========================================
+      // FASE 2: PERMAINAN BERJALAN (GAMEPLAY)
+      // ==========================================
+      if (state.players[data]) {
+        state.selectedPlayer = data;
+
+        if (state.mode === 'GO') {
+          state.players[data].balance += 20000;
+          addLog(`<b>${state.players[data].name}</b> melewati START (+$20.000)`);
+          state.selectedPlayer = null;
+          renderPlayers();
+        }
+        updateStatusUI();
+        return;
+      }
+
+      if (PROPERTIES[data]) {
+        const prop = PROPERTIES[data];
+        const propState = state.ownership[data];
+
+        if (state.mode === 'BUY') {
+          if (!state.selectedPlayer) {
+            alert("Scan QR Pemain terlebih dahulu!");
+            return;
+          }
+
+          if (!propState) {
+            if (state.players[state.selectedPlayer].balance < prop.price) {
+              alert(`Saldo ${state.players[state.selectedPlayer].name} tidak cukup!`);
+              return;
+            }
+
+            state.players[state.selectedPlayer].balance -= prop.price;
+            state.ownership[data] = { owner: state.selectedPlayer, level: 0 };
+            addLog(`<b>${state.players[state.selectedPlayer].name}</b> membeli Tanah <b>${prop.name}</b> (-$${prop.price.toLocaleString()})`);
+          } else if (propState.owner === state.selectedPlayer) {
+            if (propState.level >= 5) {
+              alert(`Properti ${prop.name} sudah memiliki Hotel!`);
+              return;
+            }
+
+            if (state.players[state.selectedPlayer].balance < prop.housePrice) {
+              alert(`Saldo tidak cukup untuk upgrade! ($${prop.housePrice.toLocaleString()})`);
+              return;
+            }
+
+            state.players[state.selectedPlayer].balance -= prop.housePrice;
+            propState.level += 1;
+
+            const label = propState.level === 5 ? "Hotel 🏨" : `Rumah ke-${propState.level} 🏠`;
+            addLog(`<b>${state.players[state.selectedPlayer].name}</b> membangun ${label} di <b>${prop.name}</b> (-$${prop.housePrice.toLocaleString()})`);
+          } else {
+            alert(`Properti ini milik ${state.players[propState.owner].name}!`);
+          }
+
+          state.selectedPlayer = null;
+          renderPlayers();
+          updateStatusUI();
+
+        } else if (state.mode === 'RENT') {
+          if (!propState) {
+            alert(`Properti ${prop.name} belum ada pemiliknya!`);
+            return;
+          }
+
+          if (!state.selectedPlayer) {
+            alert("Scan QR Pemain yang singgah terlebih dahulu!");
+            return;
+          }
+
+          if (propState.owner === state.selectedPlayer) {
+            alert("Pemain berada di properti miliknya sendiri!");
+            state.selectedPlayer = null;
+            updateStatusUI();
+            return;
+          }
+
+          const visitorId = state.selectedPlayer;
+          const ownerId = propState.owner;
+          const currentRent = prop.rent[propState.level];
+
+          state.players[visitorId].balance -= currentRent;
+          state.players[ownerId].balance += currentRent;
+
+          const buildingStatus = propState.level === 5 ? "Hotel" : `${propState.level} Rumah`;
+          addLog(`<b>${state.players[visitorId].name}</b> bayar sewa <b>${prop.name}</b> (${buildingStatus}) ke <b>${state.players[ownerId].name}</b> ($${currentRent.toLocaleString()})`);
+
+          state.selectedPlayer = null;
+          renderPlayers();
+          updateStatusUI();
+        }
+      }
+    }
+
+    function updateLobbyUI() {
+      const count = Object.keys(state.players).length;
+      document.getElementById('player-count-badge').innerText = `${count} Pemain`;
+
+      const startBtn = document.getElementById('btn-start-game');
+      if (count >= 2) {
+        startBtn.disabled = false;
+        startBtn.className = "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl text-xs transition shadow flex items-center justify-center gap-2";
+      } else {
+        startBtn.disabled = true;
+        startBtn.className = "w-full bg-slate-800 text-slate-500 font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2";
+      }
+    }
+
+    function finalizeRegistration() {
+      if (Object.keys(state.players).length < 2) return;
+
+      state.isStarted = true;
+      
+      // Update UI Status
+      document.getElementById('game-status-badge').className = "text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-full font-mono";
+      document.getElementById('game-status-badge').innerText = "Status: Game Berjalan";
+
+      document.getElementById('panel-registration').classList.add('hidden');
+      document.getElementById('panel-gameplay').classList.remove('hidden');
+
+      addLog("🚀 <b>Permainan Resmi Dimulai!</b> Selamat bermain.");
+      updateStatusUI();
+    }
+
+    function renderPlayers() {
+      const container = document.getElementById('player-list');
+      container.innerHTML = '';
+
+      const playerKeys = Object.keys(state.players);
+
+      if (playerKeys.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-2 text-center py-6 border border-dashed border-slate-800 rounded-xl">
+            <p class="text-xs text-slate-500">Belum ada pemain terdaftar.</p>
+            <p class="text-[10px] text-slate-600 mt-1">Scan QR Kartu Pemain di bawah.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      playerKeys.forEach(pId => {
+        const p = state.players[pId];
+        const properties = Object.keys(state.ownership).filter(prop => state.ownership[prop].owner === pId);
+        
+        container.innerHTML += `
+          <div class="bg-slate-900 border-l-4 ${p.color} border-y border-r border-slate-800 p-3 rounded-xl shadow-sm flex flex-col justify-between">
+            <div class="flex justify-between items-center">
+              <span class="font-semibold text-xs text-slate-300">${p.name} (${pId})</span>
+              <span class="text-[10px] text-slate-500">${properties.length} Aset</span>
+            </div>
+            <p class="text-base font-mono font-bold text-emerald-400 mt-1">$${p.balance.toLocaleString()}</p>
+          </div>
+        `;
+      });
+    }
+
+    function setTransactionMode(mode) {
+      state.mode = mode;
+      state.selectedPlayer = null;
+      
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.className = 'mode-btn bg-slate-800 text-slate-400 py-2 px-1 rounded-lg font-semibold text-xs flex flex-col items-center gap-1 border border-slate-700';
+      });
+
+      const activeBtn = document.getElementById(`btn-${mode}`);
+      if (mode === 'BUY') activeBtn.className = 'mode-btn bg-emerald-600 text-white py-2 px-1 rounded-lg font-semibold text-xs flex flex-col items-center gap-1 shadow';
+      if (mode === 'RENT') activeBtn.className = 'mode-btn bg-amber-600 text-white py-2 px-1 rounded-lg font-semibold text-xs flex flex-col items-center gap-1 shadow';
+      if (mode === 'GO') activeBtn.className = 'mode-btn bg-blue-600 text-white py-2 px-1 rounded-lg font-semibold text-xs flex flex-col items-center gap-1 shadow';
+
+      updateStatusUI();
+    }
+
+    function updateStatusUI() {
+      const statusText = document.getElementById('status-text');
+
+      if (!state.selectedPlayer) {
+        statusText.innerText = `[Mode ${state.mode}] Scan QR Pemain.`;
+      } else {
+        statusText.innerText = `Pemain ${state.selectedPlayer} dipilih. Scan QR Properti.`;
+      }
+    }
+
+    function addLog(message) {
+      const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      state.logs.unshift({ message, time });
+      renderLogs();
+    }
+
+    function renderLogs() {
+      const container = document.getElementById('log-list');
+      if (state.logs.length === 0) {
+        container.innerHTML = `<p class="text-slate-500 text-center py-4 text-xs">Belum ada riwayat.</p>`;
+        return;
+      }
+      
+      container.innerHTML = state.logs.map(log => `
+        <div class="flex justify-between items-center p-2 bg-slate-950/60 rounded-lg border border-slate-800/80">
+          <span class="text-slate-300">${log.message}</span>
+          <span class="text-[10px] text-slate-500 font-mono ml-2">${log.time}</span>
+        </div>
+      `).join('');
+    }
+
+    function resetGame() {
+      if (confirm("Reset seluruh registrasi pemain & permainan?")) {
+        location.reload();
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
