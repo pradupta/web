@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monopoly Banker - Full Edition</title>
+  <title>Monopoly Banker - Board Edition</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Library QR Scanner -->
@@ -158,40 +158,43 @@
   <script>
     const INITIAL_BANK_MONEY = 150000;
 
+    // DATABASE 28 KARTU PROPERTI (Harga Beli disesuaikan persis dengan foto BOARD Papan Permainan)
     const PROPERTIES = {
-      // --- NEGARA / KOTA ---
-      'PROP_IDN': { type: 'COUNTRY', name: 'Indonesia', price: 6000, housePrice: 2000, rent: [1200, 2400, 4800, 8000, 12000, 18000] },
-      'PROP_MYS': { type: 'COUNTRY', name: 'Malaysia', price: 6000, housePrice: 2000, rent: [1200, 2400, 4800, 8000, 12000, 18000] },
-      'PROP_SGP': { type: 'COUNTRY', name: 'Singapura', price: 10000, housePrice: 3000, rent: [2000, 4000, 8000, 14000, 20000, 30000] },
-      'PROP_HKG': { type: 'COUNTRY', name: 'Hongkong', price: 10000, housePrice: 3000, rent: [2000, 4000, 8000, 14000, 20000, 30000] },
-      'PROP_TWN': { type: 'COUNTRY', name: 'Taiwan', price: 12000, housePrice: 3000, rent: [2400, 4800, 9600, 16000, 24000, 35000] },
-      'PROP_PHL': { type: 'COUNTRY', name: 'Philipina', price: 14000, housePrice: 4000, rent: [2800, 5600, 11000, 18000, 28000, 40000] },
-      'PROP_THA': { type: 'COUNTRY', name: 'Thailand', price: 14000, housePrice: 4000, rent: [2800, 5600, 11000, 18000, 28000, 40000] },
-      'PROP_VNM': { type: 'COUNTRY', name: 'Vietnam', price: 16000, housePrice: 4000, rent: [3200, 6400, 12800, 20000, 32000, 45000] },
-      'PROP_JPN': { type: 'COUNTRY', name: 'Jepang', price: 18000, housePrice: 5000, rent: [3600, 7200, 14400, 22000, 36000, 50000] },
-      'PROP_KOR': { type: 'COUNTRY', name: 'Korea Selatan', price: 18000, housePrice: 5000, rent: [3600, 7200, 14400, 22000, 36000, 50000] },
-      'PROP_IND': { type: 'COUNTRY', name: 'India', price: 20000, housePrice: 5000, rent: [4000, 8000, 16000, 25000, 40000, 55000] },
-      'PROP_CHN': { type: 'COUNTRY', name: 'China', price: 22000, housePrice: 6000, rent: [4400, 8800, 17600, 28000, 44000, 60000] },
-      'PROP_RUS': { type: 'COUNTRY', name: 'Rusia', price: 22000, housePrice: 6000, rent: [4400, 8800, 17600, 28000, 44000, 60000] },
-      'PROP_ITA': { type: 'COUNTRY', name: 'Italy', price: 24000, housePrice: 6000, rent: [4800, 9600, 19200, 30000, 48000, 65000] },
-      'PROP_GBR': { type: 'COUNTRY', name: 'Inggris', price: 25000, housePrice: 7000, rent: [5000, 10000, 20000, 32000, 50000, 70000] },
-      'PROP_FRA': { type: 'COUNTRY', name: 'Perancis', price: 25000, housePrice: 7000, rent: [5000, 10000, 20000, 32000, 50000, 70000] },
-      'PROP_NLD': { type: 'COUNTRY', name: 'Belanda', price: 28000, housePrice: 7000, rent: [5600, 11200, 22400, 35000, 56000, 75000] },
-      'PROP_CAN': { type: 'COUNTRY', name: 'Kanada', price: 30000, housePrice: 8000, rent: [6000, 12000, 24000, 38000, 60000, 80000] },
-      'PROP_USA': { type: 'COUNTRY', name: 'Amerika', price: 30000, housePrice: 8000, rent: [6000, 12000, 24000, 38000, 60000, 80000] },
-      'PROP_BRA': { type: 'COUNTRY', name: 'Brazil', price: 32000, housePrice: 8000, rent: [6400, 12800, 25600, 40000, 64000, 85000] },
-      'PROP_AUS': { type: 'COUNTRY', name: 'Australia', price: 35000, housePrice: 10000, rent: [7000, 14000, 28000, 45000, 70000, 95000] },
-      'PROP_EGY': { type: 'COUNTRY', name: 'Mesir', price: 40000, housePrice: 10000, rent: [8000, 16000, 32000, 50000, 80000, 110000] },
+      // --- SISI KANAN (START -> BENJARA) ---
+      'PROP_IDN': { type: 'COUNTRY', name: 'Indonesia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [400, 2000, 6000, 18000, 32000, 45000], mortgage: 3000 },
+      'PROP_MYS': { type: 'COUNTRY', name: 'Malaysia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [200, 1000, 3000, 9000, 16000, 25000], mortgage: 3000 },
+      'PROP_STN_CHANGI': { type: 'STATION', name: 'Bandara Changi ✈️', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
+      'PROP_SGP': { type: 'COUNTRY', name: 'Singapura (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [600, 3000, 9000, 27000, 40000, 55000], mortgage: 4000 },
+      'PROP_HKG': { type: 'COUNTRY', name: 'Hongkong (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
+      'PROP_TWN': { type: 'COUNTRY', name: 'Taiwan (Kompleks B)', price: 12000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
 
-      // --- PERUSAHAAN UTILITAS (LISTRIK & AIR) ---
-      'PROP_ELEC': { type: 'UTILITY', name: 'Perusahaan Listrik ⚡', price: 15000, rent: 4000 },
-      'PROP_WATER': { type: 'UTILITY', name: 'Perusahaan Air 💧', price: 15000, rent: 4000 },
+      // --- SISI BAWAH (BENJARA -> BEBAS PARKIR) ---
+      'PROP_PHL': { type: 'COUNTRY', name: 'Philipina (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1200, 6000, 8000, 50000, 70000, 90000], mortgage: 8000 },
+      'PROP_ELEC': { type: 'UTILITY', name: 'Perusahaan Listrik ⚡', price: 15000, mortgage: 3750, rules: '1 Kompleks = 4x dadu | 2 Kompleks = 10x dadu' },
+      'PROP_THA': { type: 'COUNTRY', name: 'Thailand (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
+      'PROP_VNM': { type: 'COUNTRY', name: 'Vietnam (Kompleks C)', price: 16000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
+      'PROP_STN_TOKYO': { type: 'STATION', name: 'Terminal Bus Tokyo 🚌', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
+      'PROP_JPN': { type: 'COUNTRY', name: 'Jepang (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
+      'PROP_KOR': { type: 'COUNTRY', name: 'Korea Selatan (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1600, 8000, 22000, 60000, 80000, 100000], mortgage: 10000 },
+      'PROP_IND': { type: 'COUNTRY', name: 'India (Kompleks D)', price: 20000, housePrice: 10000, hotelPrice: 50000, rent: [1400, 7000, 20000, 55000, 75000, 95000], mortgage: 9000 },
 
-      // --- STASIUN / TRANSPORTASI (Sewa Naik sesuai Jumlah kepemilikan: 1=2500, 2=5000, 3=10000, 4=20000) ---
-      'PROP_STN_NORTH': { type: 'STATION', name: 'Stasiun Utara 🚆', price: 20000, rentBase: 2500 },
-      'PROP_STN_SOUTH': { type: 'STATION', name: 'Stasiun Selatan 🚆', price: 20000, rentBase: 2500 },
-      'PROP_STN_EAST':  { type: 'STATION', name: 'Bandara Internasional ✈️', price: 20000, rentBase: 2500 },
-      'PROP_STN_WEST':  { type: 'STATION', name: 'Pelabuhan Utama 🚢', price: 20000, rentBase: 2500 }
+      // --- SISI KIRI (BEBAS PARKIR -> PENJARA) ---
+      'PROP_CHN': { type: 'COUNTRY', name: 'China (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
+      'PROP_RUS': { type: 'COUNTRY', name: 'Rusia (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
+      'PROP_ITA': { type: 'COUNTRY', name: 'Italy (Kompleks E)', price: 24000, housePrice: 15000, hotelPrice: 75000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
+      'PROP_STN_LONDON': { type: 'STATION', name: 'Stasiun London 🚆', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
+      'PROP_GBR': { type: 'COUNTRY', name: 'Inggris (Kompleks F)', price: 25000, housePrice: 15000, hotelPrice: 75000, rent: [2400, 14000, 36000, 85000, 102000, 120000], mortgage: 14000 },
+      'PROP_FRA': { type: 'COUNTRY', name: 'Perancis (Kompleks F)', price: 25000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
+      'PROP_WATER': { type: 'UTILITY', name: 'Perusahaan Air 💧', price: 15000, mortgage: 3750, rules: '1 Kompleks = 4x dadu | 2 Kompleks = 10x dadu' },
+      'PROP_NLD': { type: 'COUNTRY', name: 'Belanda (Kompleks F)', price: 28000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
+
+      // --- SISI ATAS (PENJARA -> START) ---
+      'PROP_CAN': { type: 'COUNTRY', name: 'Kanada (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
+      'PROP_USA': { type: 'COUNTRY', name: 'Amerika (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2800, 15000, 45000, 100000, 120000, 140000], mortgage: 16000 },
+      'PROP_BRA': { type: 'COUNTRY', name: 'Brazil (Kompleks G)', price: 32000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
+      'PROP_STN_SIDNEY': { type: 'STATION', name: 'Pelabuhan Sidney 🚢', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
+      'PROP_AUS': { type: 'COUNTRY', name: 'Australia (Kompleks H)', price: 35000, housePrice: 20000, hotelPrice: 100000, rent: [2800, 15000, 45000, 100000, 120000, 140000], mortgage: 16000 },
+      'PROP_EGY': { type: 'COUNTRY', name: 'Mesir (Kompleks H)', price: 40000, housePrice: 20000, hotelPrice: 100000, rent: [5000, 20000, 60000, 140000, 170000, 200000], mortgage: 20000 }
     };
 
     const MASTER_PLAYERS = {
@@ -323,7 +326,7 @@
           if (!state.selectedPlayer) { alert("Scan QR Pemain terlebih dahulu!"); return; }
 
           if (!propState) {
-            if (state.players[state.selectedPlayer].balance < prop.price) { alert(`Saldo tidak cukup!`); return; }
+            if (state.players[state.selectedPlayer].balance < prop.price) { alert(`Saldo tidak cukup untuk membeli ${prop.name}! Harga: $${prop.price.toLocaleString()}`); return; }
 
             state.players[state.selectedPlayer].balance -= prop.price;
             state.ownership[data] = { owner: state.selectedPlayer, level: 0 };
@@ -335,13 +338,19 @@
               return;
             }
 
-            if (propState.level >= 5) { alert(`Properti sudah Hotel!`); return; }
-            if (state.players[state.selectedPlayer].balance < prop.housePrice) { alert(`Saldo tidak cukup!`); return; }
+            if (propState.level >= 5) { alert(`Properti sudah memiliki Hotel!`); return; }
+            
+            const upgradeCost = propState.level === 4 ? prop.hotelPrice : prop.housePrice;
 
-            state.players[state.selectedPlayer].balance -= prop.housePrice;
+            if (state.players[state.selectedPlayer].balance < upgradeCost) { 
+              alert(`Saldo tidak cukup! Biaya Upgrade: $${upgradeCost.toLocaleString()}`); 
+              return; 
+            }
+
+            state.players[state.selectedPlayer].balance -= upgradeCost;
             propState.level += 1;
             const label = propState.level === 5 ? "Hotel 🏨" : `Rumah ke-${propState.level} 🏠`;
-            addLog(`<b>${state.players[state.selectedPlayer].name}</b> membangun ${label} di <b>${prop.name}</b> (- $${prop.housePrice.toLocaleString()})`);
+            addLog(`<b>${state.players[state.selectedPlayer].name}</b> membangun ${label} di <b>${prop.name}</b> (- $${upgradeCost.toLocaleString()})`);
           } else {
             alert(`Properti ini milik ${state.players[propState.owner].name}!`);
           }
@@ -363,15 +372,28 @@
           if (prop.type === 'COUNTRY') {
             calculatedRent = prop.rent[propState.level];
           } else if (prop.type === 'UTILITY') {
-            calculatedRent = prop.rent; // Rent flat
+            const diceInput = prompt(`Kalkulasi Sewa (${prop.name}):\nMasukkan total angka kocokan 2 Dadu:`, "7");
+            const diceVal = parseInt(diceInput) || 0;
+            
+            const utilityCount = Object.keys(state.ownership).filter(pKey => {
+              return PROPERTIES[pKey].type === 'UTILITY' && state.ownership[pKey].owner === ownerId;
+            }).length;
+
+            const multiplier = utilityCount >= 2 ? 10 : 4;
+            calculatedRent = diceVal * multiplier;
+            alert(`Sewa Fasilitas (${multiplier}x Dadu [${diceVal}]): $${calculatedRent.toLocaleString()}`);
           } else if (prop.type === 'STATION') {
-            // Hitung berapa banyak stasiun yang dimiliki pemilik ini
             const stationCount = Object.keys(state.ownership).filter(pKey => {
               return PROPERTIES[pKey].type === 'STATION' && state.ownership[pKey].owner === ownerId;
             }).length;
 
-            // Sewa naik berlipat sesuai jumlah stasiun yang dimiliki (1=2.5k, 2=5k, 3=10k, 4=20k)
-            calculatedRent = prop.rentBase * Math.pow(2, stationCount - 1);
+            const index = Math.min(stationCount - 1, prop.rentTable.length - 1);
+            calculatedRent = prop.rentTable[index >= 0 ? index : 0];
+          }
+
+          if (state.players[visitorId].balance < calculatedRent) {
+            alert(`Saldo ${state.players[visitorId].name} tidak mencukupi untuk bayar sewa $${calculatedRent.toLocaleString()}!`);
+            return;
           }
 
           state.players[visitorId].balance -= calculatedRent;
