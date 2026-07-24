@@ -76,9 +76,12 @@
         <p class="text-[9px] font-medium text-slate-500 uppercase tracking-wider mt-0.5">Digital Cashier System</p>
       </div>
     </div>
-    <button onclick="resetGame()" class="text-[11px] font-semibold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 px-3 py-1.5 rounded-xl transition-all shadow-sm active:scale-95 flex items-center gap-1">
-      <i class="fa-solid fa-rotate-right"></i> Reset
-    </button>
+    <div class="flex items-center gap-2">
+      <span id="game-status-badge" class="text-[9px] font-bold bg-slate-100 text-slate-500 border border-slate-200 px-2 py-0.5 rounded-full">Status: Lobi</span>
+      <button onclick="resetGame()" class="text-[11px] font-semibold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 px-3 py-1.5 rounded-xl transition-all shadow-sm active:scale-95 flex items-center gap-1">
+        <i class="fa-solid fa-rotate-right"></i> Reset
+      </button>
+    </div>
   </header>
 
   <!-- CONTAINER UTAMA -->
@@ -135,7 +138,7 @@
             Tap Kartu NFC Pemain (atau Scan QR) untuk mendaftar & klaim $150.000.
           </p>
         </div>
-        <button id="btn-start-game" onclick="finalizeRegistration()" disabled class="w-full bg-slate-200 text-slate-400 font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5">
+        <button id="btn-start-game" onclick="finalizeRegistration()" disabled class="w-full bg-slate-200 text-slate-400 font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-not-allowed">
           <i class="fa-solid fa-play"></i> Mulai Game (Min 2 Pemain)
         </button>
       </div>
@@ -648,8 +651,10 @@
       state.isStarted = true;
       
       const badge = document.getElementById('game-status-badge');
-      badge.className = "text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full";
-      badge.innerText = "Status: Game Berjalan";
+      if (badge) {
+        badge.className = "text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full";
+        badge.innerText = "Status: Game Berjalan";
+      }
 
       document.getElementById('panel-registration').classList.add('hidden');
       document.getElementById('panel-gameplay').classList.remove('hidden');
