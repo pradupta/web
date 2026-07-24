@@ -340,4 +340,435 @@
       html5QrCode = new Html5Qrcode("reader");
       const config = { fps: 20, qrbox: null, videoConstraints: { facingMode: currentFacingMode } };
 
-      html5QrCode.start({ facingMod
+      html5QrCode.start({ facingMode: currentFacingMode }, config, handleScanResult)
+      .then(() => {
+        document.getElementById('btn-start-camera').classList.add('hidden');
+        document.getElementById('btn-switch-camera').classList.remove('hidden');
+      }).catch(err => showToast("Gagal mengakses kamera.", "error"));
+    }
+
+    // LOGIKA WEB NFC API
+    async function initNFCScanner() {
+      const badge = document.getElementById('nfc-status-badge');
+
+      if ('NDEFReader' in window) {
+        try {
+          ndefReader = new NDEFReader();
+          await ndefReader.scan();
+
+          badge.className = "text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1";
+          badge.innerHTML = `<i class="fa-solid fa-wifi text-[8px] animate-pulse"></i> NFC: Ready`;
+
+          ndefReader.addEventListener("reading", ({ serialNumber, message }) => {
+            let nfcPayload = "";
+
+            // Cek jika ada Teks NDEF
+            for (const record of message.records) {
+              if (record.recordType === "text") {
+                const textDecoder = new TextDecoder(record.encoding);
+                nfcPayload = textDecoder.decode(record.data);
+                break;
+              }
+            }
+
+            // Jika tidak ada teks, gunakan Serial Number / UID
+            if (!nfcPayload && serialNumber) {
+              const formattedSerial = serialNumber.toUpperCase();
+              nfcPayload = NFC_UID_MAP[formattedSerial] || formattedSerial;
+            }
+
+            if (nfcPayload) {
+              handleScanResult(nfcPayload);
+            }
+          });
+
+        } catch (error) {
+          console.error("NFC Error:", error);
+          badge.className = "text-[9px] font-bold bg-rose-100 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-full flex items-center gap-1";
+          badge.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-[8px]"></i> NFC: Off`;
+        }
+      } else {
+        badge.className = "text-[9px] font-bold bg-amber-100 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1";
+        badge.innerHTML = `<i class="fa-solid fa-ban text-[8px]"></i> NFC: Unsupported`;
+      }
+    }
+
+    async function switchCamera() {
+      if (!html5QrCode) return;
+      currentFacingMode = (currentFacingMode === "environment") ? "user" : "environment";
+      try { await html5QrCode.stop(); initCameraScanner(); } catch (err) {}
+    }
+
+    function handleScanResult(scannedData) {
+      let data = scannedData.trim().toUpperCase().replace(/\.(PNG|JPG|JPEG)$/i, '');
+      if (data === lastScannedCode) return;
+
+      lastScannedCode = data;
+      clearTimeout(scanCooldownTimer);
+      scanCooldownTimer = setTimeout(() => { lastScannedCode = null; }, 2500);
+
+      playAudio('beep');
+
+      // REGISTRASI
+      if (!state.isStarted) {
+        if (MASTER_PLAYERS[data]) {
+          if (state.players[data]) {
+            playAudio('error');
+            showToast(`${MASTER_PLAYERS[data].name} sudah terdaftar!`, "warning");
+            return;
+          }
+          state.players[data] = { ...MASTER_PLAYERS[data], balance: INITIAL_BANK_MONEY };
+          addLog(`💳 <b>${MASTER_PLAYERS[data].name}</b> terdaftar via NFC/QR ($${INITIAL_BANK_MONEY.toLocaleString()})`);
+          playAudio('cash');
+          triggerConfetti();
+          showToast(`${MASTER_PLAYERS[data].name} Berhasil Terdaftar!`, "success");
+          renderPlayers();
+          updateLobbyUI();
+        } else {
+          playAudio('error');
+          showToast(`Kode Tidak Dikenal: "${scannedData}"`, "error");
+        }
+        return;
+      }
+
+      // GAMEPLAY - SCAN/TAP PEMAIN
+      if (state.players[data]) {
+        state.selectedPlayer = data;
+
+        if (state.mode === 'GO') {
+          state.players[data].balance += 20000;
+          addLog(`<b>${state.players[data].name}</b> melewati START (+ $20.000)`);
+          playAudio('cash');
+          triggerConfetti();
+          showToast(`${state.players[data].name} Melewati START (+ $20.000)`, "success");
+          state.selectedPlayer = null;
+          renderPlayers();
+        } else if (state.mode === 'BANK') {
+          const action = document.getElementById('bank-action-type').value;
+          const amount = parseInt(document.getElementById('bank-amount').value) || 0;
+
+          if (amount <= 0) {
+            playAudio('error');
+            showToast("Masukkan nominal transaksi!", "warning");
+            return;
+          }
+
+          if (action === 'RECEIVE') {
+            state.players[data].balance += amount;
+            addLog(`🎁 <b>${state.players[data].name}</b> terima <b>$${amount.toLocaleString()}</b>`);
+            playAudio('cash');
+            showToast(`${state.players[data].name} Menerima $${amount.toLocaleString()}`, "success");
+          } else if (action === 'PAY') {
+            if (state.players[data].balance < amount) {
+              playAudio('error');
+              showToast(`Saldo ${state.players[data].name} kurang!`, "error");
+              return;
+            }
+            state.players[data].balance -= amount;
+            addLog(`💸 <b>${state.players[data].name}</b> bayar <b>$${amount.toLocaleString()}</b>`);
+            showToast(`${state.players[data].name} Membayar $${amount.toLocaleString()}`, "info");
+          }
+
+          state.selectedPlayer = null;
+          renderPlayers();
+        }
+
+        updateStatusUI();
+        return;
+      }
+
+      // SCAN PROPERTI (QR CODE)
+      if (PROPERTIES[data]) {
+        const prop = PROPERTIES[data];
+        const propState = state.ownership[data];
+
+        if (state.mode === 'BUY') {
+          if (!state.selectedPlayer) { playAudio('error'); showToast("Tap Kartu NFC Pemain terlebih dahulu!", "warning"); return; }
+
+          if (!propState) {
+            if (state.players[state.selectedPlayer].balance < prop.price) { 
+              playAudio('error'); showToast(`Saldo tidak cukup! Harga: $${prop.price.toLocaleString()}`, "error"); return; 
+            }
+
+            state.players[state.selectedPlayer].balance -= prop.price;
+            state.ownership[data] = { owner: state.selectedPlayer, level: 0, isMortgaged: false };
+            addLog(`<b>${state.players[state.selectedPlayer].name}</b> beli <b>${prop.name}</b> (-$${prop.price.toLocaleString()})`);
+            playAudio('cash'); triggerConfetti();
+            showToast(`${state.players[state.selectedPlayer].name} Membeli ${prop.name}!`, "success");
+          } else if (propState.owner === state.selectedPlayer) {
+            if (propState.isMortgaged) {
+              playAudio('error'); showToast("Properti sedang digadaikan! Tebus dulu sebelum upgrade.", "warning"); return;
+            }
+            if (prop.type !== 'COUNTRY') {
+              playAudio('error'); showToast(`Properti ${prop.name} tidak bisa di-upgrade!`, "warning"); return;
+            }
+            if (propState.level >= 5) { 
+              playAudio('error'); showToast(`Properti sudah memiliki Hotel!`, "warning"); return; 
+            }
+            
+            const upgradeCost = propState.level === 4 ? prop.hotelPrice : prop.housePrice;
+            if (state.players[state.selectedPlayer].balance < upgradeCost) { 
+              playAudio('error'); showToast(`Saldo tidak cukup! Biaya: $${upgradeCost.toLocaleString()}`, "error"); return; 
+            }
+
+            state.players[state.selectedPlayer].balance -= upgradeCost;
+            propState.level += 1;
+            const label = propState.level === 5 ? "Hotel 🏨" : `Rumah ke-${propState.level} 🏠`;
+            addLog(`<b>${state.players[state.selectedPlayer].name}</b> bangun ${label} di <b>${prop.name}</b>`);
+            playAudio('cash'); triggerConfetti();
+            showToast(`Upgrade ${label} di ${prop.name}!`, "success");
+          } else {
+            playAudio('error'); showToast(`Properti milik ${state.players[propState.owner].name}!`, "error");
+          }
+
+          state.selectedPlayer = null;
+          renderPlayers();
+          updateStatusUI();
+
+        } else if (state.mode === 'RENT') {
+          if (!propState) { playAudio('error'); showToast(`Properti ${prop.name} belum dimiliki siapapun!`, "warning"); return; }
+          if (!state.selectedPlayer) { playAudio('error'); showToast("Tap Kartu NFC Pemain yang singgah!", "warning"); return; }
+          if (propState.owner === state.selectedPlayer) { showToast("Pemain berada di properti sendiri!", "info"); state.selectedPlayer = null; updateStatusUI(); return; }
+          
+          if (propState.isMortgaged) {
+            showToast(`Properti ${prop.name} sedang DIGADAIKAN! Bebas sewa.`, "info");
+            state.selectedPlayer = null;
+            updateStatusUI();
+            return;
+          }
+
+          const visitorId = state.selectedPlayer;
+          const ownerId = propState.owner;
+          let calculatedRent = 0;
+
+          if (prop.type === 'COUNTRY') {
+            calculatedRent = prop.rent[propState.level];
+          } else if (prop.type === 'UTILITY') {
+            const diceInput = prompt(`Kalkulasi Sewa (${prop.name}):\nMasukkan total kocokan 2 Dadu:`, "7");
+            const diceVal = parseInt(diceInput) || 0;
+            const utilityCount = Object.keys(state.ownership).filter(pKey => PROPERTIES[pKey].type === 'UTILITY' && state.ownership[pKey].owner === ownerId).length;
+            calculatedRent = diceVal * (utilityCount >= 2 ? 10 : 4);
+          } else if (prop.type === 'STATION') {
+            const stationCount = Object.keys(state.ownership).filter(pKey => PROPERTIES[pKey].type === 'STATION' && state.ownership[pKey].owner === ownerId).length;
+            const index = Math.min(stationCount - 1, prop.rentTable.length - 1);
+            calculatedRent = prop.rentTable[index >= 0 ? index : 0];
+          }
+
+          if (state.players[visitorId].balance < calculatedRent) {
+            playAudio('error'); showToast(`Saldo ${state.players[visitorId].name} kurang!`, "error"); return;
+          }
+
+          state.players[visitorId].balance -= calculatedRent;
+          state.players[ownerId].balance += calculatedRent;
+
+          addLog(`<b>${state.players[visitorId].name}</b> bayar sewa ke <b>${state.players[ownerId].name}</b> ($${calculatedRent.toLocaleString()})`);
+          playAudio('cash');
+          showToast(`Sewa $${calculatedRent.toLocaleString()} terbayar ke ${state.players[ownerId].name}`, "success");
+
+          state.selectedPlayer = null;
+          renderPlayers();
+          updateStatusUI();
+
+        } else if (state.mode === 'MORTGAGE') {
+          if (!propState) { playAudio('error'); showToast(`Properti ${prop.name} belum dimiliki siapapun!`, "warning"); return; }
+          if (!state.selectedPlayer) { playAudio('error'); showToast("Tap Kartu NFC Pemain pemilik aset!", "warning"); return; }
+          if (propState.owner !== state.selectedPlayer) { playAudio('error'); showToast(`Properti ini milik ${state.players[propState.owner].name}!`, "error"); return; }
+
+          if (!propState.isMortgaged) {
+            const mortgageValue = prop.mortgage;
+            state.players[state.selectedPlayer].balance += mortgageValue;
+            propState.isMortgaged = true;
+            addLog(`🏷️ <b>${state.players[state.selectedPlayer].name}</b> menggadaikan <b>${prop.name}</b> (+ $${mortgageValue.toLocaleString()})`);
+            playAudio('cash');
+            showToast(`${prop.name} digadaikan (+ $${mortgageValue.toLocaleString()})`, "warning");
+          } else {
+            const unmortgageCost = Math.round(prop.mortgage * 1.1);
+            if (state.players[state.selectedPlayer].balance < unmortgageCost) {
+              playAudio('error'); showToast(`Saldo kurang untuk tebus gadai! Biaya: $${unmortgageCost.toLocaleString()}`, "error"); return;
+            }
+
+            state.players[state.selectedPlayer].balance -= unmortgageCost;
+            propState.isMortgaged = false;
+            addLog(`🔓 <b>${state.players[state.selectedPlayer].name}</b> menebus gadai <b>${prop.name}</b> (- $${unmortgageCost.toLocaleString()})`);
+            playAudio('cash');
+            showToast(`${prop.name} berhasil ditebus kembali!`, "success");
+          }
+
+          state.selectedPlayer = null;
+          renderPlayers();
+          updateStatusUI();
+        }
+      } else {
+        playAudio('error'); showToast(`Kode "${scannedData}" tidak terdaftar!`, "error");
+      }
+    }
+
+    function declareBankruptcy() {
+      if (!state.selectedPlayer) {
+        showToast("Tap Kartu NFC Pemain yang ingin menyatakan bangkrut terlebih dahulu!", "warning");
+        return;
+      }
+
+      const player = state.players[state.selectedPlayer];
+      if (confirm(`Apakah ${player.name} yakin ingin menyatakannya BANGKRUT?\nSemua properti akan dilepas ke Bank.`)) {
+        Object.keys(state.ownership).forEach(propKey => {
+          if (state.ownership[propKey].owner === state.selectedPlayer) {
+            delete state.ownership[propKey];
+          }
+        });
+
+        addLog(`💥 <b>${player.name}</b> dinyatakan <b>BANGKRUT!</b>`);
+        playAudio('error');
+        showToast(`${player.name} gugur dari permainan!`, "error");
+
+        delete state.players[state.selectedPlayer];
+        state.selectedPlayer = null;
+        renderPlayers();
+        updateStatusUI();
+        updateLobbyUI();
+      }
+    }
+
+    function updateLobbyUI() {
+      const count = Object.keys(state.players).length;
+      document.getElementById('player-count-badge').innerText = `${count} Pemain`;
+
+      const startBtn = document.getElementById('btn-start-game');
+      if (count >= 2) {
+        startBtn.disabled = false;
+        startBtn.className = "w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-2 rounded-xl text-xs transition-all shadow-md shadow-emerald-200 active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer flex-shrink-0";
+      } else {
+        startBtn.disabled = true;
+        startBtn.className = "w-full bg-slate-200 text-slate-400 font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-not-allowed flex-shrink-0";
+      }
+    }
+
+    function finalizeRegistration() {
+      if (Object.keys(state.players).length < 2) return;
+      state.isStarted = true;
+      
+      const badge = document.getElementById('game-status-badge');
+      badge.className = "text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full";
+      badge.innerText = "Status: Game Berjalan";
+
+      document.getElementById('panel-registration').classList.add('hidden');
+      document.getElementById('panel-gameplay').classList.remove('hidden');
+
+      addLog("🎲 <b>Permainan Dimulai!</b>");
+      triggerConfetti();
+      showToast("Permainan Dimulai! Selamat bermain 🎲", "success");
+      updateStatusUI();
+    }
+
+    function renderPlayers() {
+      const container = document.getElementById('player-list');
+      container.innerHTML = '';
+      const playerKeys = Object.keys(state.players);
+
+      if (playerKeys.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-2 text-center py-3 border border-dashed border-slate-300 rounded-xl bg-white/40">
+            <p class="text-[11px] font-semibold text-slate-400">Belum ada pemain aktif</p>
+          </div>
+        `;
+        return;
+      }
+
+      let maxBalance = -1;
+      playerKeys.forEach(pId => {
+        if (state.players[pId].balance > maxBalance) maxBalance = state.players[pId].balance;
+      });
+      
+      playerKeys.forEach(pId => {
+        const p = state.players[pId];
+        const properties = Object.keys(state.ownership).filter(prop => state.ownership[prop].owner === pId);
+        const isLeader = state.isStarted && p.balance === maxBalance && maxBalance > 0;
+        
+        container.innerHTML += `
+          <div class="relative bg-gradient-to-br ${p.bg} border ${isLeader ? 'border-amber-400 ring-2 ring-amber-300/50' : p.border} px-2.5 py-1.5 rounded-xl shadow-sm flex flex-col justify-between transition-all">
+            ${isLeader ? `<span class="absolute -top-2 -right-1 text-xs drop-shadow">👑</span>` : ''}
+            <div class="flex justify-between items-center">
+              <div class="flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full ${p.badge}"></span>
+                <span class="font-bold text-[11px] text-slate-700">${p.name}</span>
+              </div>
+              <span class="text-[9px] font-bold bg-white/80 text-slate-500 px-1.5 py-0.2 rounded-md border border-slate-100">${properties.length} Aset</span>
+            </div>
+            <p class="text-xs font-extrabold text-slate-800 mt-0.5">$${p.balance.toLocaleString()}</p>
+          </div>
+        `;
+      });
+    }
+
+    function setTransactionMode(mode) {
+      state.mode = mode;
+      state.selectedPlayer = null;
+      
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.className = 'mode-btn bg-white text-slate-600 border border-slate-200 py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 transition-all';
+      });
+
+      const bankContainer = document.getElementById('bank-input-container');
+      if (mode === 'BANK') {
+        bankContainer.classList.remove('hidden');
+      } else {
+        bankContainer.classList.add('hidden');
+      }
+
+      const activeBtn = document.getElementById(`btn-${mode}`);
+      if (mode === 'BUY') activeBtn.className = 'mode-btn bg-emerald-600 text-white py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'RENT') activeBtn.className = 'mode-btn bg-amber-500 text-white py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'MORTGAGE') activeBtn.className = 'mode-btn bg-indigo-600 text-white py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'GO') activeBtn.className = 'mode-btn bg-sky-500 text-white py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'BANK') activeBtn.className = 'mode-btn bg-purple-600 text-white py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+
+      updateStatusUI();
+    }
+
+    function updateStatusUI() {
+      const statusText = document.getElementById('status-text');
+
+      if (state.mode === 'BANK') {
+        statusText.innerText = `[Mode Bank] Tentukan nominal lalu Tap/Scan Pemain.`;
+      } else if (state.mode === 'MORTGAGE') {
+        statusText.innerText = state.selectedPlayer 
+          ? `Pemain ${state.selectedPlayer} dipilih. Scan Properti untuk Gadai/Tebus.` 
+          : `[Mode Gadai] Tap Kartu NFC Pemain pemilik properti.`;
+      } else if (!state.selectedPlayer) {
+        statusText.innerText = `[Mode ${state.mode}] Tap Kartu NFC Pemain terlebih dahulu.`;
+      } else {
+        statusText.innerText = `Pemain ${state.selectedPlayer} dipilih. Silakan Scan QR Properti.`;
+      }
+    }
+
+    function addLog(message) {
+      const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+      state.logs.unshift({ message, time });
+      renderLogs();
+    }
+
+    function renderLogs() {
+      const container = document.getElementById('log-list');
+      if (state.logs.length === 0) {
+        container.innerHTML = `<p class="text-slate-400 text-center py-2 text-[10px]">Belum ada aktivitas transaksi.</p>`;
+        return;
+      }
+      
+      container.innerHTML = state.logs.map(log => `
+        <div class="flex justify-between items-center p-1.5 bg-white/70 rounded-lg border border-slate-100">
+          <span class="text-slate-700 text-[10px]">${log.message}</span>
+          <span class="text-[9px] text-slate-400 font-mono ml-2 shrink-0">${log.time}</span>
+        </div>
+      `).join('');
+    }
+
+    function resetGame() {
+      if (confirm("Reset seluruh data permainan dan mulai dari awal?")) {
+        location.reload();
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
