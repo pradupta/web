@@ -60,7 +60,7 @@
 </head>
 <body class="flex flex-col text-slate-800">
 
-  <!-- HEADER (Fixed Height) -->
+  <!-- HEADER -->
   <header class="sticky top-0 z-50 glass-card shadow-sm px-4 py-2.5 flex justify-between items-center flex-shrink-0">
     <div class="flex items-center gap-2.5">
       <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-200">
@@ -76,10 +76,10 @@
     </button>
   </header>
 
-  <!-- CONTAINER UTAMA (Fit Remaining Viewport) -->
+  <!-- CONTAINER UTAMA -->
   <main class="max-w-md w-full mx-auto p-2.5 flex-1 min-h-0 flex flex-col gap-2 overflow-hidden">
 
-    <!-- DASHBOARD PEMAIN (Compact Flex-Shrink) -->
+    <!-- DASHBOARD PEMAIN -->
     <section class="glass-card rounded-2xl p-2.5 shadow-sm flex-shrink-0">
       <div class="flex justify-between items-center mb-1.5">
         <div class="flex items-center gap-1.5">
@@ -96,7 +96,7 @@
       </div>
     </section>
 
-    <!-- AREA SCANNER (Mengisi Sisa Ruang Fleksibel) -->
+    <!-- AREA SCANNER -->
     <section class="glass-card rounded-2xl p-2.5 shadow-sm flex-1 min-h-0 flex flex-col gap-2 overflow-hidden">
       <div class="flex justify-between items-center flex-shrink-0">
         <h2 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
@@ -107,7 +107,7 @@
         </span>
       </div>
 
-      <!-- Kamera Scanner Frame (Dynamic Flex Fill) -->
+      <!-- Kamera Scanner Frame -->
       <div class="relative rounded-xl overflow-hidden bg-slate-900 border border-slate-200 flex-1 min-h-0 w-full flex items-center justify-center">
         <div id="reader" class="w-full h-full"></div>
       </div>
@@ -168,7 +168,7 @@
 
     </section>
 
-    <!-- RIWAYAT TRANSAKSI (Compact Fixed-Height Panel) -->
+    <!-- RIWAYAT TRANSAKSI -->
     <section class="glass-card rounded-2xl p-2.5 shadow-sm flex-shrink-0 flex flex-col max-h-[110px] overflow-hidden">
       <h2 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1 flex items-center gap-1.5 flex-shrink-0">
         <i class="fa-solid fa-clock-rotate-left text-emerald-600"></i> Riwayat Transaksi
@@ -183,17 +183,14 @@
   <script>
     const INITIAL_BANK_MONEY = 150000;
 
-    // DATABASE 28 KARTU PROPERTI
+    // DATABASE PROPERTI
     const PROPERTIES = {
-      // --- SISI KANAN (START -> PENJARA) ---
       'PROP_IDN': { type: 'COUNTRY', name: 'Indonesia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [400, 2000, 6000, 18000, 32000, 45000], mortgage: 3000 },
       'PROP_MYS': { type: 'COUNTRY', name: 'Malaysia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [200, 1000, 3000, 9000, 16000, 25000], mortgage: 3000 },
       'PROP_STN_CHANGI': { type: 'STATION', name: 'Bandara Changi ✈️', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
       'PROP_SGP': { type: 'COUNTRY', name: 'Singapura (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [600, 3000, 9000, 27000, 40000, 55000], mortgage: 4000 },
       'PROP_HKG': { type: 'COUNTRY', name: 'Hongkong (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
       'PROP_TWN': { type: 'COUNTRY', name: 'Taiwan (Kompleks B)', price: 12000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
-
-      // --- SISI BAWAH (PENJARA -> BEBAS PARKIR) ---
       'PROP_PHL': { type: 'COUNTRY', name: 'Philipina (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1200, 6000, 8000, 50000, 70000, 90000], mortgage: 8000 },
       'PROP_ELEC': { type: 'UTILITY', name: 'Perusahaan Listrik ⚡', price: 15000, mortgage: 3750, rules: '1 Kompleks = 4x dadu | 2 Kompleks = 10x dadu' },
       'PROP_THA': { type: 'COUNTRY', name: 'Thailand (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
@@ -202,8 +199,6 @@
       'PROP_JPN': { type: 'COUNTRY', name: 'Jepang (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
       'PROP_KOR': { type: 'COUNTRY', name: 'Korea Selatan (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1600, 8000, 22000, 60000, 80000, 100000], mortgage: 10000 },
       'PROP_IND': { type: 'COUNTRY', name: 'India (Kompleks D)', price: 20000, housePrice: 10000, hotelPrice: 50000, rent: [1400, 7000, 20000, 55000, 75000, 95000], mortgage: 9000 },
-
-      // --- SISI KIRI (BEBAS PARKIR -> PENJARA) ---
       'PROP_CHN': { type: 'COUNTRY', name: 'China (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
       'PROP_RUS': { type: 'COUNTRY', name: 'Rusia (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
       'PROP_ITA': { type: 'COUNTRY', name: 'Italy (Kompleks E)', price: 24000, housePrice: 15000, hotelPrice: 75000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
@@ -212,8 +207,6 @@
       'PROP_FRA': { type: 'COUNTRY', name: 'Perancis (Kompleks F)', price: 25000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
       'PROP_WATER': { type: 'UTILITY', name: 'Perusahaan Air 💧', price: 15000, mortgage: 3750, rules: '1 Kompleks = 4x dadu | 2 Kompleks = 10x dadu' },
       'PROP_NLD': { type: 'COUNTRY', name: 'Belanda (Kompleks F)', price: 28000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
-
-      // --- SISI ATAS (PENJARA -> START) ---
       'PROP_CAN': { type: 'COUNTRY', name: 'Kanada (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
       'PROP_USA': { type: 'COUNTRY', name: 'Amerika (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2800, 15000, 45000, 100000, 120000, 140000], mortgage: 16000 },
       'PROP_BRA': { type: 'COUNTRY', name: 'Brazil (Kompleks G)', price: 32000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
@@ -241,6 +234,30 @@
     let html5QrCode = null;
     let lastScannedCode = null;
     let scanCooldownTimer = null;
+
+    // FUNGSI EFEK SUARA BEEP (Web Audio API)
+    function playBeepSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = 'sine'; // Nada halus
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // Frekuensi 880Hz (Nada A5)
+        
+        // Atur Volume & Durasi (150 milidetik)
+        gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.15);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.15);
+      } catch (e) {
+        console.log("Audio Context error atau diblokir browser:", e);
+      }
+    }
 
     function init() {
       renderPlayers();
@@ -286,6 +303,9 @@
       lastScannedCode = data;
       clearTimeout(scanCooldownTimer);
       scanCooldownTimer = setTimeout(() => { lastScannedCode = null; }, 2500);
+
+      // 🔊 BUNYI BEEP SAAT QR BERHASIL DIBACA
+      playBeepSound();
 
       // FASE 1: REGISTRASI
       if (!state.isStarted) {
