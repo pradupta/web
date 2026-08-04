@@ -133,6 +133,15 @@
       animation: slideDown 0.2s steps(4, end) forwards;
     }
 
+    @keyframes pixelPop {
+      0% { transform: scale(0.7); opacity: 0; }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pixel-pop {
+      animation: pixelPop 0.25s steps(6, end) forwards;
+    }
+
     /* Scanlines effect */
     .scanlines {
       position: relative;
@@ -152,7 +161,49 @@
 </head>
 <body class="flex flex-col text-slate-100 relative scanlines justify-center items-center">
 
-  <!-- OUTER GAME CONSOLE CONTAINER (Like image layout) -->
+  <!-- PIXEL POPUP MODAL (SPIDEY CARD STYLE) -->
+  <div id="pixel-modal-backdrop" class="fixed inset-0 bg-black/85 z-[200] flex items-center justify-center p-4 hidden backdrop-blur-sm">
+    <div id="pixel-modal-card" class="w-full max-w-xs pixel-box-cyan bg-[#0b1a2e] p-4 text-center relative border-4 border-black shadow-[0_8px_0_0_#000] animate-pixel-pop">
+      <button onclick="closeModal()" class="absolute -top-3 -right-3 pixel-btn pixel-btn-red text-xs px-2 py-0.5 font-pixel">X</button>
+      
+      <!-- Spider Emblem Top -->
+      <div class="w-8 h-8 bg-red-600 border-2 border-black mx-auto mb-2 flex items-center justify-center text-white shadow-md">
+        <i class="fa-solid fa-spider text-lg"></i>
+      </div>
+
+      <div id="modal-badge" class="font-pixel text-[8px] bg-yellow-400 text-black border border-black px-2 py-0.5 inline-block mb-2 uppercase font-black">
+        NOTIFIKASI
+      </div>
+
+      <!-- Icon / Bendera Negara -->
+      <div id="modal-icon" class="text-5xl my-2 leading-none drop-shadow-[2px_2px_0_#000]">
+        🇮🇩
+      </div>
+
+      <!-- Judul Aset / Event -->
+      <h3 id="modal-title" class="font-pixel text-sm text-yellow-300 leading-tight mb-1 uppercase tracking-wide drop-shadow-[1px_1px_0_#000]">
+        INDONESIA
+      </h3>
+
+      <!-- Subtitle Keterangan -->
+      <p id="modal-subtitle" class="text-base text-slate-200 mb-3 font-mono leading-tight">
+        Dibeli oleh P1 (RED SPIDEY)
+      </p>
+
+      <!-- Box Nominal Uang -->
+      <div id="modal-amount-box" class="pixel-box bg-black p-2 border-2 border-cyan-400 mb-4">
+        <span id="modal-amount-label" class="text-cyan-300 block font-pixel text-[7px] uppercase tracking-wider">NOMINAL</span>
+        <span id="modal-amount" class="text-2xl font-black text-yellow-400 tracking-wider">$6,000</span>
+      </div>
+
+      <!-- Tombol Tutup -->
+      <button onclick="closeModal()" class="w-full pixel-btn pixel-btn-yellow font-pixel text-[9px] py-2 uppercase tracking-wider">
+        OK [LANJUT]
+      </button>
+    </div>
+  </div>
+
+  <!-- OUTER GAME CONSOLE CONTAINER -->
   <div class="w-full max-w-md h-[100dvh] bg-[#114b7a] border-x-4 border-y-4 border-black flex flex-col p-2 justify-between shadow-2xl relative">
 
     <!-- FLOATING TOAST NOTIFICATION CONTAINER -->
@@ -291,7 +342,7 @@
 
     </main>
 
-    <!-- RETRO BOTTOM FOOTER (Like Image) -->
+    <!-- RETRO BOTTOM FOOTER -->
     <footer class="mt-1 pixel-box-cyan p-1.5 flex justify-between items-center flex-shrink-0">
       <div class="text-[12px] text-yellow-300 font-bold tracking-wider uppercase flex items-center gap-1">
         <i class="fa-solid fa-gamepad"></i> SPIDEY OS
@@ -306,41 +357,42 @@
   <script>
     const INITIAL_BANK_MONEY = 150000;
 
-    // OPTIONAL: MAPPING UID CHIP NFC KE ID PEMAIN
+    // MAPPING UID CHIP NFC KE ID PEMAIN
     const NFC_UID_MAP = {
       // '04:A1:B2:C3:D4:E5:F6': 'P1',
       // '04:12:34:56:78:90:AB': 'P2',
     };
 
+    // PROPERTIES DENGAN BENDERA NEGARA & IKON PETA
     const PROPERTIES = {
-      'PROP_IDN': { type: 'COUNTRY', name: 'Indonesia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [400, 2000, 6000, 18000, 32000, 45000], mortgage: 3000 },
-      'PROP_MYS': { type: 'COUNTRY', name: 'Malaysia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [200, 1000, 3000, 9000, 16000, 25000], mortgage: 3000 },
-      'PROP_STN_CHANGI': { type: 'STATION', name: 'Bandara Changi ✈️', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
-      'PROP_SGP': { type: 'COUNTRY', name: 'Singapura (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [600, 3000, 9000, 27000, 40000, 55000], mortgage: 4000 },
-      'PROP_HKG': { type: 'COUNTRY', name: 'Hongkong (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
-      'PROP_TWN': { type: 'COUNTRY', name: 'Taiwan (Kompleks B)', price: 12000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
-      'PROP_PHL': { type: 'COUNTRY', name: 'Philipina (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1200, 6000, 8000, 50000, 70000, 90000], mortgage: 8000 },
-      'PROP_ELEC': { type: 'UTILITY', name: 'Perusahaan Listrik ⚡', price: 15000, mortgage: 3750, rules: '1 Kompleks = 4x dadu | 2 Kompleks = 10x dadu' },
-      'PROP_THA': { type: 'COUNTRY', name: 'Thailand (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
-      'PROP_VNM': { type: 'COUNTRY', name: 'Vietnam (Kompleks C)', price: 16000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
-      'PROP_STN_TOKYO': { type: 'STATION', name: 'Terminal Bus Tokyo 🚌', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
-      'PROP_JPN': { type: 'COUNTRY', name: 'Jepang (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
-      'PROP_KOR': { type: 'COUNTRY', name: 'Korea Selatan (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1600, 8000, 22000, 60000, 80000, 100000], mortgage: 10000 },
-      'PROP_IND': { type: 'COUNTRY', name: 'India (Kompleks D)', price: 20000, housePrice: 10000, hotelPrice: 50000, rent: [1400, 7000, 20000, 55000, 75000, 95000], mortgage: 9000 },
-      'PROP_CHN': { type: 'COUNTRY', name: 'China (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
-      'PROP_RUS': { type: 'COUNTRY', name: 'Rusia (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
-      'PROP_ITA': { type: 'COUNTRY', name: 'Italy (Kompleks E)', price: 24000, housePrice: 15000, hotelPrice: 75000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
-      'PROP_STN_LONDON': { type: 'STATION', name: 'Stasiun London 🚆', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
-      'PROP_GBR': { type: 'COUNTRY', name: 'Inggris (Kompleks F)', price: 25000, housePrice: 15000, hotelPrice: 75000, rent: [2400, 14000, 36000, 85000, 102000, 120000], mortgage: 14000 },
-      'PROP_FRA': { type: 'COUNTRY', name: 'Perancis (Kompleks F)', price: 25000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
-      'PROP_WATER': { type: 'UTILITY', name: 'Perusahaan Air 💧', price: 15000, mortgage: 3750, rules: '1 Kompleks = 4x dadu | 2 Kompleks = 10x dadu' },
-      'PROP_NLD': { type: 'COUNTRY', name: 'Belanda (Kompleks F)', price: 28000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
-      'PROP_CAN': { type: 'COUNTRY', name: 'Kanada (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
-      'PROP_USA': { type: 'COUNTRY', name: 'Amerika (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2800, 15000, 45000, 100000, 120000, 140000], mortgage: 16000 },
-      'PROP_BRA': { type: 'COUNTRY', name: 'Brazil (Kompleks G)', price: 32000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
-      'PROP_STN_SIDNEY': { type: 'STATION', name: 'Pelabuhan Sidney 🚢', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
-      'PROP_AUS': { type: 'COUNTRY', name: 'Australia (Kompleks H)', price: 35000, housePrice: 20000, hotelPrice: 100000, rent: [2800, 15000, 45000, 100000, 120000, 140000], mortgage: 16000 },
-      'PROP_EGY': { type: 'COUNTRY', name: 'Mesir (Kompleks H)', price: 40000, housePrice: 20000, hotelPrice: 100000, rent: [5000, 20000, 60000, 140000, 170000, 200000], mortgage: 20000 }
+      'PROP_IDN': { type: 'COUNTRY', flag: '🇮🇩', name: 'Indonesia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [400, 2000, 6000, 18000, 32000, 45000], mortgage: 3000 },
+      'PROP_MYS': { type: 'COUNTRY', flag: '🇲🇾', name: 'Malaysia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [200, 1000, 3000, 9000, 16000, 25000], mortgage: 3000 },
+      'PROP_STN_CHANGI': { type: 'STATION', flag: '✈️', name: 'Bandara Changi', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
+      'PROP_SGP': { type: 'COUNTRY', flag: '🇸🇬', name: 'Singapura (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [600, 3000, 9000, 27000, 40000, 55000], mortgage: 4000 },
+      'PROP_HKG': { type: 'COUNTRY', flag: '🇭🇰', name: 'Hongkong (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
+      'PROP_TWN': { type: 'COUNTRY', flag: '🇹🇼', name: 'Taiwan (Kompleks B)', price: 12000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
+      'PROP_PHL': { type: 'COUNTRY', flag: '🇵🇭', name: 'Philipina (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1200, 6000, 8000, 50000, 70000, 90000], mortgage: 8000 },
+      'PROP_ELEC': { type: 'UTILITY', flag: '⚡', name: 'Perusahaan Listrik', price: 15000, mortgage: 3750, rules: '1 Kompleks = 4x dadu | 2 Kompleks = 10x dadu' },
+      'PROP_THA': { type: 'COUNTRY', flag: '🇹🇭', name: 'Thailand (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
+      'PROP_VNM': { type: 'COUNTRY', flag: '🇻🇳', name: 'Vietnam (Kompleks C)', price: 16000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
+      'PROP_STN_TOKYO': { type: 'STATION', flag: '🚌', name: 'Terminal Bus Tokyo', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
+      'PROP_JPN': { type: 'COUNTRY', flag: '🇯🇵', name: 'Jepang (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
+      'PROP_KOR': { type: 'COUNTRY', flag: '🇰🇷', name: 'Korea Selatan (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1600, 8000, 22000, 60000, 80000, 100000], mortgage: 10000 },
+      'PROP_IND': { type: 'COUNTRY', flag: '🇮🇳', name: 'India (Kompleks D)', price: 20000, housePrice: 10000, hotelPrice: 50000, rent: [1400, 7000, 20000, 55000, 75000, 95000], mortgage: 9000 },
+      'PROP_CHN': { type: 'COUNTRY', flag: '🇨🇳', name: 'China (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
+      'PROP_RUS': { type: 'COUNTRY', flag: '🇷🇺', name: 'Rusia (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
+      'PROP_ITA': { type: 'COUNTRY', flag: '🇮🇹', name: 'Italy (Kompleks E)', price: 24000, housePrice: 15000, hotelPrice: 75000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
+      'PROP_STN_LONDON': { type: 'STATION', flag: '🚆', name: 'Stasiun London', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
+      'PROP_GBR': { type: 'COUNTRY', flag: '🇬🇧', name: 'Inggris (Kompleks F)', price: 25000, housePrice: 15000, hotelPrice: 75000, rent: [2400, 14000, 36000, 85000, 102000, 120000], mortgage: 14000 },
+      'PROP_FRA': { type: 'COUNTRY', flag: '🇫🇷', name: 'Perancis (Kompleks F)', price: 25000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
+      'PROP_WATER': { type: 'UTILITY', flag: '💧', name: 'Perusahaan Air', price: 15000, mortgage: 3750, rules: '1 Kompleks = 4x dadu | 2 Kompleks = 10x dadu' },
+      'PROP_NLD': { type: 'COUNTRY', flag: '🇳🇱', name: 'Belanda (Kompleks F)', price: 28000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
+      'PROP_CAN': { type: 'COUNTRY', flag: '🇨🇦', name: 'Kanada (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
+      'PROP_USA': { type: 'COUNTRY', flag: '🇺🇸', name: 'Amerika (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2800, 15000, 45000, 100000, 120000, 140000], mortgage: 16000 },
+      'PROP_BRA': { type: 'COUNTRY', flag: '🇧🇷', name: 'Brazil (Kompleks G)', price: 32000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
+      'PROP_STN_SIDNEY': { type: 'STATION', flag: '🚢', name: 'Pelabuhan Sidney', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
+      'PROP_AUS': { type: 'COUNTRY', flag: '🇦🇺', name: 'Australia (Kompleks H)', price: 35000, housePrice: 20000, hotelPrice: 100000, rent: [2800, 15000, 45000, 100000, 120000, 140000], mortgage: 16000 },
+      'PROP_EGY': { type: 'COUNTRY', flag: '🇪🇬', name: 'Mesir (Kompleks H)', price: 40000, housePrice: 20000, hotelPrice: 100000, rent: [5000, 20000, 60000, 140000, 170000, 200000], mortgage: 20000 }
     };
 
     // Spider Retro Players Mapping
@@ -415,6 +467,24 @@
         toast.style.transition = 'opacity 0.2s linear';
         setTimeout(() => toast.remove(), 200);
       }, 2500);
+    }
+
+    // PIXEL POPUP MODAL CONTROL
+    function showPixelModal({ badge, icon, title, subtitle, amount, amountLabel }) {
+      document.getElementById('modal-badge').innerText = badge || 'TRANSAKSI';
+      document.getElementById('modal-icon').innerHTML = icon || '🕷️';
+      document.getElementById('modal-title').innerText = title || '';
+      document.getElementById('modal-subtitle').innerHTML = subtitle || '';
+      document.getElementById('modal-amount').innerText = typeof amount === 'number' ? `$${amount.toLocaleString()}` : amount;
+      document.getElementById('modal-amount-label').innerText = amountLabel || 'NOMINAL';
+
+      document.getElementById('pixel-modal-backdrop').classList.remove('hidden');
+      playAudio('cash');
+      triggerConfetti();
+    }
+
+    function closeModal() {
+      document.getElementById('pixel-modal-backdrop').classList.add('hidden');
     }
 
     function triggerConfetti() {
@@ -519,9 +589,16 @@
           }
           state.players[data] = { ...MASTER_PLAYERS[data], balance: INITIAL_BANK_MONEY };
           addLog(`👾 <b>${MASTER_PLAYERS[data].name}</b> JOIN ($${INITIAL_BANK_MONEY.toLocaleString()})`);
-          playAudio('cash');
-          triggerConfetti();
-          showToast(`${MASTER_PLAYERS[data].name} TERDAFTAR!`, "success");
+          
+          showPixelModal({
+            badge: "HERO REGISTERED",
+            icon: "🕷️",
+            title: MASTER_PLAYERS[data].name,
+            subtitle: "Berhasil Bergabung ke Arena Game!",
+            amount: INITIAL_BANK_MONEY,
+            amountLabel: "SALDO AWAL"
+          });
+
           renderPlayers();
           updateLobbyUI();
         } else {
@@ -538,9 +615,16 @@
         if (state.mode === 'GO') {
           state.players[data].balance += 20000;
           addLog(`<b>${state.players[data].name}</b> lewat START (+ $20.000)`);
-          playAudio('cash');
-          triggerConfetti();
-          showToast(`${state.players[data].name} START (+ $20.000)`, "success");
+          
+          showPixelModal({
+            badge: "BONUS START",
+            icon: "🏁",
+            title: "LEWAT START!",
+            subtitle: `Hero <b>${state.players[data].name}</b> mendapatkan gaji putaran!`,
+            amount: 20000,
+            amountLabel: "DAPAT GAJI"
+          });
+
           state.selectedPlayer = null;
           renderPlayers();
         } else if (state.mode === 'BANK') {
@@ -556,8 +640,15 @@
           if (action === 'RECEIVE') {
             state.players[data].balance += amount;
             addLog(`🎁 <b>${state.players[data].name}</b> +<b>$${amount.toLocaleString()}</b>`);
-            playAudio('cash');
-            showToast(`${state.players[data].name} + $${amount.toLocaleString()}`, "success");
+            
+            showPixelModal({
+              badge: "DAPAT UANG",
+              icon: "🎁",
+              title: "DANA BANK",
+              subtitle: `Hero <b>${state.players[data].name}</b> menerima dana dari Bank!`,
+              amount: amount,
+              amountLabel: "TOTAL DITERIMA"
+            });
           } else if (action === 'PAY') {
             if (state.players[data].balance < amount) {
               playAudio('error');
@@ -566,7 +657,15 @@
             }
             state.players[data].balance -= amount;
             addLog(`💸 <b>${state.players[data].name}</b> -<b>$${amount.toLocaleString()}</b>`);
-            showToast(`${state.players[data].name} - $${amount.toLocaleString()}`, "info");
+            
+            showPixelModal({
+              badge: "BAYAR DENDA",
+              icon: "💸",
+              title: "POTONGAN BANK",
+              subtitle: `Hero <b>${state.players[data].name}</b> membayar kewajiban ke Bank!`,
+              amount: amount,
+              amountLabel: "TOTAL DIBAYAR"
+            });
           }
 
           state.selectedPlayer = null;
@@ -593,8 +692,16 @@
             state.players[state.selectedPlayer].balance -= prop.price;
             state.ownership[data] = { owner: state.selectedPlayer, level: 0, isMortgaged: false };
             addLog(`<b>${state.players[state.selectedPlayer].name}</b> Beli <b>${prop.name}</b> (-$${prop.price.toLocaleString()})`);
-            playAudio('cash'); triggerConfetti();
-            showToast(`${state.players[state.selectedPlayer].name} Beli ${prop.name}!`, "success");
+            
+            showPixelModal({
+              badge: "PEMBELIAN ASET",
+              icon: prop.flag,
+              title: prop.name,
+              subtitle: `Pemilik Baru: <b>${state.players[state.selectedPlayer].name}</b>`,
+              amount: prop.price,
+              amountLabel: "HARGA BELI"
+            });
+
           } else if (propState.owner === state.selectedPlayer) {
             if (propState.isMortgaged) {
               playAudio('error'); showToast("Aset Digadaikan! Tebus dulu.", "warning"); return;
@@ -615,8 +722,16 @@
             propState.level += 1;
             const label = propState.level === 5 ? "Hotel 🏨" : `Rumah ${propState.level} 🏠`;
             addLog(`<b>${state.players[state.selectedPlayer].name}</b> Upgrade ${label} di <b>${prop.name}</b>`);
-            playAudio('cash'); triggerConfetti();
-            showToast(`Upgrade ${label} di ${prop.name}!`, "success");
+            
+            showPixelModal({
+              badge: "UPGRADE ASET",
+              icon: propState.level === 5 ? "🏨" : "🏠",
+              title: `${prop.flag} ${prop.name}`,
+              subtitle: `<b>${state.players[state.selectedPlayer].name}</b> berhasil bangun ${label}!`,
+              amount: upgradeCost,
+              amountLabel: "BIAYA BUILD"
+            });
+
           } else {
             playAudio('error'); showToast(`Aset Milik ${state.players[propState.owner].name}!`, "error");
           }
@@ -662,8 +777,15 @@
           state.players[ownerId].balance += calculatedRent;
 
           addLog(`<b>${state.players[visitorId].name}</b> Bayar Sewa ke <b>${state.players[ownerId].name}</b> ($${calculatedRent.toLocaleString()})`);
-          playAudio('cash');
-          showToast(`Sewa $${calculatedRent.toLocaleString()} -> ${state.players[ownerId].name}`, "success");
+          
+          showPixelModal({
+            badge: "BAYAR SEWA ASET",
+            icon: prop.flag,
+            title: prop.name,
+            subtitle: `<b>${state.players[visitorId].name}</b> ➡️ <b>${state.players[ownerId].name}</b>`,
+            amount: calculatedRent,
+            amountLabel: "BIAYA SEWA"
+          });
 
           state.selectedPlayer = null;
           renderPlayers();
@@ -679,8 +801,16 @@
             state.players[state.selectedPlayer].balance += mortgageValue;
             propState.isMortgaged = true;
             addLog(`🏷️ <b>${state.players[state.selectedPlayer].name}</b> Gadai <b>${prop.name}</b> (+ $${mortgageValue.toLocaleString()})`);
-            playAudio('cash');
-            showToast(`${prop.name} Digadai (+ $${mortgageValue.toLocaleString()})`, "warning");
+            
+            showPixelModal({
+              badge: "GADAI ASET",
+              icon: "🏷️",
+              title: `${prop.flag} ${prop.name}`,
+              subtitle: `<b>${state.players[state.selectedPlayer].name}</b> menggadaikan sertifikat aset`,
+              amount: mortgageValue,
+              amountLabel: "PINJAMAN DITERIMA"
+            });
+
           } else {
             const unmortgageCost = Math.round(prop.mortgage * 1.1);
             if (state.players[state.selectedPlayer].balance < unmortgageCost) {
@@ -690,8 +820,15 @@
             state.players[state.selectedPlayer].balance -= unmortgageCost;
             propState.isMortgaged = false;
             addLog(`🔓 <b>${state.players[state.selectedPlayer].name}</b> Tebus <b>${prop.name}</b> (- $${unmortgageCost.toLocaleString()})`);
-            playAudio('cash');
-            showToast(`${prop.name} Ditebus!`, "success");
+            
+            showPixelModal({
+              badge: "TEBUS ASET",
+              icon: "🔓",
+              title: `${prop.flag} ${prop.name}`,
+              subtitle: `<b>${state.players[state.selectedPlayer].name}</b> menebus kembali aset`,
+              amount: unmortgageCost,
+              amountLabel: "BIAYA TEBUS (+10%)"
+            });
           }
 
           state.selectedPlayer = null;
@@ -719,7 +856,15 @@
 
         addLog(`💥 <b>${player.name}</b> BANGKRUT!`);
         playAudio('error');
-        showToast(`${player.name} ELIMINATED!`, "error");
+        
+        showPixelModal({
+          badge: "PLAYER ELIMINATED",
+          icon: "💀",
+          title: player.name,
+          subtitle: "Telah dinyatakan **BANGKRUT** dan keluar dari permainan!",
+          amount: "OUT",
+          amountLabel: "STATUS GAME"
+        });
 
         delete state.players[state.selectedPlayer];
         state.selectedPlayer = null;
@@ -757,8 +902,16 @@
       document.getElementById('panel-gameplay').classList.remove('hidden');
 
       addLog("🎲 <b>GAME STARTED!</b>");
-      triggerConfetti();
-      showToast("GAME STARTED! Selamat Bermain 🎲", "success");
+      
+      showPixelModal({
+        badge: "GAME READY",
+        icon: "🎲",
+        title: "GAME DIMULAI!",
+        subtitle: "Selamat bertanding para Hero Spider-Man!",
+        amount: "READY",
+        amountLabel: "STATUS ARENA"
+      });
+
       updateStatusUI();
     }
 
