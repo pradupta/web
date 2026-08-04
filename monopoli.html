@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Monopoly Banker - Board Edition</title>
+  <title>Monopoly Banker - Cute Edition 💖</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Library QR Scanner -->
@@ -25,14 +25,15 @@
       padding: 0;
       overflow: hidden;
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #fef3c7 100%);
+      background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 40%, #fbcfe8 70%, #f472b6 100%);
     }
 
     .glass-card {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1.5px solid rgba(255, 182, 193, 0.6);
+      box-shadow: 0 8px 20px -6px rgba(244, 114, 182, 0.25);
     }
 
     #reader {
@@ -45,11 +46,11 @@
       width: 100% !important;
       height: 100% !important;
       object-fit: cover !important;
-      border-radius: 0.75rem !important;
+      border-radius: 1rem !important;
     }
 
-    .custom-scroll::-webkit-scrollbar { width: 3px; }
-    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .custom-scroll::-webkit-scrollbar { width: 4px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #f472b6; border-radius: 10px; }
 
     @keyframes slideDown {
       from { transform: translate(-50%, -100%); opacity: 0; }
@@ -58,27 +59,91 @@
     .animate-toast {
       animation: slideDown 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
+
+    @keyframes popIn {
+      0% { transform: scale(0.6) rotate(-5deg); opacity: 0; }
+      70% { transform: scale(1.05) rotate(2deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .animate-pop {
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes floatCute {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+    }
+    .animate-float {
+      animation: floatCute 2.5s ease-in-out infinite;
+    }
   </style>
 </head>
-<body class="flex flex-col text-slate-800 relative">
+<body class="flex flex-col text-slate-800 relative select-none">
 
   <!-- FLOATING TOAST NOTIFICATION CONTAINER -->
   <div id="toast-container" class="fixed top-3 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-xs pointer-events-none flex flex-col gap-2"></div>
 
-  <!-- HEADER -->
+  <!-- POP-UP CUTE ASSET PURCHASE MODAL -->
+  <div id="buy-modal" class="fixed inset-0 z-[120] bg-pink-950/40 backdrop-blur-md hidden flex items-center justify-center p-4 transition-all duration-300">
+    <div id="buy-modal-card" class="bg-white/95 rounded-3xl border-4 border-pink-300 p-5 max-w-xs w-full shadow-2xl text-center flex flex-col items-center gap-3 relative overflow-hidden">
+      
+      <!-- Hiasan Background Cute -->
+      <div class="absolute -top-6 -right-6 w-20 h-20 bg-pink-200/50 rounded-full blur-lg pointer-events-none"></div>
+      <div class="absolute -bottom-6 -left-6 w-20 h-20 bg-rose-200/50 rounded-full blur-lg pointer-events-none"></div>
+
+      <!-- Icon Utama Pop-up -->
+      <div id="buy-modal-icon" class="w-20 h-20 rounded-3xl bg-gradient-to-tr from-pink-400 to-rose-300 border-2 border-white flex items-center justify-center text-4xl shadow-lg shadow-pink-200 text-white animate-float">
+        🏰
+      </div>
+
+      <div>
+        <span id="buy-modal-badge" class="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest bg-pink-100 text-pink-600 border border-pink-200 inline-block shadow-sm">
+          ✨ Aset Baru Dimiliki! ✨
+        </span>
+        <h3 id="buy-modal-title" class="text-xl font-black text-pink-600 tracking-tight mt-1">
+          BERHASIL MEMBELI!
+        </h3>
+      </div>
+
+      <!-- Detail Aset -->
+      <div class="bg-pink-50/90 border border-pink-200/80 rounded-2xl p-3 w-full text-center space-y-1.5 shadow-inner">
+        <p id="buy-modal-prop" class="font-black text-slate-800 text-base leading-tight">Indonesia 🇮🇩</p>
+        <p id="buy-modal-owner" class="text-xs font-bold text-pink-500 bg-white/80 py-1 px-3 rounded-full inline-block border border-pink-100 shadow-sm">
+          Pemilik: Pemain 1
+        </p>
+        <div class="flex justify-between items-center text-[11px] font-bold text-slate-600 pt-1.5 border-t border-pink-200/60 mt-1">
+          <span>Harga / Biaya:</span>
+          <span id="buy-modal-price" class="text-rose-500 font-extrabold text-xs">$6.000</span>
+        </div>
+        <div class="flex justify-between items-center text-[11px] font-bold text-slate-600">
+          <span>Tingkat Properti:</span>
+          <span id="buy-modal-level" class="text-pink-600 font-extrabold">Tingkat 0 (Tanah)</span>
+        </div>
+      </div>
+
+      <!-- Tombol Tutup Pop-Up -->
+      <button onclick="closeBuyModal()" class="w-full py-2.5 rounded-2xl bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500 hover:from-pink-500 hover:to-rose-600 text-white font-extrabold text-xs shadow-lg shadow-pink-300 active:scale-95 transition-all flex items-center justify-center gap-1.5">
+        <span>YAY! LANJUT MAIN</span> <i class="fa-solid fa-heart text-xs"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- HEADER CUTE PINK -->
   <header class="sticky top-0 z-50 glass-card shadow-sm px-4 py-2.5 flex justify-between items-center flex-shrink-0">
     <div class="flex items-center gap-2.5">
-      <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-white shadow-md shadow-emerald-200">
-        <i class="fa-solid fa-vault text-sm"></i>
+      <div class="w-8 h-8 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center text-white shadow-md shadow-pink-200">
+        <i class="fa-solid fa-heart text-sm"></i>
       </div>
       <div>
-        <h1 class="font-extrabold text-sm tracking-tight text-slate-800 leading-none">MONOPOLY <span class="text-emerald-600">BANKER</span></h1>
-        <p class="text-[9px] font-medium text-slate-500 uppercase tracking-wider mt-0.5">Digital Cashier System</p>
+        <h1 class="font-extrabold text-sm tracking-tight text-pink-600 leading-none flex items-center gap-1">
+          MONOPOLY <span class="text-rose-500">CUTE BANKER</span> 💕
+        </h1>
+        <p class="text-[9px] font-bold text-pink-400 uppercase tracking-wider mt-0.5">Digital Cashier System</p>
       </div>
     </div>
     <div class="flex items-center gap-2">
-      <span id="game-status-badge" class="text-[9px] font-bold bg-slate-100 text-slate-500 border border-slate-200 px-2 py-0.5 rounded-full">Status: Lobi</span>
-      <button onclick="resetGame()" class="text-[11px] font-semibold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 px-3 py-1.5 rounded-xl transition-all shadow-sm active:scale-95 flex items-center gap-1">
+      <span id="game-status-badge" class="text-[9px] font-bold bg-pink-100 text-pink-600 border border-pink-200 px-2 py-0.5 rounded-full">Status: Lobi 🌸</span>
+      <button onclick="resetGame()" class="text-[11px] font-bold bg-rose-100 text-rose-600 border border-rose-200 hover:bg-rose-200 px-3 py-1.5 rounded-2xl transition-all shadow-sm active:scale-95 flex items-center gap-1">
         <i class="fa-solid fa-rotate-right"></i> Reset
       </button>
     </div>
@@ -88,13 +153,13 @@
   <main class="max-w-md w-full mx-auto p-2.5 flex-1 min-h-0 flex flex-col gap-2 overflow-hidden">
 
     <!-- DASHBOARD PEMAIN -->
-    <section class="glass-card rounded-2xl p-2.5 shadow-sm flex-shrink-0">
+    <section class="glass-card rounded-3xl p-2.5 shadow-sm flex-shrink-0">
       <div class="flex justify-between items-center mb-1.5">
         <div class="flex items-center gap-1.5">
-          <i class="fa-solid fa-users text-emerald-600 text-xs"></i>
-          <h2 class="text-[10px] font-bold uppercase tracking-wider text-slate-600">Klasemen Pemain</h2>
+          <i class="fa-solid fa-users text-pink-500 text-xs"></i>
+          <h2 class="text-[10px] font-extrabold uppercase tracking-wider text-pink-600">Klasemen Pemain ✨</h2>
         </div>
-        <span id="player-count-badge" class="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">
+        <span id="player-count-badge" class="text-[10px] font-bold bg-pink-100 text-pink-600 border border-pink-200 px-2 py-0.5 rounded-full">
           0 Pemain
         </span>
       </div>
@@ -105,40 +170,40 @@
     </section>
 
     <!-- AREA SCANNER (QR & NFC) -->
-    <section class="glass-card rounded-2xl p-2.5 shadow-sm flex-1 min-h-0 flex flex-col gap-2 overflow-hidden">
+    <section class="glass-card rounded-3xl p-2.5 shadow-sm flex-1 min-h-0 flex flex-col gap-2 overflow-hidden">
       <div class="flex justify-between items-center flex-shrink-0">
         <div class="flex items-center gap-2">
-          <h2 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-            <i class="fa-solid fa-qrcode text-emerald-600"></i> Scanner
+          <h2 class="text-xs font-bold text-pink-600 flex items-center gap-1.5">
+            <i class="fa-solid fa-qrcode text-rose-500"></i> Scanner Cute
           </h2>
           <!-- BADGE STATUS NFC -->
-          <span id="nfc-status-badge" class="text-[9px] font-bold bg-slate-100 text-slate-500 border border-slate-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+          <span id="nfc-status-badge" class="text-[9px] font-bold bg-pink-50 text-pink-500 border border-pink-200 px-2 py-0.5 rounded-full flex items-center gap-1">
             <i class="fa-solid fa-wifi text-[8px]"></i> NFC: Off
           </span>
         </div>
-        <button id="btn-switch-camera" onclick="switchCamera()" class="hidden text-[10px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-lg transition-all active:scale-95 flex items-center gap-1">
-          <i class="fa-solid fa-camera-rotate text-emerald-600"></i> Kamera
+        <button id="btn-switch-camera" onclick="switchCamera()" class="hidden text-[10px] font-bold bg-pink-100 hover:bg-pink-200 text-pink-700 border border-pink-200 px-2.5 py-1 rounded-xl transition-all active:scale-95 flex items-center gap-1">
+          <i class="fa-solid fa-camera-rotate text-pink-500"></i> Kamera
         </button>
       </div>
 
       <!-- Kamera Scanner Frame -->
-      <div class="relative rounded-xl overflow-hidden bg-slate-900 border border-slate-200 flex-1 min-h-0 w-full flex items-center justify-center">
+      <div class="relative rounded-2xl overflow-hidden bg-slate-900 border-2 border-pink-200 flex-1 min-h-0 w-full flex items-center justify-center shadow-inner">
         <div id="reader" class="w-full h-full"></div>
       </div>
       
-      <button id="btn-start-camera" onclick="startSensors()" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-2 shadow-md shadow-emerald-200 transition-all active:scale-98 flex-shrink-0">
-        <i class="fa-solid fa-wifi"></i> Aktifkan NFC & Kamera
+      <button id="btn-start-camera" onclick="startSensors()" class="w-full bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500 hover:from-pink-500 hover:to-rose-500 text-white font-extrabold py-2 rounded-2xl text-xs flex items-center justify-center gap-2 shadow-md shadow-pink-200 transition-all active:scale-98 flex-shrink-0">
+        <i class="fa-solid fa-wifi"></i> Aktifkan NFC & Kamera 💖
       </button>
 
       <!-- FASE 1: PANEL REGISTRASI -->
       <div id="panel-registration" class="space-y-1.5 flex-shrink-0">
-        <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl p-2 text-center">
-          <p class="text-[10px] font-medium text-slate-500">Instruksi Registrasi:</p>
-          <p id="reg-status-text" class="text-[11px] font-semibold text-emerald-800">
-            Tap Kartu NFC Pemain (atau Scan QR) untuk mendaftar & klaim $150.000.
+        <div class="bg-pink-50/80 border border-pink-200/80 rounded-2xl p-2 text-center shadow-sm">
+          <p class="text-[10px] font-bold text-pink-400">Instruksi Registrasi:</p>
+          <p id="reg-status-text" class="text-[11px] font-bold text-pink-700">
+            Tap Kartu NFC Pemain (atau Scan QR) untuk mendaftar & klaim $150.000 🎀
           </p>
         </div>
-        <button id="btn-start-game" onclick="finalizeRegistration()" disabled class="w-full bg-slate-200 text-slate-400 font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-not-allowed">
+        <button id="btn-start-game" onclick="finalizeRegistration()" disabled class="w-full bg-slate-200 text-slate-400 font-bold py-2 rounded-2xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-not-allowed">
           <i class="fa-solid fa-play"></i> Mulai Game (Min 2 Pemain)
         </button>
       </div>
@@ -146,39 +211,39 @@
       <!-- FASE 2: PANEL GAMEPLAY -->
       <div id="panel-gameplay" class="hidden space-y-1.5 flex-shrink-0">
         <div class="grid grid-cols-5 gap-1">
-          <button onclick="setTransactionMode('BUY')" id="btn-BUY" class="mode-btn bg-emerald-600 text-white py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all">
+          <button onclick="setTransactionMode('BUY')" id="btn-BUY" class="mode-btn bg-pink-500 text-white py-1.5 px-0.5 rounded-xl font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all">
             <i class="fa-solid fa-cart-plus text-xs"></i> Beli/Up
           </button>
-          <button onclick="setTransactionMode('RENT')" id="btn-RENT" class="mode-btn bg-white text-slate-600 border border-slate-200 py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 transition-all">
+          <button onclick="setTransactionMode('RENT')" id="btn-RENT" class="mode-btn bg-white text-pink-600 border border-pink-200 py-1.5 px-0.5 rounded-xl font-bold text-[9px] flex flex-col items-center gap-0.5 transition-all">
             <i class="fa-solid fa-hand-holding-dollar text-xs"></i> Sewa
           </button>
-          <button onclick="setTransactionMode('MORTGAGE')" id="btn-MORTGAGE" class="mode-btn bg-white text-slate-600 border border-slate-200 py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 transition-all">
+          <button onclick="setTransactionMode('MORTGAGE')" id="btn-MORTGAGE" class="mode-btn bg-white text-pink-600 border border-pink-200 py-1.5 px-0.5 rounded-xl font-bold text-[9px] flex flex-col items-center gap-0.5 transition-all">
             <i class="fa-solid fa-building-circle-arrow-right text-xs"></i> Gadai
           </button>
-          <button onclick="setTransactionMode('GO')" id="btn-GO" class="mode-btn bg-white text-slate-600 border border-slate-200 py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 transition-all">
+          <button onclick="setTransactionMode('GO')" id="btn-GO" class="mode-btn bg-white text-pink-600 border border-pink-200 py-1.5 px-0.5 rounded-xl font-bold text-[9px] flex flex-col items-center gap-0.5 transition-all">
             <i class="fa-solid fa-flag-checkered text-xs"></i> START
           </button>
-          <button onclick="setTransactionMode('BANK')" id="btn-BANK" class="mode-btn bg-white text-slate-600 border border-slate-200 py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 transition-all">
+          <button onclick="setTransactionMode('BANK')" id="btn-BANK" class="mode-btn bg-white text-pink-600 border border-pink-200 py-1.5 px-0.5 rounded-xl font-bold text-[9px] flex flex-col items-center gap-0.5 transition-all">
             <i class="fa-solid fa-box-open text-xs"></i> Bank
           </button>
         </div>
 
-        <div id="bank-input-container" class="hidden bg-purple-50/80 border border-purple-100 p-1.5 rounded-xl space-y-1">
+        <div id="bank-input-container" class="hidden bg-pink-50/80 border border-pink-200 p-1.5 rounded-2xl space-y-1">
           <div class="flex items-center justify-between gap-1.5">
-            <select id="bank-action-type" class="bg-white border border-slate-200 text-[10px] font-bold text-slate-700 rounded-lg px-2 py-1 outline-none">
+            <select id="bank-action-type" class="bg-white border border-pink-200 text-[10px] font-bold text-pink-700 rounded-xl px-2 py-1 outline-none">
               <option value="RECEIVE">Dapat Uang (+)</option>
               <option value="PAY">Bayar Denda (-)</option>
             </select>
-            <div class="flex items-center gap-1 bg-white border border-slate-200 rounded-lg px-2 py-1">
-              <span class="text-[10px] font-bold text-slate-400">$</span>
-              <input type="number" id="bank-amount" placeholder="Nominal" value="10000" step="1000" class="w-16 text-[10px] font-bold text-slate-800 outline-none">
+            <div class="flex items-center gap-1 bg-white border border-pink-200 rounded-xl px-2 py-1">
+              <span class="text-[10px] font-bold text-pink-400">$</span>
+              <input type="number" id="bank-amount" placeholder="Nominal" value="10000" step="1000" class="w-16 text-[10px] font-bold text-pink-700 outline-none">
             </div>
           </div>
         </div>
 
-        <div class="bg-white/90 border border-slate-200/80 rounded-xl p-1.5 text-center shadow-sm flex items-center justify-between">
-          <p id="status-text" class="text-[10px] font-bold text-emerald-700 leading-tight flex-1">[Mode BUY] Tap Kartu / Scan QR Pemain.</p>
-          <button onclick="declareBankruptcy()" class="ml-2 text-[9px] font-bold bg-rose-100 text-rose-700 hover:bg-rose-200 px-2 py-1 rounded-lg border border-rose-200 flex-shrink-0 transition-all">
+        <div class="bg-white/90 border border-pink-200/90 rounded-2xl p-1.5 text-center shadow-sm flex items-center justify-between">
+          <p id="status-text" class="text-[10px] font-bold text-pink-600 leading-tight flex-1">[Mode BUY] Tap Kartu / Scan QR Pemain.</p>
+          <button onclick="declareBankruptcy()" class="ml-2 text-[9px] font-bold bg-rose-100 text-rose-600 hover:bg-rose-200 px-2 py-1 rounded-xl border border-rose-200 flex-shrink-0 transition-all">
             💥 Bangkrut
           </button>
         </div>
@@ -187,9 +252,9 @@
     </section>
 
     <!-- RIWAYAT TRANSAKSI -->
-    <section class="glass-card rounded-2xl p-2.5 shadow-sm flex-shrink-0 flex flex-col max-h-[100px] overflow-hidden">
-      <h2 class="text-[10px] font-bold text-slate-600 uppercase tracking-wider mb-1 flex items-center gap-1.5 flex-shrink-0">
-        <i class="fa-solid fa-clock-rotate-left text-emerald-600"></i> Riwayat Transaksi
+    <section class="glass-card rounded-3xl p-2.5 shadow-sm flex-shrink-0 flex flex-col max-h-[100px] overflow-hidden">
+      <h2 class="text-[10px] font-extrabold text-pink-600 uppercase tracking-wider mb-1 flex items-center gap-1.5 flex-shrink-0">
+        <i class="fa-solid fa-clock-rotate-left text-rose-500"></i> Riwayat Transaksi 💕
       </h2>
       <div id="log-list" class="space-y-1 overflow-y-auto custom-scroll text-[11px] pr-1 flex-1">
         <!-- Rendered by JS -->
@@ -201,48 +266,48 @@
   <script>
     const INITIAL_BANK_MONEY = 150000;
 
-    // OPTIONAL: MAPPING UID CHIP NFC KE ID PEMAIN (Jika chip NFC tidak ditulis teks P1-P4)
+    // MAPPING UID CHIP NFC KE ID PEMAIN
     const NFC_UID_MAP = {
       // '04:A1:B2:C3:D4:E5:F6': 'P1',
       // '04:12:34:56:78:90:AB': 'P2',
     };
 
     const PROPERTIES = {
-      'PROP_IDN': { type: 'COUNTRY', name: 'Indonesia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [400, 2000, 6000, 18000, 32000, 45000], mortgage: 3000 },
-      'PROP_MYS': { type: 'COUNTRY', name: 'Malaysia (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [200, 1000, 3000, 9000, 16000, 25000], mortgage: 3000 },
+      'PROP_IDN': { type: 'COUNTRY', name: 'Indonesia 🇮🇩 (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [400, 2000, 6000, 18000, 32000, 45000], mortgage: 3000 },
+      'PROP_MYS': { type: 'COUNTRY', name: 'Malaysia 🇲🇾 (Kompleks A)', price: 6000, housePrice: 5000, hotelPrice: 25000, rent: [200, 1000, 3000, 9000, 16000, 25000], mortgage: 3000 },
       'PROP_STN_CHANGI': { type: 'STATION', name: 'Bandara Changi ✈️', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
-      'PROP_SGP': { type: 'COUNTRY', name: 'Singapura (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [600, 3000, 9000, 27000, 40000, 55000], mortgage: 4000 },
-      'PROP_HKG': { type: 'COUNTRY', name: 'Hongkong (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
-      'PROP_TWN': { type: 'COUNTRY', name: 'Taiwan (Kompleks B)', price: 12000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
-      'PROP_PHL': { type: 'COUNTRY', name: 'Philipina (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1200, 6000, 8000, 50000, 70000, 90000], mortgage: 8000 },
+      'PROP_SGP': { type: 'COUNTRY', name: 'Singapura 🇸🇬 (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [600, 3000, 9000, 27000, 40000, 55000], mortgage: 4000 },
+      'PROP_HKG': { type: 'COUNTRY', name: 'Hongkong 🇭🇰 (Kompleks B)', price: 10000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
+      'PROP_TWN': { type: 'COUNTRY', name: 'Taiwan 🇹🇼 (Kompleks B)', price: 12000, housePrice: 5000, hotelPrice: 25000, rent: [800, 4000, 12000, 36000, 48000, 64000], mortgage: 5000 },
+      'PROP_PHL': { type: 'COUNTRY', name: 'Philipina 🇵🇭 (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1200, 6000, 8000, 50000, 70000, 90000], mortgage: 8000 },
       'PROP_ELEC': { type: 'UTILITY', name: 'Perusahaan Listrik ⚡', price: 15000, mortgage: 3750, rules: '1 Kompleks = 4x dadu | 2 Kompleks = 10x dadu' },
-      'PROP_THA': { type: 'COUNTRY', name: 'Thailand (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
-      'PROP_VNM': { type: 'COUNTRY', name: 'Vietnam (Kompleks C)', price: 16000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
+      'PROP_THA': { type: 'COUNTRY', name: 'Thailand 🇹🇭 (Kompleks C)', price: 14000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
+      'PROP_VNM': { type: 'COUNTRY', name: 'Vietnam 🇻🇳 (Kompleks C)', price: 16000, housePrice: 10000, hotelPrice: 50000, rent: [1000, 5000, 15000, 45000, 60000, 80000], mortgage: 7000 },
       'PROP_STN_TOKYO': { type: 'STATION', name: 'Terminal Bus Tokyo 🚌', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
-      'PROP_JPN': { type: 'COUNTRY', name: 'Jepang (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
-      'PROP_KOR': { type: 'COUNTRY', name: 'Korea Selatan (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1600, 8000, 22000, 60000, 80000, 100000], mortgage: 10000 },
-      'PROP_IND': { type: 'COUNTRY', name: 'India (Kompleks D)', price: 20000, housePrice: 10000, hotelPrice: 50000, rent: [1400, 7000, 20000, 55000, 75000, 95000], mortgage: 9000 },
-      'PROP_CHN': { type: 'COUNTRY', name: 'China (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
-      'PROP_RUS': { type: 'COUNTRY', name: 'Rusia (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
-      'PROP_ITA': { type: 'COUNTRY', name: 'Italy (Kompleks E)', price: 24000, housePrice: 15000, hotelPrice: 75000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
+      'PROP_JPN': { type: 'COUNTRY', name: 'Jepang 🇯🇵 (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
+      'PROP_KOR': { type: 'COUNTRY', name: 'Korea Selatan 🇰🇷 (Kompleks D)', price: 18000, housePrice: 10000, hotelPrice: 50000, rent: [1600, 8000, 22000, 60000, 80000, 100000], mortgage: 10000 },
+      'PROP_IND': { type: 'COUNTRY', name: 'India 🇮🇳 (Kompleks D)', price: 20000, housePrice: 10000, hotelPrice: 50000, rent: [1400, 7000, 20000, 55000, 75000, 95000], mortgage: 9000 },
+      'PROP_CHN': { type: 'COUNTRY', name: 'China 🇨🇳 (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
+      'PROP_RUS': { type: 'COUNTRY', name: 'Rusia 🇷🇺 (Kompleks E)', price: 22000, housePrice: 15000, hotelPrice: 75000, rent: [2000, 10000, 30000, 75000, 92500, 110000], mortgage: 12000 },
+      'PROP_ITA': { type: 'COUNTRY', name: 'Italy 🇮🇹 (Kompleks E)', price: 24000, housePrice: 15000, hotelPrice: 75000, rent: [1800, 9000, 25000, 70000, 87500, 105000], mortgage: 11000 },
       'PROP_STN_LONDON': { type: 'STATION', name: 'Stasiun London 🚆', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
-      'PROP_GBR': { type: 'COUNTRY', name: 'Inggris (Kompleks F)', price: 25000, housePrice: 15000, hotelPrice: 75000, rent: [2400, 14000, 36000, 85000, 102000, 120000], mortgage: 14000 },
-      'PROP_FRA': { type: 'COUNTRY', name: 'Perancis (Kompleks F)', price: 25000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
+      'PROP_GBR': { type: 'COUNTRY', name: 'Inggris 🇬🇧 (Kompleks F)', price: 25000, housePrice: 15000, hotelPrice: 75000, rent: [2400, 14000, 36000, 85000, 102000, 120000], mortgage: 14000 },
+      'PROP_FRA': { type: 'COUNTRY', name: 'Perancis 🇫🇷 (Kompleks F)', price: 25000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
       'PROP_WATER': { type: 'UTILITY', name: 'Perusahaan Air 💧', price: 15000, mortgage: 3750, rules: '1 Kompleks = 4x dadu | 2 Kompleks = 10x dadu' },
-      'PROP_NLD': { type: 'COUNTRY', name: 'Belanda (Kompleks F)', price: 28000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
-      'PROP_CAN': { type: 'COUNTRY', name: 'Kanada (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
-      'PROP_USA': { type: 'COUNTRY', name: 'Amerika (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2800, 15000, 45000, 100000, 120000, 140000], mortgage: 16000 },
-      'PROP_BRA': { type: 'COUNTRY', name: 'Brazil (Kompleks G)', price: 32000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
+      'PROP_NLD': { type: 'COUNTRY', name: 'Belanda 🇳🇱 (Kompleks F)', price: 28000, housePrice: 15000, hotelPrice: 75000, rent: [2200, 11000, 33000, 80000, 97500, 115000], mortgage: 13000 },
+      'PROP_CAN': { type: 'COUNTRY', name: 'Kanada 🇨🇦 (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
+      'PROP_USA': { type: 'COUNTRY', name: 'Amerika 🇺🇸 (Kompleks G)', price: 30000, housePrice: 20000, hotelPrice: 100000, rent: [2800, 15000, 45000, 100000, 120000, 140000], mortgage: 16000 },
+      'PROP_BRA': { type: 'COUNTRY', name: 'Brazil 🇧🇷 (Kompleks G)', price: 32000, housePrice: 20000, hotelPrice: 100000, rent: [2600, 13000, 39000, 90000, 110000, 127500], mortgage: 15000 },
       'PROP_STN_SIDNEY': { type: 'STATION', name: 'Pelabuhan Sidney 🚢', price: 20000, rentTable: [2500, 5000, 10000, 20000], mortgage: 10000 },
-      'PROP_AUS': { type: 'COUNTRY', name: 'Australia (Kompleks H)', price: 35000, housePrice: 20000, hotelPrice: 100000, rent: [2800, 15000, 45000, 100000, 120000, 140000], mortgage: 16000 },
-      'PROP_EGY': { type: 'COUNTRY', name: 'Mesir (Kompleks H)', price: 40000, housePrice: 20000, hotelPrice: 100000, rent: [5000, 20000, 60000, 140000, 170000, 200000], mortgage: 20000 }
+      'PROP_AUS': { type: 'COUNTRY', name: 'Australia 🇦🇺 (Kompleks H)', price: 35000, housePrice: 20000, hotelPrice: 100000, rent: [2800, 15000, 45000, 100000, 120000, 140000], mortgage: 16000 },
+      'PROP_EGY': { type: 'COUNTRY', name: 'Mesir 🇪🇬 (Kompleks H)', price: 40000, housePrice: 20000, hotelPrice: 100000, rent: [5000, 20000, 60000, 140000, 170000, 200000], mortgage: 20000 }
     };
 
     const MASTER_PLAYERS = {
-      'HAFIDZ SAZILI': { name: 'Pemain 1', badge: 'bg-blue-500', bg: 'from-blue-50 to-indigo-50/50', border: 'border-blue-200' },
-      '35795167': { name: 'Pemain 2', badge: 'bg-rose-500', bg: 'from-rose-50 to-pink-50/50', border: 'border-rose-200' },
-      '01817615': { name: 'Pemain 3', badge: 'bg-emerald-500', bg: 'from-emerald-50 to-teal-50/50', border: 'border-emerald-200' },
-      'HTTP://KIDCITY.CO.ID/Q.PHP?ID=145RLK2995': { name: 'Pemain 4', badge: 'bg-amber-500', bg: 'from-amber-50 to-orange-50/50', border: 'border-amber-200' }
+      'HAFIDZ SAZILI': { name: 'Pemain 1', badge: 'bg-pink-500', bg: 'from-pink-50 to-rose-50/50', border: 'border-pink-200' },
+      '35795167': { name: 'Pemain 2', badge: 'bg-fuchsia-500', bg: 'from-fuchsia-50 to-pink-50/50', border: 'border-fuchsia-200' },
+      '01817615': { name: 'Pemain 3', badge: 'bg-rose-500', bg: 'from-rose-50 to-pink-50/50', border: 'border-rose-200' },
+      'HTTP://KIDCITY.CO.ID/Q.PHP?ID=145RLK2995': { name: 'Pemain 4', badge: 'bg-purple-500', bg: 'from-purple-50 to-pink-50/50', border: 'border-purple-200' }
     };
 
     let state = {
@@ -289,23 +354,44 @@
       } catch (e) { console.log(e); }
     }
 
+    // MUSIK JINGLE MERIAH DENGAN SINTESIS AUDIOCONTEXT
+    function playCuteFestiveJingle() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // Melodi ceria C Major Arpeggio Fanfare
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98]; // C5, E5, G5, C6, E6, G6
+        notes.forEach((freq, index) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.07);
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime + index * 0.07);
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + index * 0.07 + 0.3);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(audioCtx.currentTime + index * 0.07);
+          osc.stop(audioCtx.currentTime + index * 0.07 + 0.3);
+        });
+      } catch (e) { console.log(e); }
+    }
+
     function showToast(message, type = 'info') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
       
       const colors = {
         info: 'bg-slate-800/90 text-white border-slate-700',
-        success: 'bg-emerald-600/95 text-white border-emerald-400',
+        success: 'bg-pink-500/95 text-white border-pink-300',
         warning: 'bg-amber-500/95 text-white border-amber-300',
         error: 'bg-rose-600/95 text-white border-rose-400'
       };
 
       const icons = {
-        info: 'fa-circle-info', success: 'fa-circle-check',
+        info: 'fa-circle-info', success: 'fa-heart',
         warning: 'fa-triangle-exclamation', error: 'fa-circle-xmark'
       };
 
-      toast.className = `animate-toast glass-card ${colors[type]} p-2.5 rounded-xl shadow-lg border text-xs font-semibold flex items-center gap-2 pointer-events-auto`;
+      toast.className = `animate-toast glass-card ${colors[type]} p-2.5 rounded-2xl shadow-lg border text-xs font-bold flex items-center gap-2 pointer-events-auto`;
       toast.innerHTML = `<i class="fa-solid ${icons[type]} text-sm"></i> <span>${message}</span>`;
       container.appendChild(toast);
 
@@ -318,6 +404,42 @@
 
     function triggerConfetti() {
       if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+    }
+
+    // EFEK CONFETTI FESTIVE MEWAH UNTUK PEMBELIAN ASET
+    function triggerFestiveConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 80, spread: 100, origin: { y: 0.6 } });
+        setTimeout(() => confetti({ particleCount: 60, angle: 60, spread: 55, origin: { x: 0 } }), 150);
+        setTimeout(() => confetti({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1 } }), 300);
+      }
+    }
+
+    // TAMPILKAN POP-UP ASET CUTE
+    function showCuteBuyModal(badgeText, mainTitle, propName, ownerName, price, levelText, iconEmoji = '🏰') {
+      document.getElementById('buy-modal-badge').innerText = badgeText;
+      document.getElementById('buy-modal-title').innerText = mainTitle;
+      document.getElementById('buy-modal-prop').innerText = propName;
+      document.getElementById('buy-modal-owner').innerText = `Pemilik: ${ownerName}`;
+      document.getElementById('buy-modal-price').innerText = `$${price.toLocaleString()}`;
+      document.getElementById('buy-modal-level').innerText = levelText;
+      document.getElementById('buy-modal-icon').innerText = iconEmoji;
+
+      const modal = document.getElementById('buy-modal');
+      const card = document.getElementById('buy-modal-card');
+      
+      modal.classList.remove('hidden');
+      card.classList.add('animate-pop');
+
+      playCuteFestiveJingle();
+      triggerFestiveConfetti();
+    }
+
+    function closeBuyModal() {
+      const modal = document.getElementById('buy-modal');
+      const card = document.getElementById('buy-modal-card');
+      card.classList.remove('animate-pop');
+      modal.classList.add('hidden');
     }
 
     function init() {
@@ -359,8 +481,8 @@
           ndefReader = new NDEFReader();
           await ndefReader.scan();
 
-          badge.className = "text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1";
-          badge.innerHTML = `<i class="fa-solid fa-wifi text-[8px] animate-pulse"></i> NFC: Ready`;
+          badge.className = "text-[9px] font-bold bg-pink-100 text-pink-700 border border-pink-200 px-2 py-0.5 rounded-full flex items-center gap-1";
+          badge.innerHTML = `<i class="fa-solid fa-wifi text-[8px] animate-pulse"></i> NFC: Ready ✨`;
 
           ndefReader.addEventListener("reading", ({ serialNumber, message }) => {
             let nfcPayload = "";
@@ -421,10 +543,10 @@
             return;
           }
           state.players[data] = { ...MASTER_PLAYERS[data], balance: INITIAL_BANK_MONEY };
-          addLog(`💳 <b>${MASTER_PLAYERS[data].name}</b> terdaftar via NFC/QR ($${INITIAL_BANK_MONEY.toLocaleString()})`);
+          addLog(`💳 <b>${MASTER_PLAYERS[data].name}</b> terdaftar ($${INITIAL_BANK_MONEY.toLocaleString()})`);
           playAudio('cash');
           triggerConfetti();
-          showToast(`${MASTER_PLAYERS[data].name} Berhasil Terdaftar!`, "success");
+          showToast(`${MASTER_PLAYERS[data].name} Berhasil Terdaftar! 💕`, "success");
           renderPlayers();
           updateLobbyUI();
         } else {
@@ -496,8 +618,18 @@
             state.players[state.selectedPlayer].balance -= prop.price;
             state.ownership[data] = { owner: state.selectedPlayer, level: 0, isMortgaged: false };
             addLog(`<b>${state.players[state.selectedPlayer].name}</b> beli <b>${prop.name}</b> (-$${prop.price.toLocaleString()})`);
-            playAudio('cash'); triggerConfetti();
-            showToast(`${state.players[state.selectedPlayer].name} Membeli ${prop.name}!`, "success");
+            
+            // POP-UP MEMBELI PROPERTI BARU
+            showCuteBuyModal(
+              "✨ Aset Resmi Dimiliki! ✨",
+              "BERHASIL MEMBELI!",
+              prop.name,
+              state.players[state.selectedPlayer].name,
+              prop.price,
+              "Tingkat 0 (Tanah Baru)",
+              prop.type === 'STATION' ? '✈️' : (prop.type === 'UTILITY' ? '⚡' : '🏰')
+            );
+
           } else if (propState.owner === state.selectedPlayer) {
             if (propState.isMortgaged) {
               playAudio('error'); showToast("Properti sedang digadaikan! Tebus dulu sebelum upgrade.", "warning"); return;
@@ -518,8 +650,18 @@
             propState.level += 1;
             const label = propState.level === 5 ? "Hotel 🏨" : `Rumah ke-${propState.level} 🏠`;
             addLog(`<b>${state.players[state.selectedPlayer].name}</b> bangun ${label} di <b>${prop.name}</b>`);
-            playAudio('cash'); triggerConfetti();
-            showToast(`Upgrade ${label} di ${prop.name}!`, "success");
+            
+            // POP-UP UPGRADE PROPERTI
+            showCuteBuyModal(
+              "👑 Upgrade Properti Sukses! 👑",
+              "PEMBANGUNAN BERHASIL!",
+              prop.name,
+              state.players[state.selectedPlayer].name,
+              upgradeCost,
+              label,
+              propState.level === 5 ? '🏨' : '🏠'
+            );
+
           } else {
             playAudio('error'); showToast(`Properti milik ${state.players[propState.owner].name}!`, "error");
           }
@@ -639,10 +781,10 @@
       const startBtn = document.getElementById('btn-start-game');
       if (count >= 2) {
         startBtn.disabled = false;
-        startBtn.className = "w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-2 rounded-xl text-xs transition-all shadow-md shadow-emerald-200 active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer flex-shrink-0";
+        startBtn.className = "w-full bg-gradient-to-r from-pink-400 via-rose-400 to-pink-500 hover:from-pink-500 hover:to-rose-600 text-white font-extrabold py-2 rounded-2xl text-xs transition-all shadow-md shadow-pink-200 active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer flex-shrink-0";
       } else {
         startBtn.disabled = true;
-        startBtn.className = "w-full bg-slate-200 text-slate-400 font-bold py-2 rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-not-allowed flex-shrink-0";
+        startBtn.className = "w-full bg-slate-200 text-slate-400 font-bold py-2 rounded-2xl text-xs transition-all flex items-center justify-center gap-1.5 cursor-not-allowed flex-shrink-0";
       }
     }
 
@@ -652,16 +794,17 @@
       
       const badge = document.getElementById('game-status-badge');
       if (badge) {
-        badge.className = "text-[9px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 px-2 py-0.5 rounded-full";
-        badge.innerText = "Status: Game Berjalan";
+        badge.className = "text-[9px] font-bold bg-pink-100 text-pink-700 border border-pink-200 px-2 py-0.5 rounded-full";
+        badge.innerText = "Status: Game Berjalan 💕";
       }
 
       document.getElementById('panel-registration').classList.add('hidden');
       document.getElementById('panel-gameplay').classList.remove('hidden');
 
       addLog("🎲 <b>Permainan Dimulai!</b>");
-      triggerConfetti();
-      showToast("Permainan Dimulai! Selamat bermain 🎲", "success");
+      playCuteFestiveJingle();
+      triggerFestiveConfetti();
+      showToast("Permainan Dimulai! Selamat bermain 🎲💕", "success");
       updateStatusUI();
     }
 
@@ -672,8 +815,8 @@
 
       if (playerKeys.length === 0) {
         container.innerHTML = `
-          <div class="col-span-2 text-center py-3 border border-dashed border-slate-300 rounded-xl bg-white/40">
-            <p class="text-[11px] font-semibold text-slate-400">Belum ada pemain aktif</p>
+          <div class="col-span-2 text-center py-3 border-2 border-dashed border-pink-200 rounded-2xl bg-white/40">
+            <p class="text-[11px] font-extrabold text-pink-400">Belum ada pemain aktif 🌸</p>
           </div>
         `;
         return;
@@ -690,16 +833,16 @@
         const isLeader = state.isStarted && p.balance === maxBalance && maxBalance > 0;
         
         container.innerHTML += `
-          <div class="relative bg-gradient-to-br ${p.bg} border ${isLeader ? 'border-amber-400 ring-2 ring-amber-300/50' : p.border} px-2.5 py-1.5 rounded-xl shadow-sm flex flex-col justify-between transition-all">
+          <div class="relative bg-gradient-to-br ${p.bg} border ${isLeader ? 'border-pink-400 ring-2 ring-pink-300/60' : p.border} px-2.5 py-1.5 rounded-2xl shadow-sm flex flex-col justify-between transition-all">
             ${isLeader ? `<span class="absolute -top-2 -right-1 text-xs drop-shadow">👑</span>` : ''}
             <div class="flex justify-between items-center">
               <div class="flex items-center gap-1">
                 <span class="w-2 h-2 rounded-full ${p.badge}"></span>
-                <span class="font-bold text-[11px] text-slate-700">${p.name}</span>
+                <span class="font-extrabold text-[11px] text-slate-700">${p.name}</span>
               </div>
-              <span class="text-[9px] font-bold bg-white/80 text-slate-500 px-1.5 py-0.2 rounded-md border border-slate-100">${properties.length} Aset</span>
+              <span class="text-[9px] font-bold bg-white/80 text-pink-600 px-1.5 py-0.2 rounded-md border border-pink-100">${properties.length} Aset</span>
             </div>
-            <p class="text-xs font-extrabold text-slate-800 mt-0.5">$${p.balance.toLocaleString()}</p>
+            <p class="text-xs font-black text-pink-600 mt-0.5">$${p.balance.toLocaleString()}</p>
           </div>
         `;
       });
@@ -710,7 +853,7 @@
       state.selectedPlayer = null;
       
       document.querySelectorAll('.mode-btn').forEach(btn => {
-        btn.className = 'mode-btn bg-white text-slate-600 border border-slate-200 py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 transition-all';
+        btn.className = 'mode-btn bg-white text-pink-600 border border-pink-200 py-1.5 px-0.5 rounded-xl font-bold text-[9px] flex flex-col items-center gap-0.5 transition-all';
       });
 
       const bankContainer = document.getElementById('bank-input-container');
@@ -721,11 +864,11 @@
       }
 
       const activeBtn = document.getElementById(`btn-${mode}`);
-      if (mode === 'BUY') activeBtn.className = 'mode-btn bg-emerald-600 text-white py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
-      if (mode === 'RENT') activeBtn.className = 'mode-btn bg-amber-500 text-white py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
-      if (mode === 'MORTGAGE') activeBtn.className = 'mode-btn bg-indigo-600 text-white py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
-      if (mode === 'GO') activeBtn.className = 'mode-btn bg-sky-500 text-white py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
-      if (mode === 'BANK') activeBtn.className = 'mode-btn bg-purple-600 text-white py-1.5 px-0.5 rounded-lg font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'BUY') activeBtn.className = 'mode-btn bg-pink-500 text-white py-1.5 px-0.5 rounded-xl font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'RENT') activeBtn.className = 'mode-btn bg-rose-500 text-white py-1.5 px-0.5 rounded-xl font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'MORTGAGE') activeBtn.className = 'mode-btn bg-purple-500 text-white py-1.5 px-0.5 rounded-xl font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'GO') activeBtn.className = 'mode-btn bg-fuchsia-500 text-white py-1.5 px-0.5 rounded-xl font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
+      if (mode === 'BANK') activeBtn.className = 'mode-btn bg-pink-600 text-white py-1.5 px-0.5 rounded-xl font-bold text-[9px] flex flex-col items-center gap-0.5 shadow-sm transition-all';
 
       updateStatusUI();
     }
@@ -755,14 +898,14 @@
     function renderLogs() {
       const container = document.getElementById('log-list');
       if (state.logs.length === 0) {
-        container.innerHTML = `<p class="text-slate-400 text-center py-2 text-[10px]">Belum ada aktivitas transaksi.</p>`;
+        container.innerHTML = `<p class="text-pink-300 text-center py-2 text-[10px] font-bold">Belum ada aktivitas transaksi 💕</p>`;
         return;
       }
       
       container.innerHTML = state.logs.map(log => `
-        <div class="flex justify-between items-center p-1.5 bg-white/70 rounded-lg border border-slate-100">
+        <div class="flex justify-between items-center p-1.5 bg-white/80 rounded-xl border border-pink-100">
           <span class="text-slate-700 text-[10px]">${log.message}</span>
-          <span class="text-[9px] text-slate-400 font-mono ml-2 shrink-0">${log.time}</span>
+          <span class="text-[9px] text-pink-400 font-mono ml-2 shrink-0">${log.time}</span>
         </div>
       `).join('');
     }
