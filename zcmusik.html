@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZC Creative Musik - Full Song Engine</title>
+  <title>ZC Creative Musik - Global Full Duration Engine</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -52,7 +52,7 @@
 
   <div class="flex flex-1 overflow-hidden">
     
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR NAVIGATION -->
     <aside class="w-64 bg-zc-panel/90 border-r border-zc-cyan/10 flex flex-col justify-between hidden md:flex p-5">
       <div class="flex flex-col h-full overflow-hidden">
         <div class="flex items-center gap-3 mb-8 cursor-pointer" onclick="loadView('home')">
@@ -61,7 +61,7 @@
           </div>
           <div>
             <h1 class="font-extrabold text-xl tracking-wider zc-gradient-text">ZC CREATIVE</h1>
-            <p class="text-[10px] text-zc-cyan font-semibold tracking-widest uppercase">Full Duration Engine</p>
+            <p class="text-[10px] text-zc-cyan font-semibold tracking-widest uppercase">YouTube Full Engine</p>
           </div>
         </div>
 
@@ -70,7 +70,7 @@
             <i data-lucide="home" class="w-5 h-5"></i> Beranda
           </button>
           <button id="nav-explore" onclick="loadView('explore')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-zc-card/50 transition">
-            <i data-lucide="compass" class="w-5 h-5"></i> Populer Indonesia
+            <i data-lucide="globe" class="w-5 h-5"></i> Hits Manca Negara
           </button>
           <button id="nav-liked" onclick="loadView('liked')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-zc-card/50 transition">
             <i data-lucide="heart" class="w-5 h-5"></i> Disukai
@@ -90,10 +90,10 @@
 
       <div class="p-4 rounded-xl bg-zc-card border border-zc-cyan/20 mt-4">
         <div class="flex items-center gap-2 mb-1">
-          <span class="w-2 h-2 rounded-full bg-zc-green animate-pulse"></span>
-          <span class="text-xs font-semibold text-zc-green">Durasi Penuh (Full Song)</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-zc-green animate-pulse"></span>
+          <span class="text-xs font-semibold text-zc-green">Full Duration Stream</span>
         </div>
-        <p class="text-[11px] text-gray-400">Putar lagu penuh 3–5 menit</p>
+        <p class="text-[11px] text-gray-400">Diputar penuh via YouTube Engine</p>
       </div>
     </aside>
 
@@ -102,7 +102,7 @@
       <header class="sticky top-0 z-10 zc-glass px-6 py-4 flex items-center justify-between gap-4">
         <div class="relative flex-1 max-w-xl">
           <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-zc-cyan"></i>
-          <input id="searchInput" type="text" placeholder="Cari Idgitaf, Sheila on 7, Nadhif Basalamah..." 
+          <input id="searchInput" type="text" placeholder="Cari Taylor Swift, Wali, ColdPlay, Bruno Mars, Keisya Levronka..." 
                  onkeyup="if(event.key === 'Enter') handleSearch()"
                  class="w-full pl-12 pr-28 py-3 rounded-full bg-zc-dark/80 border border-zc-cyan/30 text-white placeholder-gray-400 focus:outline-none focus:border-zc-orange transition text-sm">
           <button onclick="handleSearch()" class="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-1.5 rounded-full zc-gradient-bg text-zc-dark font-bold text-sm">
@@ -112,15 +112,15 @@
       </header>
 
       <div class="p-6 space-y-8">
-        <div class="relative overflow-hidden rounded-3xl p-8 zc-gradient-bg text-zc-dark">
-          <span class="bg-zc-dark/20 text-zc-dark px-3 py-1 rounded-full text-xs font-bold uppercase">Durasi Lengkap</span>
-          <h2 class="text-3xl font-black mt-3 mb-2">Streaming Lagu Penuh 3-5 Menit</h2>
-          <p class="text-zc-dark/80 text-sm font-medium mb-6">Bebas batas 30 detik & bebas eror domain origin pada pradupta.my.id.</p>
+        <div class="relative overflow-hidden rounded-3xl p-8 zc-gradient-bg text-zc-dark shadow-xl">
+          <span class="bg-zc-dark/20 text-zc-dark px-3 py-1 rounded-full text-xs font-bold uppercase">100% Full Song</span>
+          <h2 class="text-3xl font-black mt-3 mb-2">Streaming Musik Indonesia & Dunia</h2>
+          <p class="text-zc-dark/80 text-sm font-medium mb-2">Lagu lengkap, durasi penuh 3-5 menit, tanpa eror domain & tanpa batas preview.</p>
         </div>
 
         <div>
           <h3 id="sectionTitle" class="text-xl font-bold flex items-center gap-2 mb-6">
-            <i data-lucide="sparkles" class="w-5 h-5 text-zc-orange"></i> Top Pop Indonesia
+            <i data-lucide="sparkles" class="w-5 h-5 text-zc-orange"></i> Populer Indonesia & Internasional
           </h3>
           <div id="songGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5"></div>
         </div>
@@ -130,7 +130,7 @@
 
   <!-- PLAYER BAR -->
   <footer class="h-28 bg-zc-panel/95 border-t border-zc-cyan/20 px-6 flex items-center justify-between z-20 zc-glass gap-4">
-    <!-- Info Lagu -->
+    <!-- Metadata Informasi Lagu -->
     <div class="flex items-center gap-4 w-1/3">
       <img id="playerAlbumArt" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150" class="w-14 h-14 rounded-xl object-cover border border-zc-cyan/30 flex-shrink-0">
       <div class="truncate">
@@ -143,18 +143,22 @@
       </button>
     </div>
 
-    <!-- Embedded Player -->
+    <!-- YouTube Stream Player (Durasi Penuh) -->
     <div class="flex items-center justify-center w-1/3">
-      <div id="playerContainer" class="w-48 h-20 bg-black rounded-xl overflow-hidden border border-zc-cyan/30 relative shadow-lg flex items-center justify-center">
-        <p id="playerPlaceholder" class="text-[11px] text-gray-500 text-center p-2">Pemutar Musik Otomatis</p>
+      <div id="playerContainer" class="w-64 h-20 bg-black rounded-xl overflow-hidden border border-zc-cyan/30 relative shadow-lg flex items-center justify-center">
+        <p id="playerPlaceholder" class="text-[11px] text-gray-400 text-center p-2 font-medium">Player Musik Full Durasi</p>
         <iframe id="playerIframe" class="w-full h-full hidden" src="" allow="autoplay; encrypted-media" frameborder="0"></iframe>
       </div>
     </div>
 
-    <!-- Navigation -->
-    <div class="flex items-center justify-end gap-4 w-1/3">
-      <button onclick="prevTrack()" class="text-gray-300 hover:text-white p-2 bg-zc-card rounded-full border border-zc-cyan/20 hover:border-zc-cyan transition"><i data-lucide="skip-back" class="w-5 h-5"></i></button>
-      <button onclick="nextTrack()" class="text-gray-300 hover:text-white p-2 bg-zc-card rounded-full border border-zc-cyan/20 hover:border-zc-cyan transition"><i data-lucide="skip-forward" class="w-5 h-5"></i></button>
+    <!-- Control Tombol Next/Prev -->
+    <div class="flex items-center justify-end gap-3 w-1/3">
+      <button onclick="prevTrack()" class="text-gray-300 hover:text-white p-3 bg-zc-card rounded-full border border-zc-cyan/20 hover:border-zc-cyan transition shadow">
+        <i data-lucide="skip-back" class="w-5 h-5"></i>
+      </button>
+      <button onclick="nextTrack()" class="text-gray-300 hover:text-white p-3 bg-zc-card rounded-full border border-zc-cyan/20 hover:border-zc-cyan transition shadow">
+        <i data-lucide="skip-forward" class="w-5 h-5"></i>
+      </button>
     </div>
   </footer>
 
@@ -185,11 +189,11 @@
 
     function loadView(view, param = null) {
       if (view === 'home') {
-        document.getElementById('sectionTitle').innerHTML = `<i data-lucide="sparkles" class="w-5 h-5 text-zc-orange"></i> Top Pop Indonesia`;
-        fetchMusicData('Lagu Pop Indonesia Terbaru Audio');
+        document.getElementById('sectionTitle').innerHTML = `<i data-lucide="sparkles" class="w-5 h-5 text-zc-orange"></i> Populer Indonesia & Dunia`;
+        fetchMusicData('Hits Indonesia');
       } else if (view === 'explore') {
-        document.getElementById('sectionTitle').innerHTML = `<i data-lucide="compass" class="w-5 h-5 text-zc-cyan"></i> Populer Indonesia`;
-        fetchMusicData('Hits Indonesia Audio');
+        document.getElementById('sectionTitle').innerHTML = `<i data-lucide="globe" class="w-5 h-5 text-zc-cyan"></i> Hits Manca Negara`;
+        fetchMusicData('Top Global Hits 2026');
       } else if (view === 'liked') {
         document.getElementById('sectionTitle').innerHTML = `<i data-lucide="heart" class="w-5 h-5 text-zc-orange"></i> Lagu Disukai (${likedSongs.length})`;
         playlist = likedSongs;
@@ -205,50 +209,27 @@
       lucide.createIcons();
     }
 
+    // Mengambil metadata resmi global (Artis, Album, Gambar Kualitas Tinggi)
     async function fetchMusicData(query) {
       renderLoading();
       try {
-        const res = await fetch(`https://inv.tux.pizza/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=30`);
         const data = await res.json();
 
-        if (data && data.length > 0) {
-          playlist = data.slice(0, 24).map(item => ({
-            id: item.videoId,
-            title: item.title,
-            artist: item.author,
-            cover: `https://i.ytimg.com/vi/${item.videoId}/hqdefault.jpg`,
-            videoId: item.videoId
+        if (data.results && data.results.length > 0) {
+          playlist = data.results.map(song => ({
+            id: song.trackId.toString(),
+            title: song.trackName,
+            artist: song.artistName,
+            album: song.collectionName || 'Single',
+            cover: song.artworkUrl100 ? song.artworkUrl100.replace('100x100bb', '600x600bb') : 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400'
           }));
           renderSongs(playlist);
         } else {
-          fetchFallbackData(query);
+          renderError("Tidak ada lagu ditemukan.");
         }
       } catch (err) {
-        fetchFallbackData(query);
-      }
-    }
-
-    async function fetchFallbackData(query) {
-      try {
-        const res = await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(query)}&filter=music_songs`);
-        const data = await res.json();
-        if (data.items && data.items.length > 0) {
-          playlist = data.items.slice(0, 24).map(item => {
-            const vId = item.url.includes('v=') ? item.url.split('v=')[1] : item.url.replace('/watch?v=', '');
-            return {
-              id: vId,
-              title: item.title,
-              artist: item.uploaderName,
-              cover: item.thumbnail,
-              videoId: vId
-            };
-          });
-          renderSongs(playlist);
-        } else {
-          renderError("Tidak dapat memuat lagu. Silakan coba pencarian lain.");
-        }
-      } catch(e) {
-        renderError("Gagal terhubung ke server musik.");
+        renderError("Gagal mengambil data lagu dari jaringan.");
       }
     }
 
@@ -256,7 +237,7 @@
       const q = document.getElementById('searchInput').value.trim();
       if (!q) return;
       document.getElementById('sectionTitle').innerHTML = `<i data-lucide="search" class="w-5 h-5 text-zc-cyan"></i> Hasil Pencarian: "${q}"`;
-      fetchMusicData(`${q} audio`);
+      fetchMusicData(q);
     }
 
     function renderSongs(songs) {
@@ -285,6 +266,7 @@
           </div>
           <h4 class="font-bold text-sm text-white truncate mb-0.5">${song.title}</h4>
           <p class="text-xs text-gray-400 truncate">${song.artist}</p>
+          <p class="text-[10px] text-zc-cyan/70 truncate mt-1">${song.album}</p>
         `;
         songGrid.appendChild(card);
       });
@@ -295,7 +277,7 @@
       document.getElementById('songGrid').innerHTML = `
         <div class="col-span-full text-center py-12">
           <div class="w-8 h-8 border-4 border-zc-orange border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p class="text-sm text-zc-cyan">Mencari lagu durasi penuh...</p>
+          <p class="text-sm text-zc-cyan">Memuat musik global...</p>
         </div>`;
     }
 
@@ -303,7 +285,45 @@
       document.getElementById('songGrid').innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">${msg}</div>`;
     }
 
-    function playTrack(index) {
+    // Resolusi YouTube Video ID Durasi Penuh via Multi-Proxy Engine
+    async function resolveYouTubeVideoId(artist, title) {
+      const query = `${artist} ${title} official audio`;
+      
+      const resolverProxies = [
+        async (q) => {
+          const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent('https://www.youtube.com/results?search_query=' + encodeURIComponent(q))}`);
+          const text = await res.text();
+          const match = text.match(/"videoId":"([a-zA-Z0-9_-]{11})"/);
+          return match ? match[1] : null;
+        },
+        async (q) => {
+          const res = await fetch(`https://api.piped.yt/search?q=${encodeURIComponent(q)}&filter=music_songs`);
+          const data = await res.json();
+          if (data && data.items && data.items.length > 0) {
+            const item = data.items[0];
+            return item.url ? item.url.replace('/watch?v=', '') : null;
+          }
+          return null;
+        },
+        async (q) => {
+          const res = await fetch(`https://inv.privacydev.net/api/v1/search?q=${encodeURIComponent(q)}&type=video`);
+          const data = await res.json();
+          return (data && data[0] && data[0].videoId) ? data[0].videoId : null;
+        }
+      ];
+
+      for (const resolver of resolverProxies) {
+        try {
+          const vId = await resolver(query);
+          if (vId) return vId;
+        } catch (e) {
+          console.warn("Resolver Proxy mencoba opsi berikutnya...");
+        }
+      }
+      return null;
+    }
+
+    async function playTrack(index) {
       if (index < 0 || index >= playlist.length) return;
       
       currentIndex = index;
@@ -312,10 +332,10 @@
       document.getElementById('playerSongTitle').innerText = track.title;
       document.getElementById('playerArtistName').innerText = track.artist;
       document.getElementById('playerAlbumArt').src = track.cover;
-      
+
       const badge = document.getElementById('statusBadge');
-      badge.innerText = "FULL SONG (3-5 MIN)";
-      badge.className = "inline-block mt-1 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-zc-green/20 text-zc-green border border-zc-green/30";
+      badge.innerText = "MENYAMBUNGKAN YOUTUBE...";
+      badge.className = "inline-block mt-1 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-zc-orange/20 text-zc-orange border border-zc-orange/30";
 
       const placeholder = document.getElementById('playerPlaceholder');
       const iframe = document.getElementById('playerIframe');
@@ -323,12 +343,21 @@
       if (placeholder) placeholder.classList.add('hidden');
       iframe.classList.remove('hidden');
 
-      // Mengirimkan domain origin asli agar bebas dari eror postMessage
-      const currentOrigin = encodeURIComponent(window.location.origin);
-      iframe.src = `https://www.youtube-nocookie.com/embed/${track.videoId}?autoplay=1&enablejsapi=1&origin=${currentOrigin}`;
+      renderSongs(playlist);
+
+      // Cari Video ID YouTube asli untuk lagu penuh
+      const videoId = await resolveYouTubeVideoId(track.artist, track.title);
+
+      if (videoId) {
+        iframe.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+        badge.innerText = "MEMUTAR FULL SONG (3-5 MIN)";
+        badge.className = "inline-block mt-1 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-zc-green/20 text-zc-green border border-zc-green/30";
+      } else {
+        badge.innerText = "GAGAL MEMUTAR";
+        badge.className = "inline-block mt-1 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30";
+      }
 
       updateLikeIcon();
-      renderSongs(playlist);
     }
 
     function nextTrack() {
