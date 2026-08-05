@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZC Creative Musik - Full Audio Engine</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            zc: {
+              dark: '#0B132B',
+              panel: '#1C2541',
+              card: '#111D35',
+              cyan: '#06B6D4',
+              orange: '#F97316',
+              green: '#10B981'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #0B132B; }
+    ::-webkit-scrollbar-thumb { background: #1C2541; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #06B6D4; }
+
+    .zc-gradient-text {
+      background: linear-gradient(135deg, #F97316 0%, #06B6D4 50%, #10B981 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .zc-gradient-bg {
+      background: linear-gradient(135deg, #F97316 0%, #06B6D4 50%, #10B981 100%);
+    }
+    .zc-glass {
+      background: rgba(28, 37, 65, 0.85);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(6, 182, 212, 0.2);
+    }
+  </style>
+</head>
+<body class="bg-zc-dark text-gray-100 font-sans h-full flex flex-col overflow-hidden select-none">
+
+  <!-- YouTube Hidden Bridge Player (Langsung Tanpa Proxy API) -->
+  <div style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; overflow: hidden; left: -9999px;">
+    <iframe id="ytEmbed" width="200" height="200" src="" allow="autoplay"></iframe>
+  </div>
+
+  <div class="flex flex-1 overflow-hidden">
+    
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-zc-panel/90 border-r border-zc-cyan/10 flex flex-col justify-between hidden md:flex p-5">
+      <div class="flex flex-col h-full overflow-hidden">
+        <div class="flex items-center gap-3 mb-8 cursor-pointer" onclick="loadView('home')">
+          <div class="w-10 h-10 rounded-xl zc-gradient-bg flex items-center justify-center shadow-lg">
+            <i data-lucide="play" class="w-6 h-6 text-zc-dark fill-zc-dark"></i>
+          </div>
+          <div>
+            <h1 class="font-extrabold text-xl tracking-wider zc-gradient-text">ZC CREATIVE</h1>
+            <p class="text-[10px] text-zc-cyan font-semibold tracking-widest uppercase">Full Audio Engine</p>
+          </div>
+        </div>
+
+        <nav class="space-y-2 mb-6">
+          <button id="nav-home" onclick="loadView('home')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-zc-cyan/10 text-zc-cyan font-semibold transition">
+            <i data-lucide="home" class="w-5 h-5"></i> Beranda
+          </button>
+          <button id="nav-explore" onclick="loadView('explore')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-zc-card/50 transition">
+            <i data-lucide="compass" class="w-5 h-5"></i> Populer Indonesia
+          </button>
+          <button id="nav-liked" onclick="loadView('liked')" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-400 hover:text-white hover:bg-zc-card/50 transition">
+            <i data-lucide="heart" class="w-5 h-5"></i> Disukai
+          </button>
+        </nav>
+
+        <div class="flex flex-col flex-1 overflow-hidden border-t border-zc-cyan/10 pt-4">
+          <div class="flex items-center justify-between mb-3 px-2">
+            <span class="text-xs font-bold text-gray-400 uppercase">Playlist Saya</span>
+            <button onclick="createNewPlaylist()" class="text-zc-orange hover:text-zc-cyan text-xs font-bold flex items-center gap-1">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i> Buat
+            </button>
+          </div>
+          <div id="sidebarPlaylists" class="space-y-1 overflow-y-auto flex-1 pr-1"></div>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-xl bg-zc-card border border-zc-cyan/20 mt-4">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="w-2 h-2 rounded-full bg-zc-green animate-pulse"></span>
+          <span class="text-xs font-semibold text-zc-green">Full Song Engine 3.0</span>
+        </div>
+        <p class="text-[11px] text-gray-400">Durasi Penuh 3-5 Menit Aktif</p>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col overflow-y-auto">
+      <header class="sticky top-0 z-10 zc-glass px-6 py-4 flex items-center justify-between gap-4">
+        <div class="relative flex-1 max-w-xl">
+          <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-zc-cyan"></i>
+          <input id="searchInput" type="text" placeholder="Cari Wali, Tulus, Keisya Levronka, Taylor Swift..." 
+                 onkeyup="if(event.key === 'Enter') handleSearch()"
+                 class="w-full pl-12 pr-28 py-3 rounded-full bg-zc-dark/80 border border-zc-cyan/30 text-white placeholder-gray-400 focus:outline-none focus:border-zc-orange transition text-sm">
+          <button onclick="handleSearch()" class="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-1.5 rounded-full zc-gradient-bg text-zc-dark font-bold text-sm">
+            Cari
+          </button>
+        </div>
+      </header>
+
+      <div class="p-6 space-y-8">
+        <div class="relative overflow-hidden rounded-3xl p-8 zc-gradient-bg text-zc-dark">
+          <span class="bg-zc-dark/20 text-zc-dark px-3 py-1 rounded-full text-xs font-bold uppercase">Durasi Penuh (3-5 Menit)</span>
+          <h2 class="text-3xl font-black mt-3 mb-2">Musik Indonesia & Dunia Tanpa Batas</h2>
+          <p class="text-zc-dark/80 text-sm font-medium mb-6">Nikmati lagu favorit tanpa terpotong 30 detik. Mendukung semua artis lokal dan internasional.</p>
+        </div>
+
+        <div>
+          <h3 id="sectionTitle" class="text-xl font-bold flex items-center gap-2 mb-6">
+            <i data-lucide="sparkles" class="w-5 h-5 text-zc-orange"></i> Top Pop Indonesia
+          </h3>
+          <div id="songGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- PLAYER BAR -->
+  <footer class="h-24 bg-zc-panel/95 border-t border-zc-cyan/20 px-6 flex items-center justify-between z-20 zc-glass">
+    <div class="flex items-center gap-4 w-1/4 min-w-[200px]">
+      <img id="playerAlbumArt" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150" class="w-14 h-14 rounded-xl object-cover border border-zc-cyan/30">
+      <div class="truncate">
+        <h4 id="playerSongTitle" class="font-bold text-sm text-white truncate">Belum Ada Lagu</h4>
+        <p id="playerArtistName" class="text-xs text-gray-400 truncate">Pilih lagu untuk memutar</p>
+      </div>
+      <button id="likeBtn" onclick="toggleCurrentLike()" class="text-gray-400 hover:text-zc-orange transition ml-1">
+        <i data-lucide="heart" id="likeIcon" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <div class="flex flex-col items-center gap-2 w-2/4 max-w-xl">
+      <div class="flex items-center gap-6">
+        <button id="shuffleBtn" onclick="toggleShuffle()" class="text-gray-400 hover:text-zc-cyan"><i data-lucide="shuffle" class="w-4 h-4"></i></button>
+        <button onclick="prevTrack()" class="text-gray-300 hover:text-white"><i data-lucide="skip-back" class="w-5 h-5"></i></button>
+        <button id="mainPlayBtn" onclick="togglePlay()" class="w-11 h-11 rounded-full zc-gradient-bg text-zc-dark flex items-center justify-center hover:scale-105 shadow-lg">
+          <i data-lucide="play" id="playIcon" class="w-5 h-5 fill-zc-dark ml-0.5"></i>
+        </button>
+        <button onclick="nextTrack()" class="text-gray-300 hover:text-white"><i data-lucide="skip-forward" class="w-5 h-5"></i></button>
+        <button id="repeatBtn" onclick="toggleRepeat()" class="text-gray-400 hover:text-zc-cyan"><i data-lucide="repeat" class="w-4 h-4"></i></button>
+      </div>
+
+      <div class="w-full flex items-center gap-3 text-xs text-gray-400">
+        <span id="currentTime">0:00</span>
+        <input id="progressBar" type="range" value="0" max="100" oninput="seekAudio(this.value)" class="w-full h-1.5 bg-zc-dark rounded-lg appearance-none cursor-pointer accent-zc-orange">
+        <span id="totalTime">0:00</span>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end gap-3 w-1/4 min-w-[200px]">
+      <span id="statusBadge" class="text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-zc-cyan/20 text-zc-cyan border border-zc-cyan/30">SIAP DIPUTAR</span>
+      <div class="flex items-center gap-2">
+        <i data-lucide="volume-2" class="w-4 h-4 text-zc-cyan"></i>
+        <input id="volumeSlider" type="range" min="0" max="100" value="80" oninput="setVolume(this.value)" class="w-16 h-1.5 bg-zc-dark rounded-lg appearance-none cursor-pointer accent-zc-cyan">
+      </div>
+    </div>
+  </footer>
+
+  <!-- ADD TO PLAYLIST MODAL -->
+  <div id="playlistModal" class="fixed inset-0 bg-zc-dark/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-zc-panel border border-zc-cyan/30 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-base text-white flex items-center gap-2">
+          <i data-lucide="plus-circle" class="w-5 h-5 text-zc-orange"></i> Tambahkan ke Playlist
+        </h3>
+        <button onclick="closePlaylistModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div id="playlistModalOptions" class="space-y-2 max-h-60 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <script>
+    let playlist = [];
+    let currentIndex = -1;
+    let isPlaying = false;
+    let isShuffle = false;
+    let isRepeat = false;
+    let ytPlayer = null;
+    let progressTimer = null;
+    let likedSongs = JSON.parse(localStorage.getItem('zc_liked_songs')) || [];
+    let customPlaylists = JSON.parse(localStorage.getItem('zc_custom_playlists')) || [];
+
+    function onYouTubeIframeAPIReady() {
+      ytPlayer = new YT.Player('ytEmbed', {
+        events: {
+          'onStateChange': (e) => {
+            if (e.data === YT.PlayerState.PLAYING) {
+              isPlaying = true;
+              updatePlayBtn();
+              startProgressTracker();
+              document.getElementById('statusBadge').innerText = "FULL AUDIO";
+              document.getElementById('statusBadge').className = "text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-zc-green/20 text-zc-green border border-zc-green/30";
+            } else if (e.data === YT.PlayerState.PAUSED) {
+              isPlaying = false;
+              updatePlayBtn();
+              stopProgressTracker();
+            } else if (e.data === YT.PlayerState.ENDED) {
+              if (isRepeat) {
+                ytPlayer.playVideo();
+              } else {
+                nextTrack();
+              }
+            }
+          }
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadView('home');
+      renderSidebarPlaylists();
+    });
+
+    function loadView(view, param = null) {
+      if (view === 'home') {
+        document.getElementById('sectionTitle').innerHTML = `<i data-lucide="sparkles" class="w-5 h-5 text-zc-orange"></i> Top Pop Indonesia`;
+        fetchMusicData('Hits Indonesia');
+      } else if (view === 'explore') {
+        document.getElementById('sectionTitle').innerHTML = `<i data-lucide="compass" class="w-5 h-5 text-zc-cyan"></i> Lagu Populer`;
+        fetchMusicData('Pop Hits 2026');
+      } else if (view === 'liked') {
+        document.getElementById('sectionTitle').innerHTML = `<i data-lucide="heart" class="w-5 h-5 text-zc-orange"></i> Lagu Disukai (${likedSongs.length})`;
+        playlist = likedSongs;
+        renderSongs(playlist);
+      } else if (view === 'playlist') {
+        const pl = customPlaylists.find(p => p.id === param);
+        if (pl) {
+          document.getElementById('sectionTitle').innerHTML = `<i data-lucide="list-music" class="w-5 h-5 text-zc-cyan"></i> Playlist: ${pl.name}`;
+          playlist = pl.songs;
+          renderSongs(playlist);
+        }
+      }
+      lucide.createIcons();
+    }
+
+    async function fetchMusicData(query) {
+      renderLoading();
+      try {
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&country=ID&media=music&limit=24`);
+        const data = await res.json();
+
+        if (data.results && data.results.length > 0) {
+          playlist = data.results.map(song => ({
+            id: song.trackId.toString(),
+            title: song.trackName,
+            artist: song.artistName,
+            cover: song.artworkUrl100 ? song.artworkUrl100.replace('100x100bb', '400x400bb') : 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400'
+          }));
+          renderSongs(playlist);
+        } else {
+          renderError("Tidak ada lagu ditemukan.");
+        }
+      } catch (err) {
+        renderError("Gagal terhubung ke server lagu.");
+      }
+    }
+
+    async function handleSearch() {
+      const q = document.getElementById('searchInput').value.trim();
+      if (!q) return;
+      document.getElementById('sectionTitle').innerHTML = `<i data-lucide="search" class="w-5 h-5 text-zc-cyan"></i> Hasil Pencarian: "${q}"`;
+      fetchMusicData(q);
+    }
+
+    function renderSongs(songs) {
+      const songGrid = document.getElementById('songGrid');
+      songGrid.innerHTML = '';
+
+      if (!songs || songs.length === 0) {
+        songGrid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">Belum ada lagu.</div>`;
+        return;
+      }
+
+      songs.forEach((song, idx) => {
+        const isCurrent = currentIndex === idx;
+        const card = document.createElement('div');
+        card.className = `group relative bg-zc-card/80 p-3 rounded-2xl border ${isCurrent ? 'border-zc-orange' : 'border-zc-cyan/10'} hover:border-zc-orange/50 transition duration-300 hover:-translate-y-1 cursor-pointer`;
+        
+        card.innerHTML = `
+          <div class="relative mb-3 overflow-hidden rounded-xl aspect-square bg-zc-dark" onclick="playTrack(${idx})">
+            <img src="${song.cover}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+            <button class="absolute bottom-2 right-2 w-10 h-10 rounded-full zc-gradient-bg text-zc-dark flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-lg">
+              <i data-lucide="${isCurrent && isPlaying ? 'pause' : 'play'}" class="w-5 h-5 fill-zc-dark"></i>
+            </button>
+            <button onclick="event.stopPropagation(); openPlaylistModal(${idx})" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-zc-dark/80 text-zc-cyan hover:text-zc-orange flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+            </button>
+          </div>
+          <h4 class="font-bold text-sm text-white truncate mb-0.5">${song.title}</h4>
+          <p class="text-xs text-gray-400 truncate">${song.artist}</p>
+        `;
+        songGrid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    function renderLoading() {
+      document.getElementById('songGrid').innerHTML = `
+        <div class="col-span-full text-center py-12">
+          <div class="w-8 h-8 border-4 border-zc-orange border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+          <p class="text-sm text-zc-cyan">Memuat musik...</p>
+        </div>`;
+    }
+
+    function renderError(msg) {
+      document.getElementById('songGrid').innerHTML = `<div class="col-span-full text-center py-12 text-gray-400">${msg}</div>`;
+    }
+
+    // Pemutaran Langsung Melalui Youtube Search Embed Resmi
+    function playTrack(index) {
+      if (index < 0 || index >= playlist.length) return;
+      
+      currentIndex = index;
+      const track = playlist[currentIndex];
+
+      document.getElementById('playerSongTitle').innerText = track.title;
+      document.getElementById('playerArtistName').innerText = track.artist;
+      document.getElementById('playerAlbumArt').src = track.cover;
+      document.getElementById('statusBadge').innerText = "MEMUAT STREAM...";
+      document.getElementById('statusBadge').className = "text-[10px] font-bold uppercase px-2.5 py-1 rounded-full bg-zc-orange/20 text-zc-orange border border-zc-orange/30";
+
+      updateLikeIcon();
+      renderSongs(playlist);
+
+      // Menggunakan Youtube Embedded Search resmi tanpa ketergantungan API pihak ketiga
+      const query = encodeURIComponent(`${track.artist} ${track.title} audio`);
+      const iframe = document.getElementById('ytEmbed');
+      iframe.src = `https://www.youtube-nocookie.com/embed?listType=search&list=${query}&autoplay=1&enablejsapi=1`;
+
+      isPlaying = true;
+      updatePlayBtn();
+    }
+
+    function togglePlay() {
+      if (currentIndex === -1 && playlist.length > 0) {
+        playTrack(0);
+        return;
+      }
+      if (!ytPlayer) return;
+
+      if (isPlaying) {
+        if (ytPlayer.pauseVideo) ytPlayer.pauseVideo();
+        isPlaying = false;
+      } else {
+        if (ytPlayer.playVideo) ytPlayer.playVideo();
+        isPlaying = true;
+      }
+      updatePlayBtn();
+    }
+
+    function updatePlayBtn() {
+      const playIcon = document.getElementById('playIcon');
+      playIcon.setAttribute('data-lucide', isPlaying ? 'pause' : 'play');
+      lucide.createIcons();
+    }
+
+    function nextTrack() {
+      if (playlist.length === 0) return;
+      let nextIdx = isShuffle ? Math.floor(Math.random() * playlist.length) : (currentIndex + 1) % playlist.length;
+      playTrack(nextIdx);
+    }
+
+    function prevTrack() {
+      if (playlist.length === 0) return;
+      let prevIdx = (currentIndex - 1 + playlist.length) % playlist.length;
+      playTrack(prevIdx);
+    }
+
+    function startProgressTracker() {
+      stopProgressTracker();
+      progressTimer = setInterval(() => {
+        if (ytPlayer && ytPlayer.getCurrentTime && ytPlayer.getDuration) {
+          const curr = ytPlayer.getCurrentTime();
+          const dur = ytPlayer.getDuration();
+          if (dur > 0) {
+            document.getElementById('progressBar').value = (curr / dur) * 100;
+            document.getElementById('currentTime').innerText = formatTime(curr);
+            document.getElementById('totalTime').innerText = formatTime(dur);
+          }
+        }
+      }, 500);
+    }
+
+    function stopProgressTracker() {
+      if (progressTimer) clearInterval(progressTimer);
+    }
+
+    function seekAudio(val) {
+      if (ytPlayer && ytPlayer.getDuration) {
+        const dur = ytPlayer.getDuration();
+        ytPlayer.seekTo((val / 100) * dur, true);
+      }
+    }
+
+    function setVolume(val) {
+      if (ytPlayer && ytPlayer.setVolume) ytPlayer.setVolume(val);
+    }
+
+    function toggleShuffle() {
+      isShuffle = !isShuffle;
+      document.getElementById('shuffleBtn').className = isShuffle ? "text-zc-orange font-bold" : "text-gray-400";
+    }
+
+    function toggleRepeat() {
+      isRepeat = !isRepeat;
+      document.getElementById('repeatBtn').className = isRepeat ? "text-zc-orange font-bold" : "text-gray-400";
+    }
+
+    function createNewPlaylist() {
+      const name = prompt("Nama Playlist Baru:");
+      if (!name) return;
+      customPlaylists.push({ id: 'pl_' + Date.now(), name: name.trim(), songs: [] });
+      localStorage.setItem('zc_custom_playlists', JSON.stringify(customPlaylists));
+      renderSidebarPlaylists();
+    }
+
+    function renderSidebarPlaylists() {
+      const container = document.getElementById('sidebarPlaylists');
+      container.innerHTML = '';
+      customPlaylists.forEach(pl => {
+        const item = document.createElement('div');
+        item.className = "flex items-center justify-between px-2 py-2 rounded-lg hover:bg-zc-card/60 transition cursor-pointer text-xs";
+        item.onclick = () => loadView('playlist', pl.id);
+        item.innerHTML = `<span class="truncate text-gray-300 font-medium">${pl.name}</span>`;
+        container.appendChild(item);
+      });
+    }
+
+    function openPlaylistModal(songIdx) {
+      const selectedSong = playlist[songIdx];
+      const container = document.getElementById('playlistModalOptions');
+      container.innerHTML = '';
+      customPlaylists.forEach(pl => {
+        const btn = document.createElement('button');
+        btn.className = "w-full text-left p-3 rounded-xl bg-zc-card hover:bg-zc-cyan/20 text-xs font-semibold text-white mb-2";
+        btn.onclick = () => {
+          pl.songs.push(selectedSong);
+          localStorage.setItem('zc_custom_playlists', JSON.stringify(customPlaylists));
+          closePlaylistModal();
+        };
+        btn.innerText = pl.name;
+        container.appendChild(btn);
+      });
+      document.getElementById('playlistModal').classList.remove('hidden');
+    }
+
+    function closePlaylistModal() {
+      document.getElementById('playlistModal').classList.add('hidden');
+    }
+
+    function toggleCurrentLike() {
+      if (currentIndex === -1) return;
+      const track = playlist[currentIndex];
+      const idx = likedSongs.findIndex(s => s.id === track.id);
+      if (idx > -1) likedSongs.splice(idx, 1);
+      else likedSongs.push(track);
+      localStorage.setItem('zc_liked_songs', JSON.stringify(likedSongs));
+      updateLikeIcon();
+    }
+
+    function updateLikeIcon() {
+      if (currentIndex === -1) return;
+      const isLiked = likedSongs.some(s => s.id === playlist[currentIndex].id);
+      document.getElementById('likeIcon').className = isLiked ? "w-5 h-5 text-zc-orange fill-zc-orange" : "w-5 h-5 text-gray-400";
+    }
+
+    function formatTime(sec) {
+      if (isNaN(sec) || sec === 0) return "0:00";
+      const mins = Math.floor(sec / 60);
+      const secs = Math.floor(sec % 60);
+      return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+  </script>
+</body>
+</html>
