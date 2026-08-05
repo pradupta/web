@@ -2,7 +2,7 @@
   "name": "Pradupta - Gerakan Pramuka",
   "short_name": "Pradupta",
   "description": "Website Resmi Ambalan ScoutDupta",
-  "start_url": "https://ambalan-scout-dupta-sman-20-kab-tangerang-1004187060699.asia-southeast1.run.app/",
+  "start_url": "app.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#dc143c",
