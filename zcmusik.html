@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ZC Creative Musik - Native Audio Engine</title>
+  <title>ZC Creative Musik - Full Song Engine</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -50,9 +50,6 @@
 </head>
 <body class="bg-zc-dark text-gray-100 font-sans h-full flex flex-col overflow-hidden select-none">
 
-  <!-- NATIVE AUDIO ELEMENT (TIDAK PAKAI IFRAME YOUTUBE) -->
-  <audio id="audioEngine" class="hidden"></audio>
-
   <div class="flex flex-1 overflow-hidden">
     
     <!-- SIDEBAR -->
@@ -64,7 +61,7 @@
           </div>
           <div>
             <h1 class="font-extrabold text-xl tracking-wider zc-gradient-text">ZC CREATIVE</h1>
-            <p class="text-[10px] text-zc-cyan font-semibold tracking-widest uppercase">Native Audio Engine</p>
+            <p class="text-[10px] text-zc-cyan font-semibold tracking-widest uppercase">Full Duration Engine</p>
           </div>
         </div>
 
@@ -94,9 +91,9 @@
       <div class="p-4 rounded-xl bg-zc-card border border-zc-cyan/20 mt-4">
         <div class="flex items-center gap-2 mb-1">
           <span class="w-2 h-2 rounded-full bg-zc-green animate-pulse"></span>
-          <span class="text-xs font-semibold text-zc-green">Domain Safe Engine</span>
+          <span class="text-xs font-semibold text-zc-green">Durasi Penuh (Full Song)</span>
         </div>
-        <p class="text-[11px] text-gray-400">Bebas eror postMessage & CORS</p>
+        <p class="text-[11px] text-gray-400">Putar lagu penuh 3–5 menit</p>
       </div>
     </aside>
 
@@ -105,7 +102,7 @@
       <header class="sticky top-0 z-10 zc-glass px-6 py-4 flex items-center justify-between gap-4">
         <div class="relative flex-1 max-w-xl">
           <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-zc-cyan"></i>
-          <input id="searchInput" type="text" placeholder="Cari Wali, Tulus, Keisya Levronka, Sheila on 7..." 
+          <input id="searchInput" type="text" placeholder="Cari Idgitaf, Sheila on 7, Nadhif Basalamah..." 
                  onkeyup="if(event.key === 'Enter') handleSearch()"
                  class="w-full pl-12 pr-28 py-3 rounded-full bg-zc-dark/80 border border-zc-cyan/30 text-white placeholder-gray-400 focus:outline-none focus:border-zc-orange transition text-sm">
           <button onclick="handleSearch()" class="absolute right-2 top-1/2 -translate-y-1/2 px-5 py-1.5 rounded-full zc-gradient-bg text-zc-dark font-bold text-sm">
@@ -116,9 +113,9 @@
 
       <div class="p-6 space-y-8">
         <div class="relative overflow-hidden rounded-3xl p-8 zc-gradient-bg text-zc-dark">
-          <span class="bg-zc-dark/20 text-zc-dark px-3 py-1 rounded-full text-xs font-bold uppercase">Stream Live</span>
-          <h2 class="text-3xl font-black mt-3 mb-2">Streaming Musik Tanpa Eror</h2>
-          <p class="text-zc-dark/80 text-sm font-medium mb-6">Diputar langsung via Native Audio Stream (Kompatibel dengan pradupta.my.id).</p>
+          <span class="bg-zc-dark/20 text-zc-dark px-3 py-1 rounded-full text-xs font-bold uppercase">Durasi Lengkap</span>
+          <h2 class="text-3xl font-black mt-3 mb-2">Streaming Lagu Penuh 3-5 Menit</h2>
+          <p class="text-zc-dark/80 text-sm font-medium mb-6">Bebas batas 30 detik & bebas eror domain origin pada pradupta.my.id.</p>
         </div>
 
         <div>
@@ -133,7 +130,8 @@
 
   <!-- PLAYER BAR -->
   <footer class="h-28 bg-zc-panel/95 border-t border-zc-cyan/20 px-6 flex items-center justify-between z-20 zc-glass gap-4">
-    <div class="flex items-center gap-4 w-1/4">
+    <!-- Info Lagu -->
+    <div class="flex items-center gap-4 w-1/3">
       <img id="playerAlbumArt" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150" class="w-14 h-14 rounded-xl object-cover border border-zc-cyan/30 flex-shrink-0">
       <div class="truncate">
         <h4 id="playerSongTitle" class="font-bold text-sm text-white truncate">Belum Ada Lagu</h4>
@@ -145,29 +143,18 @@
       </button>
     </div>
 
-    <!-- Center Player Controls -->
-    <div class="flex flex-col items-center justify-center w-2/4 max-w-xl px-4">
-      <div class="flex items-center gap-6 mb-2">
-        <button onclick="prevTrack()" class="text-gray-300 hover:text-white transition"><i data-lucide="skip-back" class="w-5 h-5"></i></button>
-        <button id="playPauseBtn" onclick="togglePlayPause()" class="w-11 h-11 rounded-full zc-gradient-bg text-zc-dark flex items-center justify-center shadow-lg hover:scale-105 transition">
-          <i data-lucide="play" id="playPauseIcon" class="w-6 h-6 fill-zc-dark ml-0.5"></i>
-        </button>
-        <button onclick="nextTrack()" class="text-gray-300 hover:text-white transition"><i data-lucide="skip-forward" class="w-5 h-5"></i></button>
-      </div>
-
-      <div class="w-full flex items-center gap-3">
-        <span id="currentTimeText" class="text-[11px] font-mono text-gray-400 w-9 text-right">0:00</span>
-        <div id="progressBarContainer" onclick="seekAudio(event)" class="flex-1 h-2 bg-zc-dark rounded-full overflow-hidden cursor-pointer relative border border-zc-cyan/20">
-          <div id="progressBar" class="h-full zc-gradient-bg w-0 transition-all duration-100"></div>
-        </div>
-        <span id="durationText" class="text-[11px] font-mono text-gray-400 w-9">0:00</span>
+    <!-- Embedded Player -->
+    <div class="flex items-center justify-center w-1/3">
+      <div id="playerContainer" class="w-48 h-20 bg-black rounded-xl overflow-hidden border border-zc-cyan/30 relative shadow-lg flex items-center justify-center">
+        <p id="playerPlaceholder" class="text-[11px] text-gray-500 text-center p-2">Pemutar Musik Otomatis</p>
+        <iframe id="playerIframe" class="w-full h-full hidden" src="" allow="autoplay; encrypted-media" frameborder="0"></iframe>
       </div>
     </div>
 
-    <!-- Volume -->
-    <div class="flex items-center justify-end gap-3 w-1/4">
-      <i data-lucide="volume-2" class="w-4 h-4 text-zc-cyan"></i>
-      <input id="volumeSlider" type="range" min="0" max="100" value="80" oninput="changeVolume(this.value)" class="w-20 h-1.5 bg-zc-dark rounded-lg appearance-none cursor-pointer accent-zc-cyan">
+    <!-- Navigation -->
+    <div class="flex items-center justify-end gap-4 w-1/3">
+      <button onclick="prevTrack()" class="text-gray-300 hover:text-white p-2 bg-zc-card rounded-full border border-zc-cyan/20 hover:border-zc-cyan transition"><i data-lucide="skip-back" class="w-5 h-5"></i></button>
+      <button onclick="nextTrack()" class="text-gray-300 hover:text-white p-2 bg-zc-card rounded-full border border-zc-cyan/20 hover:border-zc-cyan transition"><i data-lucide="skip-forward" class="w-5 h-5"></i></button>
     </div>
   </footer>
 
@@ -185,7 +172,6 @@
   </div>
 
   <script>
-    const audioEngine = document.getElementById('audioEngine');
     let playlist = [];
     let currentIndex = -1;
     let likedSongs = JSON.parse(localStorage.getItem('zc_liked_songs')) || [];
@@ -195,71 +181,15 @@
       lucide.createIcons();
       loadView('home');
       renderSidebarPlaylists();
-      setupAudioListeners();
     });
-
-    function setupAudioListeners() {
-      audioEngine.addEventListener('timeupdate', () => {
-        if (!audioEngine.duration) return;
-        const pct = (audioEngine.currentTime / audioEngine.duration) * 100;
-        document.getElementById('progressBar').style.width = pct + '%';
-        document.getElementById('currentTimeText').innerText = formatTime(audioEngine.currentTime);
-        document.getElementById('durationText').innerText = formatTime(audioEngine.duration);
-      });
-
-      audioEngine.addEventListener('ended', nextTrack);
-
-      audioEngine.addEventListener('play', () => {
-        updatePlayPauseButton(true);
-        const badge = document.getElementById('statusBadge');
-        badge.innerText = "MEMUTAR AUDIO";
-        badge.className = "inline-block mt-1 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-zc-green/20 text-zc-green border border-zc-green/30";
-      });
-
-      audioEngine.addEventListener('pause', () => {
-        updatePlayPauseButton(false);
-        const badge = document.getElementById('statusBadge');
-        badge.innerText = "DIJEDA";
-        badge.className = "inline-block mt-1 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-zc-orange/20 text-zc-orange border border-zc-orange/30";
-      });
-    }
-
-    function formatTime(sec) {
-      if (isNaN(sec)) return "0:00";
-      const m = Math.floor(sec / 60);
-      const s = Math.floor(sec % 60);
-      return `${m}:${s < 10 ? '0' : ''}${s}`;
-    }
-
-    function seekAudio(e) {
-      if (!audioEngine.duration) return;
-      const rect = e.currentTarget.getBoundingClientRect();
-      audioEngine.currentTime = ((e.clientX - rect.left) / rect.width) * audioEngine.duration;
-    }
-
-    function changeVolume(val) {
-      audioEngine.volume = val / 100;
-    }
-
-    function togglePlayPause() {
-      if (currentIndex === -1 && playlist.length > 0) return playTrack(0);
-      audioEngine.paused ? audioEngine.play() : audioEngine.pause();
-    }
-
-    function updatePlayPauseButton(isPlaying) {
-      const btnIcon = document.getElementById('playPauseIcon');
-      btnIcon.setAttribute('data-lucide', isPlaying ? 'pause' : 'play');
-      isPlaying ? btnIcon.classList.remove('ml-0.5') : btnIcon.classList.add('ml-0.5');
-      lucide.createIcons();
-    }
 
     function loadView(view, param = null) {
       if (view === 'home') {
         document.getElementById('sectionTitle').innerHTML = `<i data-lucide="sparkles" class="w-5 h-5 text-zc-orange"></i> Top Pop Indonesia`;
-        fetchMusicData('Pop Indonesia');
+        fetchMusicData('Lagu Pop Indonesia Terbaru Audio');
       } else if (view === 'explore') {
-        document.getElementById('sectionTitle').innerHTML = `<i data-lucide="compass" class="w-5 h-5 text-zc-cyan"></i> Lagu Populer`;
-        fetchMusicData('Hits Indonesia');
+        document.getElementById('sectionTitle').innerHTML = `<i data-lucide="compass" class="w-5 h-5 text-zc-cyan"></i> Populer Indonesia`;
+        fetchMusicData('Hits Indonesia Audio');
       } else if (view === 'liked') {
         document.getElementById('sectionTitle').innerHTML = `<i data-lucide="heart" class="w-5 h-5 text-zc-orange"></i> Lagu Disukai (${likedSongs.length})`;
         playlist = likedSongs;
@@ -278,23 +208,47 @@
     async function fetchMusicData(query) {
       renderLoading();
       try {
-        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&country=ID&media=music&limit=24`);
+        const res = await fetch(`https://inv.tux.pizza/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
         const data = await res.json();
 
-        if (data.results && data.results.length > 0) {
-          playlist = data.results.filter(s => s.previewUrl).map(song => ({
-            id: song.trackId.toString(),
-            title: song.trackName,
-            artist: song.artistName,
-            cover: song.artworkUrl100 ? song.artworkUrl100.replace('100x100bb', '400x400bb') : 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400',
-            stream: song.previewUrl
+        if (data && data.length > 0) {
+          playlist = data.slice(0, 24).map(item => ({
+            id: item.videoId,
+            title: item.title,
+            artist: item.author,
+            cover: `https://i.ytimg.com/vi/${item.videoId}/hqdefault.jpg`,
+            videoId: item.videoId
           }));
           renderSongs(playlist);
         } else {
-          renderError("Tidak ada lagu ditemukan.");
+          fetchFallbackData(query);
         }
       } catch (err) {
-        renderError("Gagal terhubung ke server lagu.");
+        fetchFallbackData(query);
+      }
+    }
+
+    async function fetchFallbackData(query) {
+      try {
+        const res = await fetch(`https://pipedapi.kavin.rocks/search?q=${encodeURIComponent(query)}&filter=music_songs`);
+        const data = await res.json();
+        if (data.items && data.items.length > 0) {
+          playlist = data.items.slice(0, 24).map(item => {
+            const vId = item.url.includes('v=') ? item.url.split('v=')[1] : item.url.replace('/watch?v=', '');
+            return {
+              id: vId,
+              title: item.title,
+              artist: item.uploaderName,
+              cover: item.thumbnail,
+              videoId: vId
+            };
+          });
+          renderSongs(playlist);
+        } else {
+          renderError("Tidak dapat memuat lagu. Silakan coba pencarian lain.");
+        }
+      } catch(e) {
+        renderError("Gagal terhubung ke server musik.");
       }
     }
 
@@ -302,7 +256,7 @@
       const q = document.getElementById('searchInput').value.trim();
       if (!q) return;
       document.getElementById('sectionTitle').innerHTML = `<i data-lucide="search" class="w-5 h-5 text-zc-cyan"></i> Hasil Pencarian: "${q}"`;
-      fetchMusicData(q);
+      fetchMusicData(`${q} audio`);
     }
 
     function renderSongs(songs) {
@@ -341,7 +295,7 @@
       document.getElementById('songGrid').innerHTML = `
         <div class="col-span-full text-center py-12">
           <div class="w-8 h-8 border-4 border-zc-orange border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
-          <p class="text-sm text-zc-cyan">Memuat musik...</p>
+          <p class="text-sm text-zc-cyan">Mencari lagu durasi penuh...</p>
         </div>`;
     }
 
@@ -351,6 +305,7 @@
 
     function playTrack(index) {
       if (index < 0 || index >= playlist.length) return;
+      
       currentIndex = index;
       const track = playlist[currentIndex];
 
@@ -358,8 +313,19 @@
       document.getElementById('playerArtistName').innerText = track.artist;
       document.getElementById('playerAlbumArt').src = track.cover;
       
-      audioEngine.src = track.stream;
-      audioEngine.play();
+      const badge = document.getElementById('statusBadge');
+      badge.innerText = "FULL SONG (3-5 MIN)";
+      badge.className = "inline-block mt-1 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-zc-green/20 text-zc-green border border-zc-green/30";
+
+      const placeholder = document.getElementById('playerPlaceholder');
+      const iframe = document.getElementById('playerIframe');
+
+      if (placeholder) placeholder.classList.add('hidden');
+      iframe.classList.remove('hidden');
+
+      // Mengirimkan domain origin asli agar bebas dari eror postMessage
+      const currentOrigin = encodeURIComponent(window.location.origin);
+      iframe.src = `https://www.youtube-nocookie.com/embed/${track.videoId}?autoplay=1&enablejsapi=1&origin=${currentOrigin}`;
 
       updateLikeIcon();
       renderSongs(playlist);
