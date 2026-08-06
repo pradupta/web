@@ -357,10 +357,11 @@
   <script>
     const INITIAL_BANK_MONEY = 150000;
 
-    // MAPPING UID CHIP NFC KE ID PEMAIN
+    // MAPPING UID CHIP KARTU NFC FISIK KE ID PEMAIN
+    // Anda bisa mendaftarkan UID Kartu NFC fisik Anda di sini (Format huruf besar & titi dua)
     const NFC_UID_MAP = {
-      // '04:A1:B2:C3:D4:E5:F6': 'P1',
-      // '04:12:34:56:78:90:AB': 'P2',
+      // contoh: '04:A1:B2:C3:D4:E5:F6': 'HAFIDZ SAZILI',
+      // contoh: '04:12:34:56:78:90:AB': '35795167',
     };
 
     // PROPERTIES DENGAN BENDERA NEGARA & IKON PETA
@@ -531,24 +532,16 @@
           badge.className = "font-pixel text-[6px] bg-black text-cyan-300 border border-cyan-400 px-1 py-0.5";
           badge.innerHTML = `NFC:READY`;
 
-          ndefReader.addEventListener("reading", ({ serialNumber, message }) => {
-            let nfcPayload = "";
-
-            for (const record of message.records) {
-              if (record.recordType === "text") {
-                const textDecoder = new TextDecoder(record.encoding);
-                nfcPayload = textDecoder.decode(record.data);
-                break;
-              }
-            }
-
-            if (!nfcPayload && serialNumber) {
+          // MENDENGARKAN EVENT READING TAP NFC
+          ndefReader.addEventListener("reading", ({ serialNumber }) => {
+            // LANGSUNG BACA SERIAL NUMBER / UID KARTU FISIK (MENGABAIKAN ISI TEKS)
+            if (serialNumber) {
               const formattedSerial = serialNumber.toUpperCase();
-              nfcPayload = NFC_UID_MAP[formattedSerial] || formattedSerial;
-            }
-
-            if (nfcPayload) {
-              handleScanResult(nfcPayload);
+              // Cek apakah UID ini di-mapping ke ID/Nama tertentu di NFC_UID_MAP
+              const cardId = NFC_UID_MAP[formattedSerial] || formattedSerial;
+              handleScanResult(cardId);
+            } else {
+              showToast("UID Kartu NFC tidak terdeteksi!", "warning");
             }
           });
 
@@ -602,8 +595,27 @@
           renderPlayers();
           updateLobbyUI();
         } else {
-          playAudio('error');
-          showToast(`KODE ASING: "${scannedData}"`, "error");
+          // Jika ID Kartu UID belum terdaftar di MASTER_PLAYERS, daftarkan secara otomatis sebagai Hero baru
+          state.players[data] = { 
+            name: `HERO [${data.slice(-5)}]`, 
+            badge: 'bg-cyan-400', 
+            border: 'border-cyan-400', 
+            balance: INITIAL_BANK_MONEY 
+          };
+          
+          addLog(`👾 <b>HERO [${data.slice(-5)}]</b> JOIN ($${INITIAL_BANK_MONEY.toLocaleString()})`);
+          
+          showPixelModal({
+            badge: "HERO REGISTERED",
+            icon: "💳",
+            title: `CARD UID: ${data}`,
+            subtitle: "Kartu NFC Berhasil Terdaftar!",
+            amount: INITIAL_BANK_MONEY,
+            amountLabel: "SALDO AWAL"
+          });
+
+          renderPlayers();
+          updateLobbyUI();
         }
         return;
       }
@@ -940,11 +952,11 @@
         const isLeader = state.isStarted && p.balance === maxBalance && maxBalance > 0;
         
         container.innerHTML += `
-          <div class="relative bg-black/80 border-2 ${isLeader ? 'border-yellow-400' : p.border} p-1.5 flex flex-col justify-between">
+          <div class="relative bg-black/80 border-2 ${isLeader ? 'border-yellow-400' : (p.border || 'border-cyan-400')} p-1.5 flex flex-col justify-between">
             ${isLeader ? `<span class="absolute -top-2 -right-1 text-xs">👑</span>` : ''}
             <div class="flex justify-between items-center">
               <div class="flex items-center gap-1">
-                <span class="w-2 h-2 ${p.badge}"></span>
+                <span class="w-2 h-2 ${p.badge || 'bg-cyan-400'}"></span>
                 <span class="font-extrabold text-xs text-white">${p.name}</span>
               </div>
               <span class="text-[10px] text-cyan-300 font-bold">${properties.length} ASET</span>
